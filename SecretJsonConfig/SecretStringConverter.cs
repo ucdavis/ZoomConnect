@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ZoomConnect.Web.Serialization
+namespace SecretJsonConfig
 {
     public class SecretStringConverter : JsonConverter<String>
     {

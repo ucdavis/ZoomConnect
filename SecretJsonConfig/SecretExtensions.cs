@@ -4,7 +4,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
-namespace ZoomConnect.Web.SecretJsonConfig
+namespace SecretJsonConfig
 {
     public static class SecretExtensions
     {

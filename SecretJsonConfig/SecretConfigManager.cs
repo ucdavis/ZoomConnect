@@ -3,9 +3,8 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ZoomConnect.Web.Serialization;
 
-namespace ZoomConnect.Web.SecretJsonConfig
+namespace SecretJsonConfig
 {
     public class SecretConfigManager<TSecret> where TSecret : new()
     {

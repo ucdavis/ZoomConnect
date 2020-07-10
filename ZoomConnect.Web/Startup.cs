@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ZoomConnect.Web.Models;
-using ZoomConnect.Web.SecretJsonConfig;
+using SecretJsonConfig;
 
 namespace ZoomConnect.Web
 {

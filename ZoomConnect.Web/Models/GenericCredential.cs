@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using ZoomConnect.Web.Serialization;
+using SecretJsonConfig;
 
 namespace ZoomConnect.Web.Models
 {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using ZoomConnect.Web.SecretJsonConfig;
-using ZoomConnect.Web.Serialization;
+using SecretJsonConfig;
 
 namespace ZoomConnect.Web.Models
 {
