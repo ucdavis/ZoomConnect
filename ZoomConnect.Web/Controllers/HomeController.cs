@@ -35,6 +35,13 @@ namespace ZoomConnect.Web.Controllers
             ViewBag.NotSecret = $"non-secret changing from '{oldplain}' to '{secrets.NotSecret}'.";
             ViewBag.CredsStored = countString;
 
+            var secretToString = new SecretString(countString);
+            var stringToSecret = "bob";
+
+            var newSecret = (SecretString)stringToSecret;
+            var newString = newSecret.ToString();
+            ViewBag.StringTest = newSecret;
+
             return View();
         }
 
