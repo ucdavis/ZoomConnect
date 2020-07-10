@@ -27,6 +27,9 @@ namespace ZoomConnect.Web.Controllers
             secrets.NotSecret += " hey!";
             ViewBag.Secret = $"secret changing from '{oldsecret}' to '{secrets.Secret}'.";
             ViewBag.NotSecret = $"non-secret changing from '{oldplain}' to '{secrets.NotSecret}'.";
+            // add another credential
+            var countString = secrets.Creds.Count.ToString();
+            secrets.Creds.Add(new GenericCredential { Username = $"bob{countString}", Password = $"secret{countString}!" });
             _secretOptions.Save();
 
             return View();
