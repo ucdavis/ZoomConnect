@@ -1,31 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ThijsTijsma.WritableConfiguration.Json;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.SecretJsonConfig;
 
 namespace ZoomConnect.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IWritableOptions<ZoomOptions> _zoomOptions;
+        private readonly Secrets<ZoomOptions> _secretOptions;
 
-        public HomeController(ILogger<HomeController> logger, IWritableOptions<ZoomOptions> zoomOptions)
+        public HomeController(ILogger<HomeController> logger, Secrets<ZoomOptions> secretOptions)
         {
             _logger = logger;
-            _zoomOptions = zoomOptions;
+            _secretOptions = secretOptions;
         }
 
         public IActionResult Index()
         {
-            ViewBag.Secret = _zoomOptions.Value.Secret;
-            _zoomOptions.Value.Secret += "!";
-            _zoomOptions.Write();
+            var secrets = _secretOptions.GetValue().Result;
+            var oldsecret = secrets.Secret;
+            var oldplain = secrets.NotSecret;
+            secrets.Secret += " shh!";
+            secrets.NotSecret += " hey!";
+            ViewBag.Secret = $"secret changing from '{oldsecret}' to '{secrets.Secret}'.";
+            ViewBag.NotSecret = $"non-secret changing from '{oldplain}' to '{secrets.NotSecret}'.";
+            _secretOptions.Save();
 
             return View();
         }

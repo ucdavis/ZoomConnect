@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using ThijsTijsma.WritableConfiguration.Json;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.SecretJsonConfig;
 
 namespace ZoomConnect.Web
 {
@@ -26,8 +26,9 @@ namespace ZoomConnect.Web
         {
             services.AddControllersWithViews();
 
+            // try new secrets interface
             var fileProvider = new PhysicalFileProvider(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            services.AddWritableJsonConfiguration<ZoomOptions>(fileProvider, Configuration.GetSection("ZoomOptions"));
+            services.UseSecrets<ZoomOptions>(fileProvider.GetFileInfo("ZoomSecrets.json"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
