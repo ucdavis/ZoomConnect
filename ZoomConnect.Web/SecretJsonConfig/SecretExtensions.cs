@@ -6,11 +6,11 @@ namespace ZoomConnect.Web.SecretJsonConfig
 {
     public static class SecretExtensions
     {
-        public static void UseSecrets<TSecret>(this IServiceCollection services, IFileInfo file) where TSecret : ISecret, new()
+        public static void UseSecrets<TSecret>(this IServiceCollection services, IFileInfo file) where TSecret : new()
         {
-            var secrets = new Secrets<TSecret> { SecretFile = file };
+            var secrets = new SecretConfigManager<TSecret> { SecretFile = file };
 
-            services.AddSingleton<Secrets<TSecret>>(secrets);
+            services.AddSingleton<SecretConfigManager<TSecret>>(secrets);
         }
     }
 }

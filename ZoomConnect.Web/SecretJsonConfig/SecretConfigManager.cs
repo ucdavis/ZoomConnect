@@ -1,30 +1,27 @@
 ﻿using Microsoft.Extensions.FileProviders;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ZoomConnect.Web.Serialization;
 
 namespace ZoomConnect.Web.SecretJsonConfig
 {
-    public class Secrets<TSecret> where TSecret : ISecret, new()
+    public class SecretConfigManager<TSecret> where TSecret : new()
     {
         private IFileInfo _file;
         private TSecret _secret;
         private JsonSerializerOptions _jsonOptions;
 
-        public Secrets()
+        public SecretConfigManager()
         {
             _jsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true
             };
-            //_jsonOptions.Converters.Add(new SecretStringConverter());
         }
 
-        public Secrets(IFileInfo file)
+        public SecretConfigManager(IFileInfo file)
         {
             _file = file;
 
