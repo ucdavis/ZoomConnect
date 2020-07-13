@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.FileProviders;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace SecretJsonConfig
             {
                 WriteIndented = true
             };
+            _jsonOptions.Converters.Add(new SecretStructConverter(_jsonOptions));
         }
 
         public SecretConfigManager(IFileInfo file)
@@ -28,7 +30,7 @@ namespace SecretJsonConfig
             {
                 WriteIndented = true
             };
-            _jsonOptions.Converters.Add(new SecretStringConverter());
+            _jsonOptions.Converters.Add(new SecretStructConverter(_jsonOptions));
         }
 
         public IFileInfo SecretFile
@@ -59,7 +61,7 @@ namespace SecretJsonConfig
             {
                 using (FileStream fs = File.OpenRead(_file.PhysicalPath))
                 {
-                    _secret = await JsonSerializer.DeserializeAsync<TSecret>(fs);
+                    _secret = await JsonSerializer.DeserializeAsync<TSecret>(fs, _jsonOptions);
                 }
             }
             else

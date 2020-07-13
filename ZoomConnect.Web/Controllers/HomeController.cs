@@ -21,26 +21,26 @@ namespace ZoomConnect.Web.Controllers
         public IActionResult Index()
         {
             var secrets = _secretOptions.GetValue().Result;
-            var oldsecret = secrets.Secret;
+            var oldsecret = secrets.Secret.Value;
             var oldplain = secrets.NotSecret;
-            secrets.Secret += " shh!";
+            secrets.Secret = new SecureStruct(secrets.Secret.Value + " shh!");
             secrets.NotSecret += " hey!";
 
             // add another credential
-            var countString = secrets.Creds.Count.ToString();
-            secrets.Creds.Add(new GenericCredential { Username = $"bob{countString}", Password = $"secret{countString}!" });
+            //var countString = secrets.Creds.Count.ToString();
+            //secrets.Creds.Add(new GenericCredential { Username = $"bob{countString}", Password = (SecretString)$"secret{countString}!" });
             _secretOptions.Save();
 
-            ViewBag.Secret = $"secret changing from '{oldsecret}' to '{secrets.Secret}'.";
+            ViewBag.Secret = $"secret changing from '{oldsecret}' to '{secrets.Secret.Value}'.";
             ViewBag.NotSecret = $"non-secret changing from '{oldplain}' to '{secrets.NotSecret}'.";
-            ViewBag.CredsStored = countString;
+            //ViewBag.CredsStored = countString;
 
-            var secretToString = new SecretString(countString);
-            var stringToSecret = "bob";
+            //var secretToString = new SecretString(countString);
+            //var stringToSecret = "bob";
 
-            var newSecret = (SecretString)stringToSecret;
-            var newString = newSecret.ToString();
-            ViewBag.StringTest = newSecret;
+            //var newSecret = (SecretString)stringToSecret;
+            //var newString = newSecret.ToString();
+            //ViewBag.StringTest = newSecret;
 
             return View();
         }

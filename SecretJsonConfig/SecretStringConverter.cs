@@ -4,21 +4,23 @@ using System.Text.Json.Serialization;
 
 namespace SecretJsonConfig
 {
-    public class SecretStringConverter : JsonConverter<String>
+    public class SecretStringConverter : JsonConverter<string>
     {
-        public override String Read(
+        public override string Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
             JsonSerializerOptions options)
         {
             var s = reader.GetString();
-            return s == null ? s : s[1..^1];
+            if (s == null) { return ""; }
+
+            return s[1..^1];
         }
 
         public override void Write(
             Utf8JsonWriter writer,
-            String stringValue,
+            string secretValue,
             JsonSerializerOptions options) =>
-                writer.WriteStringValue(stringValue == null ? stringValue : $"*{stringValue}*");
+                writer.WriteStringValue(secretValue == null ? "" : $"*{secretValue}*");
     }
 }

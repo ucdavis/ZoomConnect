@@ -7,7 +7,6 @@ namespace ZoomConnect.Web.Models
     public class GenericCredential
     {
         public string Username { get; set; }
-        [JsonConverter(typeof(SecretStringConverter))]
-        public string Password { get; set; }
+        public SecretString Password { get; set; }
     }
 }
