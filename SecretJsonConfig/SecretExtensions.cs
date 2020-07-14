@@ -21,7 +21,7 @@ namespace SecretJsonConfig
                     ValidationAlgorithm = ValidationAlgorithm.HMACSHA512
                 });
 
-            services.AddTransient<Crypt>();
+            services.AddSingleton<Crypt>();
 
             services.TryAddSingleton<SecretConfigManager<TSecret>>(sp =>
             {
