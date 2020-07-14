@@ -73,7 +73,7 @@ namespace SecretJsonConfig
 
         public async void Save()
         {
-            using (FileStream fs = new FileStream(_file.PhysicalPath, FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(_file.PhysicalPath, FileMode.Create))
             {
                 await JsonSerializer.SerializeAsync(fs, _secret, _jsonOptions);
             }
