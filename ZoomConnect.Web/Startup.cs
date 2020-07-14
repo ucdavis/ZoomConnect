@@ -23,7 +23,7 @@ namespace ZoomConnect.Web
         {
             services.AddControllersWithViews();
 
-            // try new secrets interface
+            // add secrets file so credentials stay encrypted on disk
             services.UseSecretJsonConfig<ZoomOptions>("ZoomSecrets.json");
         }
 
