@@ -12,10 +12,10 @@ namespace ZoomConnect.Web.Models
         public ZoomOptions()
         {
             //Creds = new List<GenericCredential>();
-            Secret = new SecureStruct("");
+            Secret = new SecretStruct("");
         }
 
-        public SecureStruct Secret { get; set; }
+        public SecretStruct Secret { get; set; }
         public string NotSecret { get; set; }
         //public List<GenericCredential> Creds { get; set; }
     }

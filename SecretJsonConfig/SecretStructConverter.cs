@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace SecretJsonConfig
 {
-    public class SecretStructConverter : JsonConverter<SecureStruct>
+    public class SecretStructConverter : JsonConverter<SecretStruct>
     {
         private readonly JsonEncodedText ValueName = JsonEncodedText.Encode("Value");
         private readonly JsonConverter<string> _stringConverter;
@@ -24,7 +24,7 @@ namespace SecretJsonConfig
             }
         }
 
-        public override SecureStruct Read(
+        public override SecretStruct Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
             JsonSerializerOptions options)
@@ -60,7 +60,7 @@ namespace SecretJsonConfig
                 throw new JsonException();
             }
 
-            return new SecureStruct(value);
+            return new SecretStruct(value);
         }
 
         private string ReadProperty(ref Utf8JsonReader reader, JsonSerializerOptions options)
@@ -93,7 +93,7 @@ namespace SecretJsonConfig
 
         public override void Write(
             Utf8JsonWriter writer,
-            SecureStruct secureValue,
+            SecretStruct secureValue,
             JsonSerializerOptions options)
         {
             writer.WriteStartObject();

@@ -23,7 +23,7 @@ namespace ZoomConnect.Web.Controllers
             var secrets = _secretOptions.GetValue().Result;
             var oldsecret = secrets.Secret.Value;
             var oldplain = secrets.NotSecret;
-            secrets.Secret = new SecureStruct(secrets.Secret.Value + " shh!");
+            secrets.Secret = new SecretStruct(secrets.Secret.Value + " shh!");
             secrets.NotSecret += " hey!";
 
             // add another credential
