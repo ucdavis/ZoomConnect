@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.FileProviders;
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.FileProviders;
 
 namespace SecretJsonConfig
 {
@@ -12,14 +11,16 @@ namespace SecretJsonConfig
         private IFileInfo _file;
         private TSecret _secret;
         private JsonSerializerOptions _jsonOptions;
+        private Crypt _crypt;
 
-        public SecretConfigManager()
+        public SecretConfigManager(Crypt crypt)
         {
+            _crypt = crypt;
             _jsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true
             };
-            _jsonOptions.Converters.Add(new SecretStructConverter(_jsonOptions));
+            _jsonOptions.Converters.Add(new SecretStructConverter(_jsonOptions, _crypt));
         }
 
         public SecretConfigManager(IFileInfo file)
@@ -30,7 +31,7 @@ namespace SecretJsonConfig
             {
                 WriteIndented = true
             };
-            _jsonOptions.Converters.Add(new SecretStructConverter(_jsonOptions));
+            _jsonOptions.Converters.Add(new SecretStructConverter(_jsonOptions, _crypt));
         }
 
         public IFileInfo SecretFile

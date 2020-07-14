@@ -8,11 +8,12 @@ namespace SecretJsonConfig
     public class SecretStructConverter : JsonConverter<SecureStruct>
     {
         private readonly JsonEncodedText ValueName = JsonEncodedText.Encode("Value");
-
         private readonly JsonConverter<string> _stringConverter;
+        private readonly Crypt _crypt;
 
-        public SecretStructConverter(JsonSerializerOptions options)
+        public SecretStructConverter(JsonSerializerOptions options, Crypt crypt)
         {
+            _crypt = crypt;
             if (options?.GetConverter(typeof(string)) is JsonConverter<string> stringConverter)
             {
                 _stringConverter = stringConverter;
@@ -67,17 +68,25 @@ namespace SecretJsonConfig
             Debug.Assert(reader.TokenType == JsonTokenType.PropertyName);
 
             reader.Read();
-            var value = _stringConverter.Read(ref reader, typeof(string), options);
-            return value == null ? value : value[1..^1];
+            var encryptedValue = _stringConverter.Read(ref reader, typeof(string), options);
+            if (encryptedValue == null)
+            {
+                return encryptedValue;
+            }
+            var decrypted = "";
+            _crypt.TryDecrypt(encryptedValue, out decrypted);
+
+            return decrypted;
         }
 
         private void WriteProperty(Utf8JsonWriter writer, JsonEncodedText name, string stringValue, JsonSerializerOptions options)
         {
             writer.WritePropertyName(name);
+
             // convert the string on write
             if (stringValue != null)
             {
-                stringValue = $"*{stringValue}*";
+                stringValue = _crypt.Encrypt(stringValue);
             }
             _stringConverter.Write(writer, stringValue, options);
         }
