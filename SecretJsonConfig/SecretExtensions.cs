@@ -12,6 +12,13 @@ namespace SecretJsonConfig
 {
     public static class SecretExtensions
     {
+        /// <summary>
+        /// Adds SecretConfigManager of specified Type to the DI container.  SecretConfigManager reads and writes to an associated Json file.
+        /// The Type's <see cref="SecretStruct"/> members will be encrypted on disk, and decrypted in memory.
+        /// </summary>
+        /// <typeparam name="TSecret"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="filename"></param>
         public static void UseSecretJsonConfig<TSecret>(this IServiceCollection services, string filename) where TSecret : new()
         {
             services.AddDataProtection()
