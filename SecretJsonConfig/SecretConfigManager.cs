@@ -3,8 +3,9 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
+using SecretJsonConfig;
 
-namespace SecretJsonConfig
+namespace Microsoft.Extensions.DependencyInjection
 {
     public class SecretConfigManager<TSecret> where TSecret : new()
     {
