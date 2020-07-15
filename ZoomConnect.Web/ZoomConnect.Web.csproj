@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>3b02e51b-2c75-4ff7-bb38-46f8906d3fda</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.Security.CAS" Version="2.0.5" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SecretJsonConfig\SecretJsonConfig.csproj" />

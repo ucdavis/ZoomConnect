@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ZoomConnect.Web.Models;
 using SecretJsonConfig;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using AspNetCore.Security.CAS;
 
 namespace ZoomConnect.Web
 {
@@ -25,6 +28,17 @@ namespace ZoomConnect.Web
 
             // add secrets file so credentials stay encrypted on disk
             services.UseSecretJsonConfig<ZoomOptions>("ZoomSecrets.json");
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/login");
+                })
+                .AddCAS(options =>
+                {
+                    options.CasServerUrlBase = Configuration["CasBaseUrl"];   // Set in `appsettings.json` file.
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +55,9 @@ namespace ZoomConnect.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
+
             app.UseStaticFiles();
 
             app.UseRouting();
