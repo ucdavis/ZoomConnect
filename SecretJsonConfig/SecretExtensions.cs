@@ -28,9 +28,9 @@ namespace SecretJsonConfig
                     ValidationAlgorithm = ValidationAlgorithm.HMACSHA512
                 });
 
-            services.AddSingleton<Crypt>();
+            services.AddScoped<Crypt>();
 
-            services.TryAddSingleton<SecretConfigManager<TSecret>>(sp =>
+            services.TryAddScoped<SecretConfigManager<TSecret>>(sp =>
             {
                 var fileProvider = new PhysicalFileProvider(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
                 var crypt = sp.GetRequiredService<Crypt>();
