@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
 {
@@ -31,6 +32,36 @@ namespace ZoomConnect.Web.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Setup()
+        {
+            var bannerOptions = _secretOptions.GetValue().Result.Banner;
+            var viewModel = new BannerOptionsViewModel
+            {
+                Instance = bannerOptions.Instance,
+                Username = bannerOptions.Username.Value,
+                Password = bannerOptions.Password.Value
+            };
+
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Setup(BannerOptionsViewModel model)
+        {
+            var options = _secretOptions.GetValue().Result;
+            var bannerOptions = options.Banner;
+            bannerOptions.Instance = model.Instance;
+            bannerOptions.Username = new SecretStruct(model.Username);
+            bannerOptions.Password = new SecretStruct(model.Password);
+
+            _secretOptions.Save();
+
+            return RedirectToAction("Index");
         }
 
         [AllowAnonymous]
