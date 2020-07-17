@@ -17,7 +17,7 @@ namespace ZoomConnect.Web.Models
 
         public string GetConnectionString()
         {
-            return $"Data Source={Instance};User Id={Username};Password={Password};";
+            return $"Data Source={Instance};User Id={Username.Value};Password={Password.Value};";
         }
     }
 }

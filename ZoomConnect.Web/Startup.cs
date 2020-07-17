@@ -9,6 +9,8 @@ using SecretJsonConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using AspNetCore.Security.CAS;
+using Oracle.ManagedDataAccess.Client;
+using ZoomConnect.Web.Banner;
 
 namespace ZoomConnect.Web
 {
@@ -39,6 +41,9 @@ namespace ZoomConnect.Web
                     options.CasServerUrlBase = Configuration["CasBaseUrl"];   // Set in `appsettings.json` file.
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 });
+
+            services.AddScoped<BannerConnection>();
+            services.AddScoped<BannerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

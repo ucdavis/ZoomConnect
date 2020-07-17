@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
+using ZoomConnect.Web.Banner;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.ViewModels;
 
@@ -16,6 +17,7 @@ namespace ZoomConnect.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly SecretConfigManager<ZoomOptions> _secretOptions;
+        private const string _passwordPlaceholder = "*********";
 
         public HomeController(ILogger<HomeController> logger, SecretConfigManager<ZoomOptions> secretOptions)
         {
@@ -43,7 +45,7 @@ namespace ZoomConnect.Web.Controllers
             {
                 Instance = bannerOptions.Instance,
                 Username = bannerOptions.Username.Value,
-                Password = bannerOptions.Password.Value
+                Password = String.IsNullOrEmpty(bannerOptions.Password.Value) ? "" : _passwordPlaceholder
             };
 
             return View(viewModel);
@@ -57,11 +59,22 @@ namespace ZoomConnect.Web.Controllers
             var bannerOptions = options.Banner;
             bannerOptions.Instance = model.Instance;
             bannerOptions.Username = new SecretStruct(model.Username);
-            bannerOptions.Password = new SecretStruct(model.Password);
+            if (model.Password != _passwordPlaceholder && !String.IsNullOrEmpty(model.Password))
+            {
+                bannerOptions.Password = new SecretStruct(model.Password);
+            }
 
             _secretOptions.Save();
 
             return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public IActionResult Test([FromServices] BannerRepository banner)
+        {
+            ViewData["TestResult"] = banner.TestConnection();
+
+            return View();
         }
 
         [AllowAnonymous]
