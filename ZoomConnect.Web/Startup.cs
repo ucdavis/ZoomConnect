@@ -42,8 +42,9 @@ namespace ZoomConnect.Web
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 });
 
-            services.AddScoped<BannerConnection>();
-            services.AddScoped<BannerRepository>();
+            services.AddScoped<BannerContext>();
+            services.AddScoped<TestRepository>();
+            services.AddScoped<StvtermRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

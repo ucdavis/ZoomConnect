@@ -6,14 +6,14 @@ using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner
 {
-    public class BannerConnection : IDisposable
+    public class BannerContext : IDisposable
     {
         private ZoomOptions _zoomOptions;
         private bool disposed = false;
 
         public IDbConnection Connection { get; set; }
 
-        public BannerConnection(SecretConfigManager<ZoomOptions> zoomOptions)
+        public BannerContext(SecretConfigManager<ZoomOptions> zoomOptions)
         {
             _zoomOptions = zoomOptions.GetValue().Result;
             Connection = new OracleConnection(_zoomOptions.Banner.GetConnectionString());
@@ -53,7 +53,7 @@ namespace ZoomConnect.Web.Banner
             }
         }
 
-        ~BannerConnection()
+        ~BannerContext()
         {
             // Do not re-create Dispose clean-up code here.
             // Calling Dispose(false) is optimal in terms of

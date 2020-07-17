@@ -70,7 +70,7 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Test([FromServices] BannerRepository banner)
+        public IActionResult Test([FromServices] StvtermRepository banner)
         {
             ViewData["TestResult"] = banner.TestConnection();
 
