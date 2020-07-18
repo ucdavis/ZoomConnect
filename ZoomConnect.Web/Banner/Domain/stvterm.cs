@@ -4,9 +4,9 @@ namespace ZoomConnect.Web.Banner.Domain
 {
     public class stvterm
     {
-        public string STVTERM_CODE { get; set; }
-        public string STVTERM_DESC { get; set; }
-        public DateTime STVTERM_START_DATE { get; set; }
-        public DateTime STVTERM_END_DATE { get; set; }
+        public string code { get; set; }
+        public string desc { get; set; }
+        public DateTime start_date { get; set; }
+        public DateTime end_date { get; set; }
     }
 }

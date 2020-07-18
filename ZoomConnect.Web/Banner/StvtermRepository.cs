@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using SecretJsonConfig;
 using ZoomConnect.Web.Banner.Domain;
+using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner
 {
     public class StvtermRepository : AbstractRepository
     {
-        public StvtermRepository(BannerContext context) : base(context) { }
+        public StvtermRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
-        private const string _columns = "stvterm_code, stvterm_desc, stvterm_start_date, stvterm_end_date";
+        private const string _columns = "stvterm_code as code, stvterm_desc as desc, stvterm_start_date as start_date, stvterm_end_date as end_date";
 
         public override bool TestConnection()
         {

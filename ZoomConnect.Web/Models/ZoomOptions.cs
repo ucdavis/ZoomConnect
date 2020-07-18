@@ -9,6 +9,9 @@ namespace ZoomConnect.Web.Models
             Banner = new BannerOptions();
         }
 
+        public string CurrentTerm { get; set; }
+        public string CurrentSubject { get; set; }
+
         public BannerOptions Banner { get; set; }
     }
 }

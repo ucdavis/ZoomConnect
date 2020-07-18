@@ -45,6 +45,7 @@ namespace ZoomConnect.Web
             services.AddScoped<BannerContext>();
             services.AddScoped<TestRepository>();
             services.AddScoped<StvtermRepository>();
+            services.AddScoped<SsbsectRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

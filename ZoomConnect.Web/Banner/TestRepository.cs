@@ -4,7 +4,7 @@ namespace ZoomConnect.Web.Banner
 {
     public class TestRepository : AbstractRepository
     {
-        public TestRepository(BannerContext context) : base(context)
+        public TestRepository(BannerContext context) : base(context, null)
         {
         }
 

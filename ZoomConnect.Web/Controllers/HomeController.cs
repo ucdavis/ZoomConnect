@@ -40,12 +40,15 @@ namespace ZoomConnect.Web.Controllers
         [HttpGet]
         public IActionResult Setup()
         {
-            var bannerOptions = _secretOptions.GetValue().Result.Banner;
+            var options = _secretOptions.GetValue().Result;
             var viewModel = new BannerOptionsViewModel
             {
-                Instance = bannerOptions.Instance,
-                Username = bannerOptions.Username.Value,
-                Password = String.IsNullOrEmpty(bannerOptions.Password.Value) ? "" : _passwordPlaceholder
+                Instance = options.Banner.Instance,
+                Username = options.Banner.Username.Value,
+                Password = String.IsNullOrEmpty(options.Banner.Password.Value) ? "" : _passwordPlaceholder,
+
+                CurrentTerm = options.CurrentTerm,
+                CurrentSubject = options.CurrentSubject
             };
 
             return View(viewModel);
@@ -56,13 +59,15 @@ namespace ZoomConnect.Web.Controllers
         public IActionResult Setup(BannerOptionsViewModel model)
         {
             var options = _secretOptions.GetValue().Result;
-            var bannerOptions = options.Banner;
-            bannerOptions.Instance = model.Instance;
-            bannerOptions.Username = new SecretStruct(model.Username);
+            options.Banner.Instance = model.Instance;
+            options.Banner.Username = new SecretStruct(model.Username);
             if (model.Password != _passwordPlaceholder && !String.IsNullOrEmpty(model.Password))
             {
-                bannerOptions.Password = new SecretStruct(model.Password);
+                options.Banner.Password = new SecretStruct(model.Password);
             }
+
+            options.CurrentTerm = model.CurrentTerm;
+            options.CurrentSubject = model.CurrentSubject;
 
             _secretOptions.Save();
 
@@ -70,9 +75,16 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Test([FromServices] StvtermRepository banner)
+        public IActionResult Test([FromServices] SsbsectRepository ssbsect)
         {
-            ViewData["TestResult"] = banner.TestConnection();
+            var success = ssbsect.TestConnection();
+            ViewData["TestResult"] = success;
+
+            if (success)
+            {
+                var rows = ssbsect.ReadCurrent();
+                ViewData["RowCount"] = rows.Count;
+            }
 
             return View();
         }
