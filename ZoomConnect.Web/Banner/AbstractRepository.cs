@@ -1,10 +1,12 @@
 ﻿using SecretJsonConfig;
 using System;
+using System.Collections.Generic;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner
 {
-    public abstract class AbstractRepository
+    public abstract class AbstractRepository<TBannerTable> where TBannerTable : IBannerTable
     {
         protected BannerContext Context { get; set; }
         protected ZoomOptions Options { get; set; }
@@ -20,5 +22,11 @@ namespace ZoomConnect.Web.Banner
         /// </summary>
         /// <returns>true if successful</returns>
         public abstract bool TestConnection();
+
+        /// <summary>
+        /// Get all rows from this table, filtered by current options.
+        /// </summary>
+        /// <returns></returns>
+        public abstract List<TBannerTable> GetAll();
     }
 }

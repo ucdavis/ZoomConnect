@@ -2,7 +2,7 @@
 
 namespace ZoomConnect.Web.Banner.Domain
 {
-    public class stvterm
+    public class stvterm : IBannerTable
     {
         public string code { get; set; }
         public string desc { get; set; }

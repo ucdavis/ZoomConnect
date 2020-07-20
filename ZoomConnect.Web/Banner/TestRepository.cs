@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Dapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ZoomConnect.Web.Banner.Domain;
 
 namespace ZoomConnect.Web.Banner
 {
-    public class TestRepository : AbstractRepository
+    public class TestRepository : AbstractRepository<dual>
     {
         public TestRepository(BannerContext context) : base(context, null)
         {
@@ -17,6 +21,12 @@ namespace ZoomConnect.Web.Banner
 
                 return "X" == (string)scalar;
             }
+        }
+
+        public override List<dual> GetAll()
+        {
+            var sql = $"select * from dual";
+            return Context.Connection.Query<dual>(sql).ToList();
         }
     }
 }

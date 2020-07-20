@@ -82,7 +82,7 @@ namespace ZoomConnect.Web.Controllers
 
             if (success)
             {
-                var rows = ssbsect.ReadCurrent();
+                var rows = ssbsect.GetAll();
                 ViewData["RowCount"] = rows.Count;
             }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ZoomConnect.Web.Banner.Domain
 {
-    public class ssbsect
+    public class ssbsect : IBannerTable
     {
         public string term_code { get; set; }
         public string crn { get; set; }

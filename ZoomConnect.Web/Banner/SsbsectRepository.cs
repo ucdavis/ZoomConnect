@@ -8,7 +8,7 @@ using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner
 {
-    public class SsbsectRepository : AbstractRepository
+    public class SsbsectRepository : AbstractRepository<ssbsect>
     {
         public SsbsectRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
@@ -20,7 +20,7 @@ namespace ZoomConnect.Web.Banner
             return rows.Count == 1;
         }
 
-        public List<ssbsect> ReadCurrent()
+        public override List<ssbsect> GetAll()
         {
             var sql = 
                 $"SELECT ssbsect_term_code as term_code, ssbsect_crn as crn, ssbsect_subj_code as subj_code, " +

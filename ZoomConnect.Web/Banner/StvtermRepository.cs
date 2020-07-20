@@ -8,7 +8,7 @@ using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner
 {
-    public class StvtermRepository : AbstractRepository
+    public class StvtermRepository : AbstractRepository<stvterm>
     {
         public StvtermRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
@@ -22,7 +22,7 @@ namespace ZoomConnect.Web.Banner
             return rows.Count == 1;
         }
 
-        public List<stvterm> ReadAll()
+        public override List<stvterm> GetAll()
         {
             var sql = $"select {_columns} from stvterm order by 1";
             return Context.Connection.Query<stvterm>(sql).ToList();
