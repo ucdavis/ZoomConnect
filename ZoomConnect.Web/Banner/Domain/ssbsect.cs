@@ -2,6 +2,9 @@
 
 namespace ZoomConnect.Web.Banner.Domain
 {
+    /// <summary>
+    /// Banner courses
+    /// </summary>
     public class ssbsect : IBannerTable
     {
         public string term_code { get; set; }

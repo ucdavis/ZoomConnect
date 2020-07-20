@@ -2,6 +2,9 @@
 
 namespace ZoomConnect.Web.Banner.Domain
 {
+    /// <summary>
+    /// Banner course meetings
+    /// </summary>
     public class ssrmeet : IBannerTable
     {
         public string term_code { get; set; }

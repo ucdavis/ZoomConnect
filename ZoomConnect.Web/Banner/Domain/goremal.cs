@@ -2,6 +2,9 @@
 
 namespace ZoomConnect.Web.Banner.Domain
 {
+    /// <summary>
+    /// Email addresses for Banner people
+    /// </summary>
     public class goremal : IBannerTable
     {
         public decimal pidm { get; set; }
