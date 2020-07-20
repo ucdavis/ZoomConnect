@@ -75,7 +75,7 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Test([FromServices] SobcaldRepository table)
+        public IActionResult Test([FromServices] GoremalRepository table)
         {
             var success = table.TestConnection();
             ViewData["TestResult"] = success;
