@@ -22,7 +22,7 @@ namespace ZoomConnect.Web.Banner
 
         public override List<ssbsect> GetAll()
         {
-            var sql = 
+            var sql =
                 $"SELECT ssbsect_term_code as term_code, ssbsect_crn as crn, ssbsect_subj_code as subj_code, " +
                 "        ssbsect_crse_numb as crse_numb, ssbsect_seq_numb as seq_numb, " +
                 "        COALESCE(ssbsect_crse_title, scbcrse_title) as crse_title, ssbsect_enrl as enrl " +
@@ -37,8 +37,7 @@ namespace ZoomConnect.Web.Banner
                 "                          AND scbcrse_subj_code = ssbsect_subj_code " +
                 "                    ) " +
                 "WHERE ssbsect_term_code = :term " +
-                "  AND ssbsect_subj_code = :subj " +
-                "  AND rownum <= 10";
+                "  AND ssbsect_subj_code = :subj ";
 
             return Context
                 .Connection
