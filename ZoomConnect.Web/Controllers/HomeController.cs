@@ -75,14 +75,14 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Test([FromServices] SsbsectRepository ssbsect)
+        public IActionResult Test([FromServices] SirasgnRepository sirasgn)
         {
-            var success = ssbsect.TestConnection();
+            var success = sirasgn.TestConnection();
             ViewData["TestResult"] = success;
 
             if (success)
             {
-                var rows = ssbsect.GetAll();
+                var rows = sirasgn.GetAll();
                 ViewData["RowCount"] = rows.Count;
             }
 
