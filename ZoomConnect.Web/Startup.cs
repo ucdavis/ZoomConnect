@@ -9,8 +9,6 @@ using SecretJsonConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using AspNetCore.Security.CAS;
-using Oracle.ManagedDataAccess.Client;
-using ZoomConnect.Web.Banner;
 
 namespace ZoomConnect.Web
 {
@@ -42,16 +40,7 @@ namespace ZoomConnect.Web
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 });
 
-            services.AddScoped<BannerContext>();
-            services.AddScoped<TestRepository>();
-            services.AddScoped<StvtermRepository>();
-            services.AddScoped<SsbsectRepository>();
-            services.AddScoped<SirasgnRepository>();
-            services.AddScoped<SsrmeetRepository>();
-            services.AddScoped<SobcaldRepository>();
-            services.AddScoped<StvsubjRepository>();
-            services.AddScoped<SpridenRepository>();
-            services.AddScoped<GoremalRepository>();
+            services.AddBanner();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
