@@ -6,34 +6,33 @@ using SecretJsonConfig;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 
-namespace ZoomConnect.Web.Banner
+namespace ZoomConnect.Web.Banner.Repository
 {
-    public class SirasgnRepository : AbstractRepository<sirasgn>
+    public class SobcaldRepository : AbstractRepository<sobcald>
     {
-        public SirasgnRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
+        public SobcaldRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
         private const string _columns = "sirasgn_term_code as term_code, sirasgn_crn as crn, sirasgn_pidm as pidm, sirasgn_primary_ind as primary_ind";
 
         public override bool TestConnection()
         {
             var sql = $"SELECT {_columns} FROM sirasgn WHERE rownum = 1";
-            var rows = Context.Connection.Query<sirasgn>(sql).ToList();
+            var rows = Context.Connection.Query<sobcald>(sql).ToList();
 
             return rows.Count == 1;
         }
 
-        public override List<sirasgn> GetAll()
+        public override List<sobcald> GetAll()
         {
             var sql =
-                $"SELECT DISTINCT {_columns} " +
-                "FROM sirasgn " +
-                "INNER JOIN ssbsect ON sirasgn_term_code = ssbsect_term_code AND sirasgn_crn = ssbsect_crn " +
-                "WHERE SIRASGN_TERM_CODE = :term " +
-                "  AND ssbsect_subj_code = :subj";
+                $"SELECT sobcald_date, sobcald_dayt_code " +
+                "FROM sobcald " +
+                "  INNER JOIN stvterm ON stvterm_start_date <= sobcald_date AND stvterm_end_date >= sobcald_date " +
+                "WHERE stvterm_code = :term";
 
             return Context
                 .Connection
-                .Query<sirasgn>(sql, new
+                .Query<sobcald>(sql, new
                 {
                     term = new DbString { Value = Options.CurrentTerm },
                     subj = new DbString { Value = Options.CurrentSubject }

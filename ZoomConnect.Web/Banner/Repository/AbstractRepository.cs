@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 
-namespace ZoomConnect.Web.Banner
+namespace ZoomConnect.Web.Banner.Repository
 {
     public abstract class AbstractRepository<TBannerTable> where TBannerTable : IBannerTable
     {

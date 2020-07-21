@@ -1,6 +1,7 @@
 ﻿using System;
 using ZoomConnect.Web.Banner;
 using ZoomConnect.Web.Banner.Domain;
+using ZoomConnect.Web.Banner.Repository;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

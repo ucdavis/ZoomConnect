@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ZoomConnect.Web.Banner.Domain;
 using Microsoft.Extensions.Caching.Memory;
+using ZoomConnect.Web.Banner.Repository;
 
 namespace ZoomConnect.Web.Banner.Cache
 {

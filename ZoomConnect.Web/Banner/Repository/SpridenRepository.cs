@@ -6,7 +6,7 @@ using SecretJsonConfig;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 
-namespace ZoomConnect.Web.Banner
+namespace ZoomConnect.Web.Banner.Repository
 {
     public class SpridenRepository : AbstractRepository<spriden>
     {

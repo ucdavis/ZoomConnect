@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ZoomConnect.Web.Banner.Domain;
 
-namespace ZoomConnect.Web.Banner
+namespace ZoomConnect.Web.Banner.Repository
 {
     public class TestRepository : AbstractRepository<dual>
     {
