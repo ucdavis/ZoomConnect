@@ -6,6 +6,9 @@ using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner
 {
+    /// <summary>
+    /// Opens and closes connection to Banner for all queries in this scope
+    /// </summary>
     public class BannerContext : IDisposable
     {
         private ZoomOptions _zoomOptions;
