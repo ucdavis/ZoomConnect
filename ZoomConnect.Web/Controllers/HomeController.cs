@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using ZoomConnect.Web.Banner;
+using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.ViewModels;
 
@@ -75,7 +77,7 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Test([FromServices] GoremalRepository table)
+        public IActionResult Test([FromServices] CachedRepository<goremal> table)
         {
             var success = table.TestConnection();
             ViewData["TestResult"] = success;
