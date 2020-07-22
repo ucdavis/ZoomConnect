@@ -21,6 +21,10 @@ namespace ZoomConnect.Web.SetupRequirements
         /// </summary>
         public EnforcementType Enforcement { get; set; }
         /// <summary>
+        /// Priority in which to check requirements, 1 = top priority, 2 = next, ...
+        /// </summary>
+        public int Priority { get; set; }
+        /// <summary>
         /// Current evaluation status of the <see cref="ISetupRequirement"/>.
         /// </summary>
         public RequirementStatus Status { get; set; }
