@@ -11,6 +11,7 @@ using ZoomConnect.Web.Banner;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.SetupRequirements;
 using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
@@ -77,9 +78,10 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Test([FromServices] CachedRepository<goremal> table)
+        public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] RequirementManager requirementManager)
         {
-            var success = table.TestConnection();
+            var success = requirementManager.CheckAllRequirements();
+
             ViewData["TestResult"] = success;
 
             if (success)
