@@ -1,7 +1,6 @@
-﻿using SecretJsonConfig;
-using System;
-using ZoomConnect.Web.Banner.Repository;
-using ZoomConnect.Web.Models;
+﻿using System;
+using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
 
 namespace ZoomConnect.Web.SetupRequirements.Banner
 {
@@ -9,9 +8,9 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
     {
         private RequirementStatus _status = RequirementStatus.Unchecked;
         private string _statusDescription = "";
-        private TestRepository _testRepository;
+        private CachedRepository<dual> _testRepository;
 
-        public BannerConnectionRequirement(TestRepository testRepository)
+        public BannerConnectionRequirement(CachedRepository<dual> testRepository)
         {
             _testRepository = testRepository;
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ZoomConnect.Web.Banner.Repository;
+using ZoomConnect.Web.Banner.Cache;
 
 namespace ZoomConnect.Web.SetupRequirements.Banner
 {
@@ -8,9 +8,9 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
     {
         private RequirementStatus _status = RequirementStatus.Unchecked;
         private string _statusDescription = "";
-        private IEnumerable<IRepository> _repositories;
+        private IEnumerable<ICachedRepository> _repositories;
 
-        public BannerAccessRequirement(IEnumerable<IRepository> repositories)
+        public BannerAccessRequirement(IEnumerable<ICachedRepository> repositories)
         {
             _repositories = repositories;
         }
