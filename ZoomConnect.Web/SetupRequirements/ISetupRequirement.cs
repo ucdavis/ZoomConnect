@@ -21,7 +21,9 @@ namespace ZoomConnect.Web.SetupRequirements
         /// </summary>
         public EnforcementType Enforcement { get; }
         /// <summary>
-        /// Priority in which to check requirements, 1 = top priority, 2 = next, ...
+        /// Priority in which to check requirements, 1 = top priority, 2 = next.
+        /// Failures in higher priority requirements short-circuit the automatic evaluation
+        /// of lower priority requirements.
         /// </summary>
         public int Priority { get; }
         /// <summary>
