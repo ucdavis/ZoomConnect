@@ -59,7 +59,7 @@ namespace ZoomConnect.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Setup(BannerOptionsViewModel model)
+        public IActionResult Setup(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache)
         {
             var options = _secretOptions.GetValue().Result;
             options.Banner.Instance = model.Instance;
@@ -73,6 +73,7 @@ namespace ZoomConnect.Web.Controllers
             options.CurrentSubject = model.CurrentSubject;
 
             _secretOptions.Save();
+            sizedCache.ResetCache();
 
             return RedirectToAction("Index");
         }

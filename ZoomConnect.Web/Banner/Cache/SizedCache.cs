@@ -9,10 +9,18 @@ namespace ZoomConnect.Web.Banner.Cache
 
         public SizedCache()
         {
-            Cache = new MemoryCache(new MemoryCacheOptions
-            {
-                SizeLimit = 5000    // limit of 5,000 rows before cache will stop adding rows.
-            });
+            Cache = NewCache();
         }
+
+        public void ResetCache()
+        {
+            Cache.Dispose();
+            Cache = NewCache();
+        }
+
+        private MemoryCache NewCache() => new MemoryCache(new MemoryCacheOptions
+        {
+            SizeLimit = 5000    // limit of 5,000 rows before cache will stop adding rows.
+        });
     }
 }
