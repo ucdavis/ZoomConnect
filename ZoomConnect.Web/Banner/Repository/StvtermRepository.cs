@@ -12,7 +12,7 @@ namespace ZoomConnect.Web.Banner.Repository
     {
         public StvtermRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
-        private const string _columns = "stvterm_code as code, stvterm_desc as desc, stvterm_start_date as start_date, stvterm_end_date as end_date";
+        private const string _columns = "stvterm_code as code, stvterm_desc as description, stvterm_start_date as start_date, stvterm_end_date as end_date";
 
         public override bool TestConnection()
         {
