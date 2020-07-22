@@ -6,10 +6,12 @@ using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner.Repository
 {
-    public abstract class AbstractRepository<TBannerTable> where TBannerTable : IBannerTable
+    public abstract class AbstractRepository<TBannerTable> : IRepository where TBannerTable : IBannerTable
     {
         protected BannerContext Context { get; set; }
         protected ZoomOptions Options { get; set; }
+
+        public virtual List<string> Tables => new List<string>() { typeof(TBannerTable).Name };
 
         public AbstractRepository(BannerContext context, SecretConfigManager<ZoomOptions> options)
         {

@@ -11,12 +11,17 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<BannerContext>();
 
-            //services.Scan(scan => scan
-            //    .FromAssemblyOf<TestRepository>()
-            //    .AddClasses(classes => classes.AssignableTo(typeof(AbstractRepository<>)))
-            //    .AsSelf()
-            //    .WithScopedLifetime());
+            // add repositories when requested as concrete types, and as implemented interfaces
+            services.Scan(scan => scan
+                .FromAssemblyOf<TestRepository>()
+                    .AddClasses(classes => classes.AssignableTo(typeof(AbstractRepository<>)))
+                        .AsSelf()
+                        .WithScopedLifetime()
+                    .AddClasses(classes => classes.AssignableTo<IRepository>())
+                        .AsImplementedInterfaces()
+                        .WithScopedLifetime());
 
+            // add repositories when requested as abstract generics
             services.AddScoped<AbstractRepository<dual>, TestRepository>();
             services.AddScoped<AbstractRepository<goremal>, GoremalRepository>();
             services.AddScoped<AbstractRepository<sirasgn>, SirasgnRepository>();

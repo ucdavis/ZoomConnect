@@ -12,6 +12,8 @@ namespace ZoomConnect.Web.Banner.Repository
     {
         public SsbsectRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
+        public override List<string> Tables => new List<string>() { "SSBSECT", "SCBCRSE" };
+
         public override bool TestConnection()
         {
             var sql = $"select ssbsect_term_code, ssbsect_enrl from ssbsect where rownum = 1";
