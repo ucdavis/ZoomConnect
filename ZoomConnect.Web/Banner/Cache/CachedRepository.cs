@@ -6,7 +6,7 @@ using ZoomConnect.Web.Banner.Repository;
 
 namespace ZoomConnect.Web.Banner.Cache
 {
-    public class CachedRepository<TTable> where TTable : IBannerTable
+    public class CachedRepository<TTable> : ICachedRepository where TTable : IBannerTable
     {
         private AbstractRepository<TTable> _repository;
         private IMemoryCache _cache;
@@ -22,10 +22,6 @@ namespace ZoomConnect.Web.Banner.Cache
             _cacheKeyTest = $"{typename}_test";
         }
 
-        /// <summary>
-        /// Gets Banner connection test result from cache if available, otherwise pulls from Banner and caches result
-        /// </summary>
-        /// <returns></returns>
         public bool TestConnection()
         {
             // see if test result is cached
@@ -45,6 +41,8 @@ namespace ZoomConnect.Web.Banner.Cache
 
             return cacheEntry;
         }
+
+        public List<string> Tables => _repository.Tables;
 
         /// <summary>
         /// Gets Banner rows from cache if available, otherwise pulls from Banner and caches results
