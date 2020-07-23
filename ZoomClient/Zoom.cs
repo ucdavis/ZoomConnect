@@ -200,7 +200,7 @@ namespace ZoomClient
 
             var request = new RestRequest("users/{userId}/meetings", Method.POST, DataFormat.Json)
                 .AddParameter("userId", userId, ParameterType.UrlSegment)
-                .AddBody(meeting);
+                .AddJsonBody(meeting);
 
             var response = client.Execute(request);
             Thread.Sleep(100);  // 10 requests per second, kludge for now
@@ -219,7 +219,7 @@ namespace ZoomClient
 
             var request = new RestRequest("meetings/{meetingId}/status", Method.PUT, DataFormat.Json)
                 .AddParameter("meetingId", meetingId, ParameterType.UrlSegment)
-                .AddBody(new EndAction());
+                .AddJsonBody(new EndAction());
 
             var response = client.Execute(request);
             Thread.Sleep(100);  // 10 requests per second, kludge for now
