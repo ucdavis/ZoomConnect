@@ -13,5 +13,6 @@ namespace ZoomConnect.Web.Models
         public string CurrentSubject { get; set; }
 
         public BannerOptions Banner { get; set; }
+        public ZoomApiOptions ZoomApi { get; set; }
     }
 }
