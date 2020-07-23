@@ -20,7 +20,14 @@ namespace ZoomConnect.Web.Banner
         {
             _zoomOptions = zoomOptions.GetValue().Result;
             Connection = new OracleConnection(_zoomOptions.Banner.GetConnectionString());
-            Connection.Open();
+            try
+            {
+                Connection.Open();
+            }
+            catch
+            {
+                // TODO log entry for failed connection
+            }
         }
 
         public void Dispose()

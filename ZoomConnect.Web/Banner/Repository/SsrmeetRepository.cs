@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper;
 using SecretJsonConfig;
@@ -21,6 +22,11 @@ namespace ZoomConnect.Web.Banner.Repository
 
         public override bool TestConnection()
         {
+            if (Context.Connection == null || Context.Connection.State != ConnectionState.Open)
+            {
+                return false;
+            }
+
             var sql = $"SELECT {_columns} FROM ssrmeet WHERE rownum = 1";
             var rows = Context.Connection.Query<ssrmeet>(sql).ToList();
 

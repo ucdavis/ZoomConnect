@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using ZoomConnect.Web.Banner.Domain;
 
@@ -14,6 +15,11 @@ namespace ZoomConnect.Web.Banner.Repository
 
         public override bool TestConnection()
         {
+            if (Context.Connection == null || Context.Connection.State != ConnectionState.Open)
+            {
+                return false;
+            }
+
             using (var command = Context.Connection.CreateCommand())
             {
                 command.CommandText = "select * from dual";
