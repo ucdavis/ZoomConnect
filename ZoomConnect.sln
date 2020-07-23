@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZoomConnect.Web", "ZoomConnect.Web\ZoomConnect.Web.csproj", "{F1C7D53D-FEA8-4478-BAAD-9DC896682245}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretJsonConfig", "SecretJsonConfig\SecretJsonConfig.csproj", "{8A5FAFB9-8B8D-4870-887E-4E0F97B1B373}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecretJsonConfig", "SecretJsonConfig\SecretJsonConfig.csproj", "{8A5FAFB9-8B8D-4870-887E-4E0F97B1B373}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoomClient", "ZoomClient\ZoomClient.csproj", "{C2AAFB5F-0862-4F56-8B54-B643373D5652}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8A5FAFB9-8B8D-4870-887E-4E0F97B1B373}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A5FAFB9-8B8D-4870-887E-4E0F97B1B373}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A5FAFB9-8B8D-4870-887E-4E0F97B1B373}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2AAFB5F-0862-4F56-8B54-B643373D5652}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2AAFB5F-0862-4F56-8B54-B643373D5652}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2AAFB5F-0862-4F56-8B54-B643373D5652}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2AAFB5F-0862-4F56-8B54-B643373D5652}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
