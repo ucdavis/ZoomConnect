@@ -7,6 +7,7 @@ namespace ZoomConnect.Web.Banner.Domain
     /// </summary>
     public class ssrmeet : IBannerTable
     {
+        public decimal surrogate_id { get; set; }
         public string term_code { get; set; }
         public string crn { get; set; }
         public string begin_time { get; set; }
