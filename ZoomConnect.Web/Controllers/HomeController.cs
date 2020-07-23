@@ -82,15 +82,8 @@ namespace ZoomConnect.Web.Controllers
         [TypeFilter(typeof(CheckRequirements))]
         public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] RequirementManager requirementManager)
         {
-            var success = requirementManager.CheckAllRequirements();
-
-            ViewData["TestResult"] = success;
-
-            if (success)
-            {
-                var rows = table.GetAll();
-                ViewData["RowCount"] = rows.Count;
-            }
+            var rows = table.GetAll();
+            ViewData["RowCount"] = rows.Count;
 
             return View();
         }
