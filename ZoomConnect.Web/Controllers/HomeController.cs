@@ -10,6 +10,7 @@ using SecretJsonConfig;
 using ZoomConnect.Web.Banner;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
+using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.SetupRequirements;
 using ZoomConnect.Web.ViewModels;
@@ -79,6 +80,7 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
+        [TypeFilter(typeof(CheckRequirements))]
         public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] RequirementManager requirementManager)
         {
             var success = requirementManager.CheckAllRequirements();
