@@ -76,13 +76,6 @@ namespace ZoomClient
             return users;
         }
 
-        public List<User> GetRoomUsers()
-        {
-            return GetUsers()
-                .Where(u => u.email.StartsWith("law-room"))
-                .ToList();
-        }
-
         public Meeting GetMeetingDetails(string meetingId)
         {
             return GetMeetingDetails(meetingId, null);
