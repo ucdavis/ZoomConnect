@@ -44,7 +44,7 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
 
             if (String.IsNullOrEmpty(_options.Banner.Instance) ||
                 String.IsNullOrEmpty(_options.Banner.Username) ||
-                String.IsNullOrEmpty(_options.Banner.Password))
+                String.IsNullOrEmpty(_options.Banner.Password.Value))
             {
                 _status = RequirementStatus.Missing;
                 _statusDescription = "Banner connection options are not filled out.";

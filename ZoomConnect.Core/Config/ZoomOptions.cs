@@ -7,6 +7,7 @@ namespace ZoomConnect.Core.Config
         public ZoomOptions()
         {
             Banner = new BannerOptions();
+            ZoomApi = new ZoomApiOptions();
         }
 
         public string CurrentTerm { get; set; }

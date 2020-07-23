@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -46,12 +47,15 @@ namespace ZoomConnect.Web.Controllers
             var options = _secretOptions.GetValue().Result;
             var viewModel = new BannerOptionsViewModel
             {
-                Instance = options.Banner.Instance,
-                Username = options.Banner.Username.Value,
-                Password = String.IsNullOrEmpty(options.Banner.Password.Value) ? "" : _passwordPlaceholder,
+                Instance = options.Banner?.Instance,
+                Username = options.Banner?.Username.Value,
+                Password = String.IsNullOrEmpty(options.Banner?.Password.Value) ? "" : _passwordPlaceholder,
 
                 CurrentTerm = options.CurrentTerm,
-                CurrentSubject = options.CurrentSubject
+                CurrentSubject = options.CurrentSubject,
+
+                ZoomApiKey = options.ZoomApi?.ApiKey,
+                ZoomApiSecret = options.ZoomApi?.ApiSecret
             };
 
             return View(viewModel);
@@ -72,6 +76,16 @@ namespace ZoomConnect.Web.Controllers
             options.CurrentTerm = model.CurrentTerm;
             options.CurrentSubject = model.CurrentSubject;
 
+            if (model.ZoomApiKey != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomApiKey))
+            {
+                options.ZoomApi.ApiKey = new SecretStruct(model.ZoomApiKey);
+            }
+
+            if (model.ZoomApiSecret != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomApiSecret))
+            {
+                options.ZoomApi.ApiSecret = new SecretStruct(model.ZoomApiSecret);
+            }
+
             _secretOptions.Save();
             sizedCache.ResetCache();
 
@@ -80,10 +94,11 @@ namespace ZoomConnect.Web.Controllers
 
         [Authorize]
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] RequirementManager requirementManager)
+        public IActionResult Test([FromServices] CachedRepository<ssrmeet> table, [FromServices] RequirementManager requirementManager)
         {
             var rows = table.GetAll();
             ViewData["RowCount"] = rows.Count;
+            ViewData["Ids"] = String.Join(", ", rows.Select(r => r.surrogate_id.ToString()));
 
             return View();
         }
