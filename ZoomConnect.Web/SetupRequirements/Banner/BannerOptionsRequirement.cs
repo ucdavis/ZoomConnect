@@ -1,6 +1,6 @@
 ﻿using SecretJsonConfig;
 using System;
-using ZoomConnect.Web.Models;
+using ZoomConnect.Core.Config;
 
 namespace ZoomConnect.Web.SetupRequirements.Banner
 {

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using ZoomConnect.Web.Banner.Domain;
-using ZoomConnect.Web.Models;
+using ZoomConnect.Core.Config;
 
 namespace ZoomConnect.Web.Banner.Repository
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ZoomConnect.Web.Models
+namespace ZoomConnect.Core.Config
 {
     public class ZoomOptions
     {

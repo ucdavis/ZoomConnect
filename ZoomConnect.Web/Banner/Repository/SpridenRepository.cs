@@ -4,8 +4,8 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using SecretJsonConfig;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Domain;
-using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Banner.Repository
 {

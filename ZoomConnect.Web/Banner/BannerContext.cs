@@ -2,7 +2,7 @@
 using SecretJsonConfig;
 using System;
 using System.Data;
-using ZoomConnect.Web.Models;
+using ZoomConnect.Core.Config;
 
 namespace ZoomConnect.Web.Banner
 {

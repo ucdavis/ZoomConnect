@@ -1,7 +1,7 @@
 ﻿using System;
 using SecretJsonConfig;
 
-namespace ZoomConnect.Web.Models
+namespace ZoomConnect.Core.Config
 {
     public class ZoomApiOptions
     {
