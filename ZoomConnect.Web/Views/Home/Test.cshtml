@@ -12,7 +12,7 @@
 <ul>
     @foreach (var prof in Model.FoundProfs)
     {
-        <li>(@prof.primaryEmail.email_address) = @prof.zoomUser.email</li>
+        <li>@prof.primaryEmail.email_address (alt. @String.Join(", ", prof.otherEmails.Select(e => e.email_address)))</li>
     }
 </ul>
 

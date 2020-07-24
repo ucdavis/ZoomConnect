@@ -13,6 +13,8 @@ namespace ZoomConnect.Web.Models
     {
         public ProfDataModel()
         {
+            otherEmails = new List<goremal>();
+            assignments = new List<sirasgn>();
         }
 
         public spriden bannerPerson { get; set; }
