@@ -14,7 +14,7 @@ namespace ZoomConnect.Web.Banner.Repository
         public GoremalRepository(BannerContext context, SecretConfigManager<ZoomOptions> options) : base(context, options) { }
 
         private string _columns =
-            "goremal_pidm as pidm, goremal_emal_code as emal_code, goremal_email_address as email_address, " +
+            "goremal_pidm as pidm, goremal_email_address as email_address, " +
             "goremal_status_ind as status_ind, goremal_preferred_ind as preferred_ind";
 
         public override bool TestConnection()
