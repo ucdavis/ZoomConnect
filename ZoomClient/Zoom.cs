@@ -29,6 +29,12 @@ namespace ZoomClient
             _zoomOptions = zoomOptions.GetValue().Result.ZoomApi;
         }
 
+        /// <summary>
+        /// Gets a specific Zoom User by id (userid or email address)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/user</remarks>
         public User GetUser(string userId)
         {
             client.Authenticator = NewToken;
@@ -37,7 +43,7 @@ namespace ZoomClient
                 .AddParameter("userId", userId, ParameterType.UrlSegment);
 
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Light);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -47,6 +53,11 @@ namespace ZoomClient
             return null;
         }
 
+        /// <summary>
+        /// Gets all Zoom users on this account.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/users</remarks>
         public List<User> GetUsers()
         {
             var page = 0;
@@ -64,7 +75,7 @@ namespace ZoomClient
 
                 client.Authenticator = NewToken;
                 var response = client.Execute(request);
-                Thread.Sleep(100);  // 10 requests per second, kludge for now
+                Thread.Sleep(RateLimit.Medium);
 
                 var result = JsonSerializer.Deserialize<ZList<User>>(response.Content);
                 users.AddRange(result.Results);
@@ -76,11 +87,24 @@ namespace ZoomClient
             return users;
         }
 
+        /// <summary>
+        /// Gets details of a Zoom Meeting
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meeting</remarks>
         public Meeting GetMeetingDetails(string meetingId)
         {
             return GetMeetingDetails(meetingId, null);
         }
 
+        /// <summary>
+        /// Gets details of a Zoom Meeting
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <param name="occurrenceId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meeting</remarks>
         public Meeting GetMeetingDetails(string meetingId, string occurrenceId)
         {
             client.Authenticator = NewToken;
@@ -94,7 +118,7 @@ namespace ZoomClient
             }
 
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Light);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -105,21 +129,23 @@ namespace ZoomClient
         }
 
         /// <summary>
-        /// All upcoming meetings in room represented by userId.
+        /// All upcoming meetings for Zoom user by userid or email.
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetings</remarks>
         public List<Meeting> GetMeetingsForUser(string userId)
         {
             return GetMeetingsForUser(userId, "upcoming");
         }
 
         /// <summary>
-        /// All meetings of requested meetingType in room represented by userId.
+        /// All meetings for Zoom user by meetingType and userId or email.
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="meetingType"></param>
         /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetings</remarks>
         public List<Meeting> GetMeetingsForUser(string userId, string meetingType)
         {
             var page = 0;
@@ -138,7 +164,7 @@ namespace ZoomClient
 
                 client.Authenticator = NewToken;
                 var response = client.Execute(request);
-                Thread.Sleep(100);  // 10 requests per second, kludge for now
+                Thread.Sleep(RateLimit.Medium);
 
                 var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
                 meetings.AddRange(result.Results);
@@ -150,6 +176,12 @@ namespace ZoomClient
             return meetings;
         }
 
+        /// <summary>
+        /// Get list of ended meeting instances by meeting id
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/pastmeetings</remarks>
         public List<Meeting> GetPastMeetingInstances(string meetingId)
         {
             var request = new RestRequest("/past_meetings/{meetingId}/instances", Method.GET, DataFormat.Json)
@@ -157,7 +189,7 @@ namespace ZoomClient
 
             client.Authenticator = NewToken;
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Medium);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -170,6 +202,12 @@ namespace ZoomClient
             return result.Results.ToList();
         }
 
+        /// <summary>
+        /// Get details of past meeting by UUID
+        /// </summary>
+        /// <param name="meetingUUID"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/pastmeetingdetails</remarks>
         public Meeting GetPastMeetingDetails(string meetingUUID)
         {
             var request = new RestRequest("/past_meetings/{meetingUUID}", Method.GET, DataFormat.Json)
@@ -177,7 +215,7 @@ namespace ZoomClient
 
             client.Authenticator = NewToken;
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Light);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -187,6 +225,13 @@ namespace ZoomClient
             return JsonSerializer.Deserialize<Meeting>(response.Content);
         }
 
+        /// <summary>
+        /// Create meeting for user
+        /// </summary>
+        /// <param name="meeting"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate</remarks>
         public Meeting CreateMeetingForUser(MeetingRequest meeting, string userId)
         {
             client.Authenticator = NewToken;
@@ -196,7 +241,7 @@ namespace ZoomClient
                 .AddJsonBody(meeting);
 
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Medium);
 
             if (response.StatusCode == HttpStatusCode.Created)
             {
@@ -206,6 +251,12 @@ namespace ZoomClient
             return null;
         }
 
+        /// <summary>
+        /// End a meeting by meeting id.
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingstatus</remarks>
         public bool EndMeeting(string meetingId)
         {
             client.Authenticator = NewToken;
@@ -215,7 +266,7 @@ namespace ZoomClient
                 .AddJsonBody(new EndAction());
 
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Light);
 
             return response.StatusCode == HttpStatusCode.NoContent;
         }
@@ -226,6 +277,7 @@ namespace ZoomClient
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/cloud-recording/recordingslist</remarks>
         public List<Meeting> GetCloudRecordingsForUser(string userId)
         {
             var page = 0;
@@ -245,7 +297,7 @@ namespace ZoomClient
 
                 client.Authenticator = NewToken;
                 var response = client.Execute(request);
-                Thread.Sleep(100);  // 10 requests per second, kludge for now
+                Thread.Sleep(RateLimit.Medium);
 
                 var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
                 meetings.AddRange(result.Results);
@@ -263,6 +315,7 @@ namespace ZoomClient
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/cloud-recording/recordingget</remarks>
         public IRestResponse DownloadRecording(string url)
         {
             var downloadClient = new RestClient("https://api.zoom.us/");
@@ -274,11 +327,12 @@ namespace ZoomClient
         }
 
         /// <summary>
-        /// Downloads zoom cloud recording from url, using stream instead of memory.  Not working.
+        /// Downloads zoom cloud recording from url, using stream instead of memory (preferred).
         /// </summary>
         /// <param name="url"></param>
         /// <param name="saveToPath"></param>
         /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/cloud-recording/recordingget</remarks>
         public IRestResponse DownloadRecordingStream(string url, string saveToPath)
         {
             var downloadClient = new RestClient("https://api.zoom.us/");
@@ -303,6 +357,13 @@ namespace ZoomClient
             }
         }
 
+        /// <summary>
+        /// Deletes a specific recording file by meeting id and recording id.
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <param name="recordingId"></param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/cloud-recording/recordingdeleteone</remarks>
         public bool DeleteRecording(string meetingId, string recordingId)
         {
             client.Authenticator = NewToken;
@@ -313,7 +374,7 @@ namespace ZoomClient
                 .AddParameter("action", "trash", ParameterType.QueryString);
 
             var response = client.Execute(request);
-            Thread.Sleep(100);  // 10 requests per second, kludge for now
+            Thread.Sleep(RateLimit.Light);
 
             return response.StatusCode == HttpStatusCode.NoContent;
         }
