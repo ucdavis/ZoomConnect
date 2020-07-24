@@ -12,11 +12,20 @@
 <ul>
     @foreach (var prof in Model.FoundProfs)
     {
-        <li>@prof.primaryEmail.email_address (alt. @String.Join(", ", prof.otherEmails.Select(e => e.email_address)))</li>
+        <li>
+            @prof.bannerPerson.last_name, @prof.bannerPerson.first_name -
+            @prof.primaryEmail.email_address
+            @if (prof.otherEmails.Any())
+            {
+                <span>(alt.
+                @String.Join(", ", prof.otherEmails.Select(e => e.email_address))
+                )</span>
+            }
+        </li>
     }
 </ul>
 
-<h2>Profs Missing From Zoom (@Model.MissingProfs.Count)</h2>
+<h2>Emails Missing From Zoom (@Model.MissingProfs.Count)</h2>
 <ul>
     @foreach (var missing in Model.MissingProfs)
     {
