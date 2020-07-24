@@ -46,27 +46,28 @@ namespace ZoomConnect.Web.Models
             hrsWeek = row.hrs_week;
             surrogate_id = row.surrogate_id;
 
-            // course subject, number, title
-            subject = row.subj_code;
-            courseNum = row.crse_numb;
-            courseTitle = row.crse_title;
+            // TODO fix all missing references below for ssrmeet -> ssbsect and -> sirasgn
+            //// course subject, number, title
+            //subject = row.subj_code;
+            //courseNum = row.crse_numb;
+            //courseTitle = row.crse_title;
 
-            // prof name (primary preferred)
-            var sirasgnRows = (LawnetDataSet.sirasgnRow[])row.GetParentRows("ssrmeet_sirasgn");
-            var primaryRows = sirasgnRows.Where(s => !s.Issirasgn_primary_indNull() && s.sirasgn_primary_ind == "Y").ToList();
-            if (primaryRows.Any())
-            {
-                var profSpriden = primaryRows.First().spridenRow;
-                profLastName = profSpriden == null ? "" : profSpriden.SPRIDEN_LAST_NAME;
-            }
-            else if (sirasgnRows.Length > 0)
-            {
-                profLastName = sirasgnRows[0].spridenRow.SPRIDEN_LAST_NAME;
-            }
-            else
-            {
-                profLastName = "";
-            }
+            //// prof name (primary preferred)
+            //var sirasgnRows = (LawnetDataSet.sirasgnRow[])row.GetParentRows("ssrmeet_sirasgn");
+            //var primaryRows = sirasgnRows.Where(s => !s.Issirasgn_primary_indNull() && s.sirasgn_primary_ind == "Y").ToList();
+            //if (primaryRows.Any())
+            //{
+            //    var profSpriden = primaryRows.First().spridenRow;
+            //    profLastName = profSpriden == null ? "" : profSpriden.SPRIDEN_LAST_NAME;
+            //}
+            //else if (sirasgnRows.Length > 0)
+            //{
+            //    profLastName = sirasgnRows[0].spridenRow.SPRIDEN_LAST_NAME;
+            //}
+            //else
+            //{
+            //    profLastName = "";
+            //}
         }
 
         // ssrmeet columns
