@@ -12,6 +12,7 @@ using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.Services.Zoom;
 using ZoomConnect.Web.SetupRequirements;
 using ZoomConnect.Web.ViewModels;
 
@@ -94,11 +95,13 @@ namespace ZoomConnect.Web.Controllers
 
         [Authorize]
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedRepository<ssrmeet> table, [FromServices] RequirementManager requirementManager)
+        public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] ZoomUserFinder userFinder)
         {
-            var rows = table.GetAll();
-            ViewData["RowCount"] = rows.Count;
-            ViewData["Ids"] = String.Join(", ", rows.Select(r => r.surrogate_id.ToString()));
+            var goremalRows = table.GetAll();
+            ViewData["GoremalCount"] = goremalRows.Count;
+
+            var zoomUsers = userFinder.Find();
+            ViewData["ZoomUserCount"] = zoomUsers.Count;
 
             return View();
         }

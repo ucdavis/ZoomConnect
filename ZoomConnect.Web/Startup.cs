@@ -43,7 +43,7 @@ namespace ZoomConnect.Web
 
             services.AddBanner();
             services.AddCachedRepositories();
-            services.AddScoped<Zoom>();
+            services.AddZoomServices();
             services.AddSetupRequirements();
         }
 
