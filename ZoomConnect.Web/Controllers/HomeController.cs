@@ -100,10 +100,7 @@ namespace ZoomConnect.Web.Controllers
             var goremalRows = table.GetAll();
             ViewData["GoremalCount"] = goremalRows.Count;
 
-            var zoomUsers = userFinder.Find();
-            ViewData["ZoomUserCount"] = zoomUsers.Count;
-
-            return View();
+            return View(userFinder);
         }
 
         [AllowAnonymous]

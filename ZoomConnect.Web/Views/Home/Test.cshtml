@@ -1,8 +1,25 @@
-﻿@{
-    ViewData["Title"] = "Setup";
+﻿@model ZoomConnect.Web.Services.Zoom.ZoomUserFinder
+
+@{
+    ViewData["Title"] = "Test";
 }
 
 <h1>Test</h1>
 
 <p>Goremal Count? @ViewData["GoremalCount"]</p>
-<p>Zoom User Count? @ViewData["ZoomUserCount"]</p>
+
+<h2>Profs Found (@Model.FoundProfs.Count)</h2>
+<ul>
+    @foreach (var prof in Model.FoundProfs)
+    {
+        <li>(@prof.primaryEmail.email_address) = @prof.zoomUser.email</li>
+    }
+</ul>
+
+<h2>Profs Missing From Zoom (@Model.MissingProfs.Count)</h2>
+<ul>
+    @foreach (var missing in Model.MissingProfs)
+    {
+        <li>@missing.email_address</li>
+    }
+</ul>
