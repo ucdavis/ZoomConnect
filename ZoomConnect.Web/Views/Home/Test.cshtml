@@ -29,6 +29,17 @@
 <ul>
     @foreach (var missing in Model.MissingProfs)
     {
-        <li>@missing.email_address</li>
+        <li>
+            @missing.bannerPerson.last_name, @missing.bannerPerson.first_name -
+            @missing.primaryEmail.email_address
+            @if (missing.otherEmails.Any())
+            {
+                <span>
+                    (alt.
+                    @String.Join(", ", missing.otherEmails.Select(e => e.email_address))
+                    )
+                </span>
+            }
+        </li>
     }
 </ul>

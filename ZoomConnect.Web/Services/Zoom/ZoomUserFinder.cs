@@ -16,7 +16,7 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<goremal> _profEmailRepo;
         private ZoomClient.Zoom _zoomClient;
         private List<ProfDataModel> _foundProfs { get; set; }
-        private List<goremal> _missingProfs { get; set; }
+        private List<ProfDataModel> _missingProfs { get; set; }
 
         public ZoomUserFinder(CachedRepository<spriden> personRepo, CachedRepository<goremal> profEmailRepo, ZoomClient.Zoom zoomClient)
         {
@@ -41,7 +41,7 @@ namespace ZoomConnect.Web.Services.Zoom
         /// <summary>
         /// Profs teaching this term not matched by email with a User in your Zoom account.
         /// </summary>
-        public List<goremal> MissingProfs
+        public List<ProfDataModel> MissingProfs
         {
             get
             {
@@ -58,7 +58,6 @@ namespace ZoomConnect.Web.Services.Zoom
         private void Find()
         {
             _foundProfs = new List<ProfDataModel>();
-            _missingProfs = new List<goremal>();
             var _allFound = new List<goremal>();
 
             // find all person rows
@@ -95,8 +94,16 @@ namespace ZoomConnect.Web.Services.Zoom
                 _foundProfs.Add(prof);
             });
 
-            // missing
-            _missingProfs.AddRange(allEmails.Where(e => !_allFound.Contains(e)));
+            // collate missing emails into per-prof model
+            _missingProfs = allEmails
+                .Where(e => !_allFound.Contains(e))
+                .GroupBy(e => e.pidm, e => e, (key, grp) => new ProfDataModel
+                {
+                    bannerPerson = bannerPeople.FirstOrDefault(p => p.pidm == key),
+                    primaryEmail = grp.OrderByDescending(g => g.preferred_ind).First(),
+                    otherEmails = grp.OrderByDescending(g => g.preferred_ind).Skip(1).ToList()
+                })
+                .ToList();
         }
     }
 }
