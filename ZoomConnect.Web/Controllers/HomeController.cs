@@ -36,6 +36,7 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [Authorize]
+        [TypeFilter(typeof(CheckRequirements))]
         public IActionResult Privacy()
         {
             return View();
