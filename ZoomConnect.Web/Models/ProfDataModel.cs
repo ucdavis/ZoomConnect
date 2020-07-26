@@ -14,13 +14,13 @@ namespace ZoomConnect.Web.Models
         public ProfDataModel()
         {
             otherEmails = new List<goremal>();
-            assignments = new List<sirasgn>();
+            assignments = new List<AssignmentModel>();
         }
 
         public spriden bannerPerson { get; set; }
         public goremal primaryEmail { get; set; }
         public List<goremal> otherEmails { get; set; }
-        public List<sirasgn> assignments { get; set; }
+        public List<AssignmentModel> assignments { get; set; }
 
         public User zoomUser { get; set; }
     }

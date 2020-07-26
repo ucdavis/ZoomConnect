@@ -17,10 +17,15 @@
             @prof.primaryEmail.email_address
             @if (prof.otherEmails.Any())
             {
-                <span>(alt.
-                @String.Join(", ", prof.otherEmails.Select(e => e.email_address))
-                )</span>
+                <span>
+                    (alt.
+                    @String.Join(", ", prof.otherEmails.Select(e => e.email_address))
+                    )
+                </span>
             }
+            [
+            @String.Join(", ", prof.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
+            ]
         </li>
     }
 </ul>
@@ -40,6 +45,9 @@
                     )
                 </span>
             }
+            [
+            @String.Join(", ", missing.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
+            ]
         </li>
     }
 </ul>

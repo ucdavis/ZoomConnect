@@ -14,15 +14,21 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         private CachedRepository<spriden> _personRepo;
         private CachedRepository<goremal> _profEmailRepo;
+        private CachedRepository<sirasgn> _assignmentRepo;
+        private CachedRepository<ssbsect> _courseRepo;
         private ZoomClient.Zoom _zoomClient;
         private List<ProfDataModel> _foundProfs { get; set; }
         private List<ProfDataModel> _missingProfs { get; set; }
 
-        public ZoomUserFinder(CachedRepository<spriden> personRepo, CachedRepository<goremal> profEmailRepo, ZoomClient.Zoom zoomClient)
+        public ZoomUserFinder(ZoomClient.Zoom zoomClient,
+            CachedRepository<spriden> personRepo, CachedRepository<goremal> profEmailRepo,
+            CachedRepository<sirasgn> assignmentRepo, CachedRepository<ssbsect> courseRepo)
         {
+            _zoomClient = zoomClient;
             _personRepo = personRepo;
             _profEmailRepo = profEmailRepo;
-            _zoomClient = zoomClient;
+            _assignmentRepo = assignmentRepo;
+            _courseRepo = courseRepo;
 
             Find();
         }
@@ -84,6 +90,7 @@ namespace ZoomConnect.Web.Services.Zoom
                     primaryEmail = e,
                     zoomUser = zoomUser
                 };
+                prof.AddAssignments(_assignmentRepo, _courseRepo);
 
                 // get prof's alternate emails so we can skip them later
                 var altEmails = allEmails.Where(alt => alt.pidm == e.pidm && alt.email_address != e.email_address);
@@ -104,6 +111,8 @@ namespace ZoomConnect.Web.Services.Zoom
                     otherEmails = grp.OrderByDescending(g => g.preferred_ind).Skip(1).ToList()
                 })
                 .ToList();
+
+            _missingProfs.ForEach(m => m.AddAssignments(_assignmentRepo, _courseRepo));
         }
     }
 }
