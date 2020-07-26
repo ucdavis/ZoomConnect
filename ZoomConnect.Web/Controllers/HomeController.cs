@@ -96,12 +96,12 @@ namespace ZoomConnect.Web.Controllers
 
         [Authorize]
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] CachedProfModels userFinder)
+        public IActionResult Test([FromServices] ZoomMeetingFinder meetingFinder, [FromServices] CachedRepository<ssrmeet> table)
         {
-            var goremalRows = table.GetAll();
-            ViewData["GoremalCount"] = goremalRows.Count;
+            var rows = table.GetAll();
+            ViewData["TableCount"] = rows.Count;
 
-            return View(userFinder);
+            return View(meetingFinder);
         }
 
         [AllowAnonymous]

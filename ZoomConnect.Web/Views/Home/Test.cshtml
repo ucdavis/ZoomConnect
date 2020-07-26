@@ -1,4 +1,4 @@
-﻿@model ZoomConnect.Web.Services.Zoom.CachedProfModels
+﻿@model ZoomConnect.Web.Services.Zoom.ZoomMeetingFinder
 
 @{
     ViewData["Title"] = "Test";
@@ -6,48 +6,27 @@
 
 <h1>Test</h1>
 
-<p>Goremal Count? @ViewData["GoremalCount"]</p>
+<p>Goremal Count? @ViewData["TableCount"]</p>
 
-<h2>Profs Found (@Model.FoundProfs.Count)</h2>
+<h2>Meetings Found (@Model.FoundMeetings.Count)</h2>
 <ul>
-    @foreach (var prof in Model.FoundProfs)
+    @foreach (var meeting in Model.FoundMeetings)
     {
         <li>
-            @prof.bannerPerson.last_name, @prof.bannerPerson.first_name -
-            @prof.primaryEmail.email_address
-            @if (prof.otherEmails.Any())
-            {
-                <span>
-                    (alt.
-                    @String.Join(", ", prof.otherEmails.Select(e => e.email_address))
-                    )
-                </span>
-            }
-            [
-            @String.Join(", ", prof.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
-            ]
+            @meeting.bannerCourse.subj_code @meeting.bannerCourse.crse_numb [@meeting.bannerCourse.seq_numb] -
+            @meeting.bannerCourse.crse_title
+            (@meeting.primaryProf.bannerPerson.last_name)
         </li>
     }
 </ul>
 
-<h2>Emails Missing From Zoom (@Model.MissingProfs.Count)</h2>
+<h2>Meetings Missing From Zoom (@Model.MissingMeetings.Count)</h2>
 <ul>
-    @foreach (var missing in Model.MissingProfs)
+    @foreach (var missing in Model.MissingMeetings)
     {
         <li>
-            @missing.bannerPerson.last_name, @missing.bannerPerson.first_name -
-            @missing.primaryEmail.email_address
-            @if (missing.otherEmails.Any())
-            {
-                <span>
-                    (alt.
-                    @String.Join(", ", missing.otherEmails.Select(e => e.email_address))
-                    )
-                </span>
-            }
-            [
-            @String.Join(", ", missing.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
-            ]
+            @missing.bannerCourse.subj_code @missing.bannerCourse.crse_numb [@missing.bannerCourse.seq_numb] -
+            @missing.bannerCourse.crse_title
         </li>
     }
 </ul>
