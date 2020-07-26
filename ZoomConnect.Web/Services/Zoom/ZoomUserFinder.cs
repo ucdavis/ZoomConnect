@@ -29,8 +29,6 @@ namespace ZoomConnect.Web.Services.Zoom
             _profEmailRepo = profEmailRepo;
             _assignmentRepo = assignmentRepo;
             _courseRepo = courseRepo;
-
-            Find();
         }
 
         /// <summary>
@@ -40,6 +38,11 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             get
             {
+                if (_foundProfs == null)
+                {
+                    Find();
+                }
+
                 return _foundProfs;
             }
         }
@@ -51,6 +54,11 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             get
             {
+                if (_missingProfs == null)
+                {
+                    Find();
+                }
+
                 return _missingProfs;
             }
         }

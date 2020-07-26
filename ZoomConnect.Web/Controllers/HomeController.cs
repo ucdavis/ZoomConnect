@@ -96,7 +96,7 @@ namespace ZoomConnect.Web.Controllers
 
         [Authorize]
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] ZoomUserFinder userFinder)
+        public IActionResult Test([FromServices] CachedRepository<goremal> table, [FromServices] CachedProfModels userFinder)
         {
             var goremalRows = table.GetAll();
             ViewData["GoremalCount"] = goremalRows.Count;
