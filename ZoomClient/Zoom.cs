@@ -78,7 +78,10 @@ namespace ZoomClient
                 Thread.Sleep(RateLimit.Medium);
 
                 var result = JsonSerializer.Deserialize<ZList<User>>(response.Content);
-                users.AddRange(result.Results);
+                if (result != null && result.Results != null)
+                {
+                    users.AddRange(result.Results);
+                }
 
                 pages = result.page_count;
             }
@@ -167,7 +170,10 @@ namespace ZoomClient
                 Thread.Sleep(RateLimit.Medium);
 
                 var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
-                meetings.AddRange(result.Results);
+                if (result != null && result.Results != null)
+                {
+                    meetings.AddRange(result.Results);
+                }
 
                 pages = result.page_count;
             }
@@ -300,7 +306,10 @@ namespace ZoomClient
                 Thread.Sleep(RateLimit.Medium);
 
                 var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
-                meetings.AddRange(result.Results);
+                if (result != null && result.Results != null)
+                {
+                    meetings.AddRange(result.Results);
+                }
 
                 pages = result.page_count;
                 page = pages;           // stop after one page for now
