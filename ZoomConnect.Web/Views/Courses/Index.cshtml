@@ -11,13 +11,20 @@
 <h2>Meetings Found (@Model.FoundMeetings.Count)</h2>
 <ul>
     @foreach (var meeting in Model.FoundMeetings
-       .OrderBy(m => m.bannerCourse.crse_numb)
-       .ThenBy(m => m.bannerCourse.seq_numb))
+      .OrderBy(m => m.bannerCourse.crse_numb)
+      .ThenBy(m => m.bannerCourse.seq_numb))
     {
         <li>
             @meeting.bannerCourse.subj_code @meeting.bannerCourse.crse_numb [@meeting.bannerCourse.seq_numb] -
             @meeting.bannerCourse.crse_title
-            (@meeting.primaryProf.bannerPerson.last_name)
+            (
+            <b>@meeting.primaryProf?.bannerPerson?.last_name</b>
+            @foreach (var otherProf in meeting.otherProfs)
+            {
+                <span>,</span>
+                @otherProf.bannerPerson.last_name
+            }
+            )
         </li>
     }
 </ul>
@@ -25,12 +32,20 @@
 <h2>Meetings Missing From Zoom (@Model.MissingMeetings.Count)</h2>
 <ul>
     @foreach (var missing in Model.MissingMeetings
-       .OrderBy(m => m.bannerCourse.crse_numb)
-       .ThenBy(m => m.bannerCourse.seq_numb))
+      .OrderBy(m => m.bannerCourse.crse_numb)
+      .ThenBy(m => m.bannerCourse.seq_numb))
     {
         <li>
             @missing.bannerCourse.subj_code @missing.bannerCourse.crse_numb [@missing.bannerCourse.seq_numb] -
             @missing.bannerCourse.crse_title
+            (
+            <b>@missing.primaryProf?.bannerPerson?.last_name</b>
+            @foreach (var otherProf in missing.otherProfs)
+            {
+                <span>,</span>
+                @otherProf.bannerPerson.last_name
+            }
+            )
         </li>
     }
 </ul>

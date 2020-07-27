@@ -120,6 +120,12 @@ namespace ZoomConnect.Web.Services.Zoom
                 })
                 .ToList();
 
+            // include profs without any email (The Staff)
+            _missingProfs.AddRange(_personRepo.GetAll()
+                .Where(p => !allEmails.Select(e => e.pidm).Contains(p.pidm))
+                .Select(p => new ProfDataModel { bannerPerson = p }));
+
+            // include assignments for each prof
             _missingProfs.ForEach(m => m.AddAssignments(_assignmentRepo, _courseRepo));
         }
     }

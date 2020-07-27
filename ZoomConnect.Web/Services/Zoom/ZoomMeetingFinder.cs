@@ -16,17 +16,20 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedProfModels _profModels;
         private CachedRepository<ssrmeet> _meetingRepo;
         private CachedRepository<ssbsect> _courseRepo;
+        private CachedRepository<sirasgn> _assignmentRepo;
 
         private List<CourseMeetingDataModel> _foundMeetings { get; set; }
         private List<CourseMeetingDataModel> _missingMeetings { get; set; }
 
         public ZoomMeetingFinder(ZoomClient.Zoom zoomClient, CachedProfModels profModels,
-            CachedRepository<ssrmeet> meetingRepo, CachedRepository<ssbsect> courseRepo)
+            CachedRepository<ssrmeet> meetingRepo, CachedRepository<ssbsect> courseRepo,
+            CachedRepository<sirasgn> assignmentRepo)
         {
             _zoomClient = zoomClient;
             _profModels = profModels;
             _meetingRepo = meetingRepo;
             _courseRepo = courseRepo;
+            _assignmentRepo = assignmentRepo;
         }
 
         /// <summary>
@@ -94,20 +97,32 @@ namespace ZoomConnect.Web.Services.Zoom
                 if (foundMeeting != null)
                 {
                     foundSsrmeetRows.Add(m);
+
+                    // add ssrmeet and ssbsect rows to meeting model
                     foundMeeting.bannerMeeting = m;
                     foundMeeting.bannerCourse = _courseRepo.GetAll().FirstOrDefault(c => c.term_code == m.term_code && c.crn == m.crn);
+
+                    // add other found profs to meeting model
+                    foundMeeting.AddProfModels(_profModels, _assignmentRepo, false);
+
                     _foundMeetings.Add(foundMeeting);
                 }
             });
 
             // What's left in ssrmeet are not found in Zoom
-            _missingMeetings.AddRange(_meetingRepo.GetAll()
+            var missingMeetings =_meetingRepo.GetAll()
                 .Where(m => !foundSsrmeetRows.Contains(m))
                 .Select(m => new CourseMeetingDataModel
                 {
                     bannerMeeting = m,
                     bannerCourse = _courseRepo.GetAll().FirstOrDefault(c => c.term_code == m.term_code && c.crn == m.crn)
-                }));
+                })
+                .ToList();
+
+            // add primary and other profs to meeting model
+            missingMeetings.ForEach(m => m.AddProfModels(_profModels, _assignmentRepo));
+
+            _missingMeetings.AddRange(missingMeetings);
         }
     }
 }

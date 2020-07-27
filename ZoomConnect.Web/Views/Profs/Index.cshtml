@@ -40,7 +40,7 @@
     {
         <li>
             @missing.bannerPerson.last_name, @missing.bannerPerson.first_name -
-            @missing.primaryEmail.email_address
+            @(missing.primaryEmail == null ? "no email" : missing.primaryEmail.email_address)
             @if (missing.otherEmails.Any())
             {
                 <span>
