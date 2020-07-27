@@ -4,13 +4,15 @@
     ViewData["Title"] = "Professors";
 }
 
-<h1>Test</h1>
+<h1>Profs</h1>
 
-<p>Goremal Count? @ViewData["GoremalCount"]</p>
+<p>goremal row count: @ViewData["GoremalCount"]</p>
 
 <h2>Profs Found (@Model.FoundProfs.Count)</h2>
 <ul>
-    @foreach (var prof in Model.FoundProfs)
+    @foreach (var prof in Model.FoundProfs
+       .OrderBy(p => p.bannerPerson.last_name)
+       .ThenBy(p => p.bannerPerson.first_name))
     {
         <li>
             @prof.bannerPerson.last_name, @prof.bannerPerson.first_name -
@@ -32,7 +34,9 @@
 
 <h2>Emails Missing From Zoom (@Model.MissingProfs.Count)</h2>
 <ul>
-    @foreach (var missing in Model.MissingProfs)
+    @foreach (var missing in Model.MissingProfs
+       .OrderBy(p => p.bannerPerson.last_name)
+       .ThenBy(p => p.bannerPerson.first_name))
     {
         <li>
             @missing.bannerPerson.last_name, @missing.bannerPerson.first_name -
