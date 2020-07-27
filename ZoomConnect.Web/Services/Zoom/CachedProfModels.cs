@@ -64,5 +64,18 @@ namespace ZoomConnect.Web.Services.Zoom
                 return cacheEntry;
             }
         }
+
+        public List<ProfDataModel> AllProfs
+        {
+            get
+            {
+                var allProfs = new List<ProfDataModel>();
+
+                allProfs.AddRange(FoundProfs);
+                allProfs.AddRange(MissingProfs);
+
+                return allProfs;
+            }
+        }
     }
 }
