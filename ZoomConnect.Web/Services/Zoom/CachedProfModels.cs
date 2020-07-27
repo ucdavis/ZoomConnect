@@ -29,11 +29,12 @@ namespace ZoomConnect.Web.Services.Zoom
                     return cacheEntry;
                 }
 
+                cacheEntry = _userFinder.FoundProfs;
+
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(1)
+                    .SetSize(cacheEntry.Count)
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
-                cacheEntry = _userFinder.FoundProfs;
                 _cache.Set(_cacheKeyFoundProfs, cacheEntry, cacheEntryOptions);
 
                 _cache.Set(_cacheKeyMissingProfs, _userFinder.MissingProfs, cacheEntryOptions);
@@ -52,11 +53,12 @@ namespace ZoomConnect.Web.Services.Zoom
                     return cacheEntry;
                 }
 
+                cacheEntry = _userFinder.MissingProfs;
+
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(1)
+                    .SetSize(cacheEntry.Count)
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
-                cacheEntry = _userFinder.MissingProfs;
                 _cache.Set(_cacheKeyMissingProfs, cacheEntry, cacheEntryOptions);
 
                 _cache.Set(_cacheKeyFoundProfs, _userFinder.FoundProfs, cacheEntryOptions);

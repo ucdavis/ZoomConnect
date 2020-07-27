@@ -36,7 +36,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 //cacheEntry = _repository.TestConnection();
 
                 //var cacheEntryOptions = new MemoryCacheEntryOptions()
-                //    .SetSize(1)
+                //    .SetSize(cacheEntry.Count)
                 //    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
                 //_cache.Set(_cacheKeyTest, cacheEntry, cacheEntryOptions);

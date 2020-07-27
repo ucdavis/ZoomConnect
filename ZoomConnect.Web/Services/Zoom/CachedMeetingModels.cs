@@ -29,11 +29,12 @@ namespace ZoomConnect.Web.Services.Zoom
                     return cacheEntry;
                 }
 
+                cacheEntry = _meetingFinder.FoundMeetings;
+
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(1)
+                    .SetSize(cacheEntry.Count)
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
-                cacheEntry = _meetingFinder.FoundMeetings;
                 _cache.Set(_cacheKeyFoundMeetings, cacheEntry, cacheEntryOptions);
 
                 _cache.Set(_cacheKeyMissingMeetings, _meetingFinder.MissingMeetings, cacheEntryOptions);
@@ -52,11 +53,12 @@ namespace ZoomConnect.Web.Services.Zoom
                     return cacheEntry;
                 }
 
+                cacheEntry = _meetingFinder.MissingMeetings;
+
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(1)
+                    .SetSize(cacheEntry.Count)
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
-                cacheEntry = _meetingFinder.MissingMeetings;
                 _cache.Set(_cacheKeyMissingMeetings, cacheEntry, cacheEntryOptions);
 
                 _cache.Set(_cacheKeyFoundMeetings, _meetingFinder.FoundMeetings, cacheEntryOptions);
