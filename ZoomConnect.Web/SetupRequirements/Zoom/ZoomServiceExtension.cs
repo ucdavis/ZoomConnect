@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ZoomUserFinder>();
             services.AddScoped<ZoomMeetingFinder>();
             services.AddScoped<CachedProfModels>();
+            services.AddScoped<CachedMeetingModels>();
 
             return services;
         }
