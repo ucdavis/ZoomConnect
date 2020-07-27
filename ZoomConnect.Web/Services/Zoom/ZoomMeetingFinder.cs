@@ -18,8 +18,7 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<ssbsect> _courseRepo;
         private CachedRepository<sirasgn> _assignmentRepo;
 
-        private List<CourseMeetingDataModel> _foundMeetings { get; set; }
-        private List<CourseMeetingDataModel> _missingMeetings { get; set; }
+        private List<CourseMeetingDataModel> _meetings { get; set; }
 
         public ZoomMeetingFinder(ZoomClient.Zoom zoomClient, CachedProfModels profModels,
             CachedRepository<ssrmeet> meetingRepo, CachedRepository<ssbsect> courseRepo,
@@ -33,34 +32,18 @@ namespace ZoomConnect.Web.Services.Zoom
         }
 
         /// <summary>
-        /// Course Meetings linked to Zoom meetings by prof-zoomuser and ssrmeet id
+        /// Course Meetings linked where possible to found Zoom meetings by prof-zoomuser and ssrmeet id
         /// </summary>
-        public List<CourseMeetingDataModel> FoundMeetings
+        public List<CourseMeetingDataModel> Meetings
         {
             get
             {
-                if (_foundMeetings == null)
+                if (_meetings == null)
                 {
                     Find();
                 }
 
-                return _foundMeetings;
-            }
-        }
-
-        /// <summary>
-        /// Course Meetings this term not matched in Zoom.
-        /// </summary>
-        public List<CourseMeetingDataModel> MissingMeetings
-        {
-            get
-            {
-                if (_missingMeetings == null)
-                {
-                    Find();
-                }
-
-                return _missingMeetings;
+                return _meetings;
             }
         }
 
@@ -69,8 +52,7 @@ namespace ZoomConnect.Web.Services.Zoom
         /// </summary>
         private void Find()
         {
-            _foundMeetings = new List<CourseMeetingDataModel>();
-            _missingMeetings = new List<CourseMeetingDataModel>();
+            _meetings = new List<CourseMeetingDataModel>();
 
             // First, get all Zoom Meetings for Found ProfDataModels.
             // No zoom meetings can be found without a found Prof<->Zoom User
@@ -105,7 +87,7 @@ namespace ZoomConnect.Web.Services.Zoom
                     // add other found profs to meeting model
                     foundMeeting.AddProfModels(_profModels, _assignmentRepo, false);
 
-                    _foundMeetings.Add(foundMeeting);
+                    _meetings.Add(foundMeeting);
                 }
             });
 
@@ -122,7 +104,7 @@ namespace ZoomConnect.Web.Services.Zoom
             // add primary and other profs to meeting model
             missingMeetings.ForEach(m => m.AddProfModels(_profModels, _assignmentRepo));
 
-            _missingMeetings.AddRange(missingMeetings);
+            _meetings.AddRange(missingMeetings);
         }
     }
 }

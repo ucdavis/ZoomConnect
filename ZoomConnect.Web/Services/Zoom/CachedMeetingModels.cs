@@ -10,8 +10,7 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         private ZoomMeetingFinder _meetingFinder;
         private IMemoryCache _cache;
-        private const string _cacheKeyFoundMeetings = "foundMeetingModels";
-        private const string _cacheKeyMissingMeetings = "missingMeetingModels";
+        private const string _cacheKeyMeetings = "foundMeetingModels";
 
         public CachedMeetingModels(ZoomMeetingFinder meetingFinder, SizedCache cache)
         {
@@ -19,49 +18,23 @@ namespace ZoomConnect.Web.Services.Zoom
             _cache = cache.Cache;
         }
 
-        public List<CourseMeetingDataModel> FoundMeetings
+        public List<CourseMeetingDataModel> Meetings
         {
             get
             {
                 // see if found meetings are cached
-                if (_cache.TryGetValue(_cacheKeyFoundMeetings, out List<CourseMeetingDataModel> cacheEntry))
+                if (_cache.TryGetValue(_cacheKeyMeetings, out List<CourseMeetingDataModel> cacheEntry))
                 {
                     return cacheEntry;
                 }
 
-                cacheEntry = _meetingFinder.FoundMeetings;
+                cacheEntry = _meetingFinder.Meetings;
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSize(cacheEntry.Count)
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
-                _cache.Set(_cacheKeyFoundMeetings, cacheEntry, cacheEntryOptions);
-
-                _cache.Set(_cacheKeyMissingMeetings, _meetingFinder.MissingMeetings, cacheEntryOptions);
-
-                return cacheEntry;
-            }
-        }
-
-        public List<CourseMeetingDataModel> MissingMeetings
-        {
-            get
-            {
-                // see if missing meetings are cached
-                if (_cache.TryGetValue(_cacheKeyMissingMeetings, out List<CourseMeetingDataModel> cacheEntry))
-                {
-                    return cacheEntry;
-                }
-
-                cacheEntry = _meetingFinder.MissingMeetings;
-
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(cacheEntry.Count)
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-                _cache.Set(_cacheKeyMissingMeetings, cacheEntry, cacheEntryOptions);
-
-                _cache.Set(_cacheKeyFoundMeetings, _meetingFinder.FoundMeetings, cacheEntryOptions);
+                _cache.Set(_cacheKeyMeetings, cacheEntry, cacheEntryOptions);
 
                 return cacheEntry;
             }

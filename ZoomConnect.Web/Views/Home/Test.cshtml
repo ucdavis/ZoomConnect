@@ -8,25 +8,14 @@
 
 <p>Goremal Count? @ViewData["TableCount"]</p>
 
-<h2>Meetings Found (@Model.FoundMeetings.Count)</h2>
+<h2>Meetings Found (@Model.Meetings.Count)</h2>
 <ul>
-    @foreach (var meeting in Model.FoundMeetings)
+    @foreach (var meeting in Model.Meetings)
     {
         <li>
             @meeting.bannerCourse.subj_code @meeting.bannerCourse.crse_numb [@meeting.bannerCourse.seq_numb] -
             @meeting.bannerCourse.crse_title
             (@meeting.primaryProf.bannerPerson.last_name)
-        </li>
-    }
-</ul>
-
-<h2>Meetings Missing From Zoom (@Model.MissingMeetings.Count)</h2>
-<ul>
-    @foreach (var missing in Model.MissingMeetings)
-    {
-        <li>
-            @missing.bannerCourse.subj_code @missing.bannerCourse.crse_numb [@missing.bannerCourse.seq_numb] -
-            @missing.bannerCourse.crse_title
         </li>
     }
 </ul>
