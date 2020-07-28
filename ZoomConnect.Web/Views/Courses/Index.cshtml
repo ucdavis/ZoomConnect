@@ -15,10 +15,8 @@
      .ThenBy(m => m.bannerCourse.seq_numb))
     {
         <li>
-            @meeting.bannerCourse.subj_code @meeting.bannerCourse.crse_numb [@meeting.bannerCourse.seq_numb] -
-            @meeting.bannerCourse.crse_title
+            @meeting.MeetingName
             (
-            <b>@meeting.primaryProf?.bannerPerson?.last_name</b>
             @foreach (var otherProf in meeting.otherProfs)
             {
                 <span>,</span>
