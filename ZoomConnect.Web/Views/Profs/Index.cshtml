@@ -8,17 +8,48 @@
 
 <p>goremal row count: @ViewData["GoremalCount"]</p>
 
-<ul>
-    @foreach (var prof in Model)
-    {
-        <li>
-            @prof.Name -
-            @prof.Email
-            @if (prof.altEmailCount > 0)
-            {
-                <span title="@prof.altEmails">(@prof.altEmailCount alt.)</span>
-            }
-            <span title="@prof.courses">[@prof.courseCount course assignment(s)]</span>
-        </li>
-    }
-</ul>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <td></td>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Courses</th>
+            <th scope="col">Zoom Acct</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var prof in Model)
+        {
+            <tr class="@(prof.ZoomConnected ? "table-success" : "")">
+                <td>
+                    @if (!prof.ZoomConnected && prof.Email != "no email")
+                    {
+                        <span><input type="checkbox" /></span>
+                    }
+                </td>
+                <td>@prof.Name</td>
+                <td>
+                    @prof.Email
+                    @if (prof.AltEmailCount > 0)
+                    {
+                        <span title="@prof.AltEmails">(@prof.AltEmailCount alt.)</span>
+                    }
+                </td>
+                <td>
+                    @if (prof.CourseCount < 5)
+                    {
+                        @prof.Courses
+                    }
+                    else
+                    {
+                        <span title="@prof.Courses">@prof.CourseCount course assignments</span>
+                    }
+                </td>
+                <td>
+                    <span>@(prof.ZoomConnected ? prof.ZoomUserEmail : "-")</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
