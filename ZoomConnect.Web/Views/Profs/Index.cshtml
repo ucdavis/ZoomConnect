@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ZoomConnect.Web.ViewModels.ProfViewModel>
+﻿@model List<ZoomConnect.Web.ViewModels.ProfViewModel>
 
 @{
     ViewData["Title"] = "Professors";
@@ -8,48 +8,56 @@
 
 <p>goremal row count: @ViewData["GoremalCount"]</p>
 
-<table class="table table-sm">
-    <thead>
-        <tr>
-            <td></td>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Courses</th>
-            <th scope="col">Zoom Acct</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var prof in Model)
-        {
-            <tr class="@(prof.ZoomConnected ? "table-success" : "")">
-                <td>
-                    @if (!prof.ZoomConnected && prof.Email != "no email")
-                    {
-                        <span><input type="checkbox" /></span>
-                    }
-                </td>
-                <td>@prof.Name</td>
-                <td>
-                    @prof.Email
-                    @if (prof.AltEmailCount > 0)
-                    {
-                        <span title="@prof.AltEmails">(@prof.AltEmailCount alt.)</span>
-                    }
-                </td>
-                <td>
-                    @if (prof.CourseCount < 5)
-                    {
-                        @prof.Courses
-                    }
-                    else
-                    {
-                        <span title="@prof.Courses">@prof.CourseCount course assignments</span>
-                    }
-                </td>
-                <td>
-                    <span>@(prof.ZoomConnected ? prof.ZoomUserEmail : "-")</span>
-                </td>
+<form asp-controller="Profs" asp-action="Index" method="post">
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <td><input type="checkbox" id="SelectAll" title="Select All" /></td>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Courses</th>
+                <th scope="col">Zoom Acct</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var prof in Model)
+            {
+                <tr class="@(prof.ZoomConnected ? "table-success" : "")">
+                    <td>
+                        @if (!prof.ZoomConnected && prof.Email != "no email")
+                        {
+                            <input type="hidden" name="Index" value="@prof.Pidm" />
+                            <input type="hidden" name="[@prof.Pidm].Pidm" value="@prof.Pidm" />
+                            <span><input type="checkbox" name="[@prof.Pidm].IsSelected" value="true" /></span>
+                        }
+                    </td>
+                    <td>@prof.Name</td>
+                    <td>
+                        @prof.Email
+                        @if (prof.AltEmailCount > 0)
+                        {
+                            <span title="@prof.AltEmails">(@prof.AltEmailCount alt.)</span>
+                        }
+                    </td>
+                    <td>
+                        @if (prof.CourseCount < 5)
+                        {
+                            @prof.Courses
+                        }
+                        else
+                        {
+                            <span title="@prof.Courses">@prof.CourseCount course assignments</span>
+                        }
+                    </td>
+                    <td>
+                        <span>@(prof.ZoomConnected ? prof.ZoomUserEmail : "-")</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit">Select</button>
+
+</form>

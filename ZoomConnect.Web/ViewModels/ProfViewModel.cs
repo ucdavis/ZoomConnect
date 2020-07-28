@@ -6,6 +6,10 @@ namespace ZoomConnect.Web.ViewModels
 {
     public class ProfViewModel
     {
+        public ProfViewModel()
+        {
+        }
+
         public ProfViewModel(ProfDataModel prof)
         {
             Pidm = prof.bannerPerson.pidm;
@@ -24,6 +28,11 @@ namespace ZoomConnect.Web.ViewModels
                 ZoomUserId = prof.zoomUser.id;
             }
         }
+
+        /// <summary>
+        /// Row is selected by user
+        /// </summary>
+        public bool IsSelected { get; set; }
 
         /// <summary>
         /// Banner person identifier

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +30,26 @@ namespace ZoomConnect.Web.Controllers
             ViewData["GoremalCount"] = goremalRows.Count;
 
             var profModels = _userFinder.Profs.Select(p => new ProfViewModel(p))
-                .OrderBy(m => m.Name);
+                .OrderBy(m => m.Name)
+                .ToList();
 
             return View(profModels);
         }
+
+        [HttpPost]
+        public IActionResult Index(List<ProfViewModel> models)
+        {
+            ViewData["SelectedCount"] = models.Where(m => m.IsSelected).Count();
+
+            var selectedPidms = models.Where(m => m.IsSelected)
+                .Select(m => m.Pidm);
+
+            var profModels = _userFinder.Profs.Select(p => new ProfViewModel(p))
+                .Where(p => selectedPidms.Contains(p.Pidm))
+                .ToList();
+
+            return View(profModels);
+        }
+
     }
 }
