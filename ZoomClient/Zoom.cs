@@ -87,6 +87,8 @@ namespace ZoomClient
             }
             while (page < pages);
 
+            // TODO prep for deprecation of page_number in favor of next_page_token (see ZList)
+
             return users;
         }
 
@@ -114,6 +116,8 @@ namespace ZoomClient
 
             var request = new RestRequest("/meetings/{meetingId}", Method.GET, DataFormat.Json)
                 .AddParameter("meetingId", meetingId, ParameterType.UrlSegment);
+
+            // TODO add new parameter:  bool show_previous_occurrences
 
             if (!String.IsNullOrEmpty(occurrenceId))
             {
@@ -178,6 +182,8 @@ namespace ZoomClient
                 pages = result.page_count;
             }
             while (page < pages);
+
+            // TODO prep for deprecation of page_number in favor of next_page_token (see ZList)
 
             return meetings;
         }
@@ -315,6 +321,8 @@ namespace ZoomClient
                 page = pages;           // stop after one page for now
             }
             while (page < pages);
+
+            // TODO prep for deprecation of page_number in favor of next_page_token (see ZList)
 
             return meetings;
         }
