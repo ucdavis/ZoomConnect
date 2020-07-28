@@ -8,15 +8,14 @@
 
 <p>goremal row count: @ViewData["GoremalCount"]</p>
 
-<h2>Profs Found (@Model.FoundProfs.Count)</h2>
 <ul>
-    @foreach (var prof in Model.FoundProfs
+    @foreach (var prof in Model.Profs
        .OrderBy(p => p.bannerPerson.last_name)
        .ThenBy(p => p.bannerPerson.first_name))
     {
         <li>
             @prof.bannerPerson.last_name, @prof.bannerPerson.first_name -
-            @prof.primaryEmail.email_address
+            @(prof.primaryEmail == null ? "no email" : prof.primaryEmail.email_address)
             @if (prof.otherEmails.Any())
             {
                 <span>
@@ -27,30 +26,6 @@
             }
             [
             @String.Join(", ", prof.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
-            ]
-        </li>
-    }
-</ul>
-
-<h2>Emails Missing From Zoom (@Model.MissingProfs.Count)</h2>
-<ul>
-    @foreach (var missing in Model.MissingProfs
-       .OrderBy(p => p.bannerPerson.last_name)
-       .ThenBy(p => p.bannerPerson.first_name))
-    {
-        <li>
-            @missing.bannerPerson.last_name, @missing.bannerPerson.first_name -
-            @(missing.primaryEmail == null ? "no email" : missing.primaryEmail.email_address)
-            @if (missing.otherEmails.Any())
-            {
-                <span>
-                    (alt.
-                    @String.Join(", ", missing.otherEmails.Select(e => e.email_address))
-                    )
-                </span>
-            }
-            [
-            @String.Join(", ", missing.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
             ]
         </li>
     }

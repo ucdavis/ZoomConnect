@@ -58,18 +58,21 @@ namespace ZoomConnect.Web.Services.Zoom
             // No zoom meetings can be found without a found Prof<->Zoom User
             // Get "live" meetings so Agenda will be included, which contains the ssrmeet id.
             var allFoundProfMeetings = new List<CourseMeetingDataModel>();
-            _profModels.FoundProfs.ForEach(p =>
-            {
-                var foundProfMeetings = _zoomClient.GetMeetingsForUser(p.zoomUser.id, "live");
-                foundProfMeetings.ForEach(pm =>
+            _profModels.Profs
+                .Where(p => p.zoomUser != null)
+                .ToList()
+                .ForEach(p =>
                 {
-                    allFoundProfMeetings.Add(new CourseMeetingDataModel
+                    var foundProfMeetings = _zoomClient.GetMeetingsForUser(p.zoomUser.id, "live");
+                    foundProfMeetings.ForEach(pm =>
                     {
-                        zoomMeeting = pm,
-                        primaryProf = p
+                        allFoundProfMeetings.Add(new CourseMeetingDataModel
+                        {
+                            zoomMeeting = pm,
+                            primaryProf = p
+                        });
                     });
                 });
-            });
 
             // Find each ssrmeet by id in meetings list from above
             var foundSsrmeetRows = new List<ssrmeet>();

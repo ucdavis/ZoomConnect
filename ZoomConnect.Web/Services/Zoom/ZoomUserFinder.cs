@@ -17,8 +17,7 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<sirasgn> _assignmentRepo;
         private CachedRepository<ssbsect> _courseRepo;
         private ZoomClient.Zoom _zoomClient;
-        private List<ProfDataModel> _foundProfs { get; set; }
-        private List<ProfDataModel> _missingProfs { get; set; }
+        private List<ProfDataModel> _profs { get; set; }
 
         public ZoomUserFinder(ZoomClient.Zoom zoomClient,
             CachedRepository<spriden> personRepo, CachedRepository<goremal> profEmailRepo,
@@ -34,32 +33,16 @@ namespace ZoomConnect.Web.Services.Zoom
         /// <summary>
         /// Profs linked to Zoom users by email
         /// </summary>
-        public List<ProfDataModel> FoundProfs
+        public List<ProfDataModel> Profs
         {
             get
             {
-                if (_foundProfs == null)
+                if (_profs == null)
                 {
                     Find();
                 }
 
-                return _foundProfs;
-            }
-        }
-
-        /// <summary>
-        /// Profs teaching this term not matched by email with a User in your Zoom account.
-        /// </summary>
-        public List<ProfDataModel> MissingProfs
-        {
-            get
-            {
-                if (_missingProfs == null)
-                {
-                    Find();
-                }
-
-                return _missingProfs;
+                return _profs;
             }
         }
 
@@ -71,7 +54,7 @@ namespace ZoomConnect.Web.Services.Zoom
         /// <returns></returns>
         private void Find()
         {
-            _foundProfs = new List<ProfDataModel>();
+            _profs = new List<ProfDataModel>();
             var _allFound = new List<goremal>();
 
             // find all person rows
@@ -106,11 +89,11 @@ namespace ZoomConnect.Web.Services.Zoom
                 _allFound.Add(e);
                 _allFound.AddRange(altEmails);
 
-                _foundProfs.Add(prof);
+                _profs.Add(prof);
             });
 
             // collate missing emails into per-prof model
-            _missingProfs = allEmails
+            var missingProfs = allEmails
                 .Where(e => !_allFound.Contains(e))
                 .GroupBy(e => e.pidm, e => e, (key, grp) => new ProfDataModel
                 {
@@ -121,12 +104,15 @@ namespace ZoomConnect.Web.Services.Zoom
                 .ToList();
 
             // include profs without any email (The Staff)
-            _missingProfs.AddRange(_personRepo.GetAll()
+            missingProfs.AddRange(_personRepo.GetAll()
                 .Where(p => !allEmails.Select(e => e.pidm).Contains(p.pidm))
                 .Select(p => new ProfDataModel { bannerPerson = p }));
 
             // include assignments for each prof
-            _missingProfs.ForEach(m => m.AddAssignments(_assignmentRepo, _courseRepo));
+            missingProfs.ForEach(m => m.AddAssignments(_assignmentRepo, _courseRepo));
+
+            // add to full list of profs
+            _profs.AddRange(missingProfs);
         }
     }
 }

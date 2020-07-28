@@ -48,7 +48,7 @@ namespace ZoomConnect.Web.Services.Zoom
         /// <returns></returns>
         public static CourseMeetingDataModel AddProfModels(this CourseMeetingDataModel meetingModel, CachedProfModels profModels, CachedRepository<sirasgn> assignmentRepo, bool includePrimary = true)
         {
-            var allProfModels = profModels.AllProfs;
+            var allProfModels = profModels.Profs;
 
             assignmentRepo.GetAll()
                 .Where(a => a.crn == meetingModel.bannerCourse.crn)

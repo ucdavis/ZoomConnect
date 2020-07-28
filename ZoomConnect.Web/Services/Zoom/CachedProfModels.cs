@@ -10,8 +10,7 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         private ZoomUserFinder _userFinder;
         private IMemoryCache _cache;
-        private const string _cacheKeyFoundProfs = "foundProfModels";
-        private const string _cacheKeyMissingProfs = "missingProfModels";
+        private const string _cacheKeyProfs = "profModels";
 
         public CachedProfModels(ZoomUserFinder userFinder, SizedCache cache)
         {
@@ -19,64 +18,25 @@ namespace ZoomConnect.Web.Services.Zoom
             _cache = cache.Cache;
         }
 
-        public List<ProfDataModel> FoundProfs
+        public List<ProfDataModel> Profs
         {
             get
             {
                 // see if found profs are cached
-                if (_cache.TryGetValue(_cacheKeyFoundProfs, out List<ProfDataModel> cacheEntry))
+                if (_cache.TryGetValue(_cacheKeyProfs, out List<ProfDataModel> cacheEntry))
                 {
                     return cacheEntry;
                 }
 
-                cacheEntry = _userFinder.FoundProfs;
+                cacheEntry = _userFinder.Profs;
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSize(cacheEntry.Count)
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
-                _cache.Set(_cacheKeyFoundProfs, cacheEntry, cacheEntryOptions);
-
-                _cache.Set(_cacheKeyMissingProfs, _userFinder.MissingProfs, cacheEntryOptions);
+                _cache.Set(_cacheKeyProfs, cacheEntry, cacheEntryOptions);
 
                 return cacheEntry;
-            }
-        }
-
-        public List<ProfDataModel> MissingProfs
-        {
-            get
-            {
-                // see if missing profs are cached
-                if (_cache.TryGetValue(_cacheKeyMissingProfs, out List<ProfDataModel> cacheEntry))
-                {
-                    return cacheEntry;
-                }
-
-                cacheEntry = _userFinder.MissingProfs;
-
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(cacheEntry.Count)
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-                _cache.Set(_cacheKeyMissingProfs, cacheEntry, cacheEntryOptions);
-
-                _cache.Set(_cacheKeyFoundProfs, _userFinder.FoundProfs, cacheEntryOptions);
-
-                return cacheEntry;
-            }
-        }
-
-        public List<ProfDataModel> AllProfs
-        {
-            get
-            {
-                var allProfs = new List<ProfDataModel>();
-
-                allProfs.AddRange(FoundProfs);
-                allProfs.AddRange(MissingProfs);
-
-                return allProfs;
             }
         }
     }
