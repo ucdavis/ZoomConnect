@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Services.Zoom;
+using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
 {
@@ -26,7 +28,10 @@ namespace ZoomConnect.Web.Controllers
             var goremalRows = _emailTable.GetAll();
             ViewData["GoremalCount"] = goremalRows.Count;
 
-            return View(_userFinder);
+            var profModels = _userFinder.Profs.Select(p => new ProfViewModel(p))
+                .OrderBy(m => m.Name);
+
+            return View(profModels);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model ZoomConnect.Web.Services.Zoom.CachedProfModels
+﻿@model IEnumerable<ZoomConnect.Web.ViewModels.ProfViewModel>
 
 @{
     ViewData["Title"] = "Professors";
@@ -9,24 +9,16 @@
 <p>goremal row count: @ViewData["GoremalCount"]</p>
 
 <ul>
-    @foreach (var prof in Model.Profs
-       .OrderBy(p => p.bannerPerson.last_name)
-       .ThenBy(p => p.bannerPerson.first_name))
+    @foreach (var prof in Model)
     {
         <li>
-            @prof.bannerPerson.last_name, @prof.bannerPerson.first_name -
-            @(prof.primaryEmail == null ? "no email" : prof.primaryEmail.email_address)
-            @if (prof.otherEmails.Any())
+            @prof.Name -
+            @prof.Email
+            @if (prof.altEmailCount > 0)
             {
-                <span>
-                    (alt.
-                    @String.Join(", ", prof.otherEmails.Select(e => e.email_address))
-                    )
-                </span>
+                <span title="@prof.altEmails">(@prof.altEmailCount alt.)</span>
             }
-            [
-            @String.Join(", ", prof.assignments.Select(a => String.Format("{0}-{1}", a.crse_numb, a.seq_numb)))
-            ]
+            <span title="@prof.courses">[@prof.courseCount course assignment(s)]</span>
         </li>
     }
 </ul>
