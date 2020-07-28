@@ -49,7 +49,14 @@
                         }
                     </td>
                     <td>
-                        <span>@(prof.ZoomConnected ? prof.ZoomUserEmail : "-")</span>
+                        @if (prof.ZoomConnected)
+                        {
+                            <span class="oi oi-check" title="connected" aria-hidden="true"></span>
+                        }
+                        else
+                        {
+                            <span class="oi oi-x" title="not connected" aria-hidden="true"></span>
+                        }
                     </td>
                 </tr>
             }
