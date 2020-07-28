@@ -104,6 +104,14 @@ namespace ZoomConnect.Web.Controllers
             return View(meetings);
         }
 
+        [Authorize]
+        public IActionResult Refresh([FromServices] SizedCache sizedCache)
+        {
+            sizedCache.ResetCache();
+
+            return RedirectToAction("Index");
+        }
+
         [AllowAnonymous]
         [Route("login")]
         public async Task Login(string returnUrl)
