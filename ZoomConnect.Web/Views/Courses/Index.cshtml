@@ -1,4 +1,4 @@
-﻿@model ZoomConnect.Web.Services.Zoom.CachedMeetingModels
+﻿@model ZoomConnect.Web.ViewModels.SelectedCoursesViewModel
 
 @{
     ViewData["Title"] = "Courses";
@@ -6,23 +6,52 @@
 
 <h1>Courses</h1>
 
-<p>ssrmeet row count: @ViewData["RowCount"]</p>
+<form asp-controller="Courses" asp-action="Index" method="POST">
 
-<h2>Meetings (@Model.Meetings.Count)</h2>
-<ul>
-    @foreach (var meeting in Model.Meetings
-     .OrderBy(m => m.bannerCourse.crse_numb)
-     .ThenBy(m => m.bannerCourse.seq_numb))
-    {
-        <li>
-            @meeting.MeetingName
-            (
-            @foreach (var otherProf in meeting.otherProfs)
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <td><input type="checkbox" id="SelectAll" title="Select All"</td>
+                <th scope="col">CRN</th>
+                <th scope="col">Description</th>
+                <th scope="col">Time</th>
+                <th scope="col">Location</th>
+                <th scope="col">Professor</th>
+                <th scope="col">Next Occurrence</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model.Courses)
             {
-                <span>,</span>
-                @otherProf.bannerPerson.last_name
+                <tr class="@(course.IsMeetingConnected ? "table-success" : "")">
+                    <td>
+                        @if (!course.IsMeetingConnected && course.IsProfConnected)
+                        {
+                            <input type="hidden" name="Courses.Index" value="@course.MeetingId" />
+                            <input type="hidden" name="Courses[@course.MeetingId].MeetingId" value="@course.MeetingId" />
+                            <input type="checkbox" name="Courses[@course.MeetingId].IsSelected" value="true" />
+                        }
+                    </td>
+                    <td>@course.Crn</td>
+                    <td>@course.Description</td>
+                    <td>@course.TimeAndDays</td>
+                    <td>@course.Location</td>
+                    <td>
+                        @if (course.IsProfConnected)
+                        {
+                            <span class="oi oi-check text-success" title="connected" aria-hidden="true"></span>
+                        }
+                        else
+                        {
+                            <span class="oi oi-x text-danger" title="not connected" aria-hidden="true"></span>
+                        }
+                        @course.Prof
+                    </td>
+                    <td>@course.NextOccurrence.ToShortDateString()</td>
+                </tr>
             }
-            )
-        </li>
-    }
-</ul>
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Find/Create Zoom Meetings</button>
+</form>
