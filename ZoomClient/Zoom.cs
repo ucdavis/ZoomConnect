@@ -94,6 +94,30 @@ namespace ZoomClient
         }
 
         /// <summary>
+        /// Create a new Zoom User as licensed user including name and email address
+        /// </summary>
+        /// <param name="userRequest">user request object with name and email address</param>
+        /// <returns>UserRequest with new id included</returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/usercreate</remarks>
+        public UserRequest CreateUser(UserRequest userRequest)
+        {
+            client.Authenticator = NewToken;
+
+            var request = new RestRequest("users", Method.POST, DataFormat.Json)
+                .AddJsonBody(userRequest);
+
+            var response = client.Execute(request);
+            Thread.Sleep(RateLimit.Light);
+
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                return JsonSerializer.Deserialize<UserRequest>(response.Content);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets details of a Zoom Meeting
         /// </summary>
         /// <param name="meetingId"></param>
