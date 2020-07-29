@@ -13,6 +13,7 @@ using System.IO;
 using System.Text.Json;
 using SecretJsonConfig;
 using ZoomConnect.Core.Config;
+using ZoomClient.Domain.Billing;
 
 namespace ZoomClient
 {
@@ -394,6 +395,29 @@ namespace ZoomClient
             Thread.Sleep(RateLimit.Light);
 
             return response.StatusCode == HttpStatusCode.NoContent;
+        }
+
+        /// <summary>
+        /// Gets a Plan Usage report for the entire account
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/billing/getplanusage</remarks>
+        public PlanUsage GetPlanUsage()
+        {
+            client.Authenticator = NewToken;
+
+            var request = new RestRequest("/accounts/{accountId}/plans/usage", Method.GET, DataFormat.Json)
+                .AddParameter("accountId", "me", ParameterType.UrlSegment);
+
+            var response = client.Execute(request);
+            Thread.Sleep(RateLimit.Heavy);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return JsonSerializer.Deserialize<PlanUsage>(response.Content);
+            }
+
+            return null;
         }
 
         private JwtAuthenticator NewToken
