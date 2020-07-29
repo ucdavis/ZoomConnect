@@ -78,5 +78,9 @@
     </table>
 
     <button type="submit" class="btn btn-primary">Find/Create Zoom Users</button>
+    @if (Model.SelectedProfs > 0)
+    {
+        <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>
+    }
 
 </form>
