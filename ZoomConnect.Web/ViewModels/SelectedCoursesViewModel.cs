@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ZoomConnect.Web.ViewModels
 {
@@ -11,5 +12,7 @@ namespace ZoomConnect.Web.ViewModels
         }
 
         public List<CourseViewModel> Courses { get; set; }
+
+        public int SelectedCourses => Courses.Where(c => c.IsSelected).Count();
     }
 }

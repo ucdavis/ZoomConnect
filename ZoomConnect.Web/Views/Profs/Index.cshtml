@@ -16,7 +16,12 @@
     <table class="table table-sm">
         <thead>
             <tr>
-                <td><input type="checkbox" id="SelectAll" title="Select All" /></td>
+                <td>
+                    @if (Model.SelectedProfs == 0)
+                    {
+                        <input type="checkbox" id="SelectAll" title="Select All" />
+                    }
+                </td>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Courses</th>
@@ -28,11 +33,15 @@
             {
                 <tr class="@(prof.ZoomConnected ? "table-success" : "")">
                     <td>
-                        @if (!prof.ZoomConnected && prof.Email != "no email")
+                        <input type="hidden" name="Profs.Index" value="@prof.Pidm" />
+                        <input type="hidden" name="Profs[@prof.Pidm].Pidm" value="@prof.Pidm" />
+                        @if (Model.SelectedProfs == 0 && !prof.ZoomConnected && prof.Email != "no email")
                         {
-                            <input type="hidden" name="Profs.Index" value="@prof.Pidm" />
-                            <input type="hidden" name="Profs[@prof.Pidm].Pidm" value="@prof.Pidm" />
-                            <span><input type="checkbox" name="Profs[@prof.Pidm].IsSelected" value="true" /></span>
+                            <input type="checkbox" name="Profs[@prof.Pidm].IsSelected" value="true" />
+                        }
+                        else if (Model.SelectedProfs > 0)
+                        {
+                            <input type="hidden" name="Profs[@prof.Pidm].IsSelected" value="true" />
                         }
                     </td>
                     <td>@prof.Name</td>

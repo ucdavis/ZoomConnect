@@ -11,7 +11,12 @@
     <table class="table table-sm">
         <thead>
             <tr>
-                <td><input type="checkbox" id="SelectAll" title="Select All"</td>
+                <td>
+                    @if (Model.SelectedCourses == 0)
+                    {
+                        <input type="checkbox" id="SelectAll" title="Select All" />
+                    }
+                </td>
                 <th scope="col">CRN</th>
                 <th scope="col">Description</th>
                 <th scope="col">Time</th>
@@ -25,11 +30,15 @@
             {
                 <tr class="@(course.IsMeetingConnected ? "table-success" : "")">
                     <td>
-                        @if (!course.IsMeetingConnected && course.IsProfConnected)
+                        <input type="hidden" name="Courses.Index" value="@course.MeetingId" />
+                        <input type="hidden" name="Courses[@course.MeetingId].MeetingId" value="@course.MeetingId" />
+                        @if (Model.SelectedCourses == 0 && !course.IsMeetingConnected && course.IsProfConnected)
                         {
-                            <input type="hidden" name="Courses.Index" value="@course.MeetingId" />
-                            <input type="hidden" name="Courses[@course.MeetingId].MeetingId" value="@course.MeetingId" />
                             <input type="checkbox" name="Courses[@course.MeetingId].IsSelected" value="true" />
+                        }
+                        else if (Model.SelectedCourses > 0)
+                        {
+                            <input type="hidden" name="Courses[@course.MeetingId].IsSelected" value="true" />
                         }
                     </td>
                     <td>@course.Crn</td>
