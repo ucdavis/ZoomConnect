@@ -22,26 +22,30 @@ namespace ZoomConnect.Web.Controllers
 
         public IActionResult Index()
         {
-            var profModels = _userFinder.Profs.Select(p => new ProfViewModel(p))
-                .OrderBy(m => m.Name)
-                .ToList();
+            var profModels = new SelectedProfsModel
+            {
+                Profs = _userFinder.Profs.Select(p => new ProfViewModel(p))
+                    .OrderBy(m => m.Name)
+                    .ToList()
+            };
 
             return View(profModels);
         }
 
         [HttpPost]
-        public IActionResult Index(List<ProfViewModel> models)
+        public IActionResult Index(SelectedProfsModel model, [FromServices] ZoomClient.Zoom zoomClient)
         {
-            ViewData["SelectedCount"] = models.Where(m => m.IsSelected).Count();
+            var planUsage = zoomClient.GetPlanUsage();
+            model.RemainingLicenses = planUsage.plan_base.hosts - planUsage.plan_base.usage;
 
-            var selectedPidms = models.Where(m => m.IsSelected)
+            var selectedPidms = model.Profs.Where(m => m.IsSelected)
                 .Select(m => m.Pidm);
 
-            var profModels = _userFinder.Profs.Select(p => new ProfViewModel(p))
+            model.Profs = _userFinder.Profs.Select(p => new ProfViewModel(p) { IsSelected = true })
                 .Where(p => selectedPidms.Contains(p.Pidm))
                 .ToList();
 
-            return View(profModels);
+            return View(model);
         }
     }
 }

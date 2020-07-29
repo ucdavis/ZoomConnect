@@ -1,10 +1,15 @@
-﻿@model List<ZoomConnect.Web.ViewModels.ProfViewModel>
+﻿@model ZoomConnect.Web.ViewModels.SelectedProfsModel
 
 @{
     ViewData["Title"] = "Professors";
 }
 
 <h1>Profs</h1>
+
+@if (Model.SelectedProfs > 0)
+{
+    <div class="alert @Model.AlertClass" role="alert">@Model.AlertMessage</div>
+}
 
 <form asp-controller="Profs" asp-action="Index" method="post">
 
@@ -19,15 +24,15 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var prof in Model)
+            @foreach (var prof in Model.Profs)
             {
                 <tr class="@(prof.ZoomConnected ? "table-success" : "")">
                     <td>
                         @if (!prof.ZoomConnected && prof.Email != "no email")
                         {
-                            <input type="hidden" name="Index" value="@prof.Pidm" />
-                            <input type="hidden" name="[@prof.Pidm].Pidm" value="@prof.Pidm" />
-                            <span><input type="checkbox" name="[@prof.Pidm].IsSelected" value="true" /></span>
+                            <input type="hidden" name="Profs.Index" value="@prof.Pidm" />
+                            <input type="hidden" name="Profs[@prof.Pidm].Pidm" value="@prof.Pidm" />
+                            <span><input type="checkbox" name="Profs[@prof.Pidm].IsSelected" value="true" /></span>
                         }
                     </td>
                     <td>@prof.Name</td>
