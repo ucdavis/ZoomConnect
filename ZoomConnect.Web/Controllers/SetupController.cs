@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SecretJsonConfig;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
@@ -15,11 +16,13 @@ namespace ZoomConnect.Web.Controllers
     public class SetupController : Controller
     {
         private SecretConfigManager<ZoomOptions> _secretOptions;
+        private CachedRepository<stvterm> _termRepository;
         private const string _passwordPlaceholder = "*********";
 
-        public SetupController(SecretConfigManager<ZoomOptions> secretOptions)
+        public SetupController(SecretConfigManager<ZoomOptions> secretOptions, CachedRepository<stvterm> termRepository)
         {
             _secretOptions = secretOptions;
+            _termRepository = termRepository;
         }
 
         public IActionResult Index()
@@ -34,6 +37,9 @@ namespace ZoomConnect.Web.Controllers
                 CurrentTerm = options.CurrentTerm,
                 CurrentSubject = options.CurrentSubject,
 
+                TermStart = options.TermStart,
+                TermEnd = options.TermEnd,
+
                 ZoomApiKey = options.ZoomApi?.ApiKey,
                 ZoomApiSecret = options.ZoomApi?.ApiSecret
             };
@@ -42,8 +48,13 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Setup(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache)
+        public IActionResult Index(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var options = _secretOptions.GetValue().Result;
             options.Banner.Instance = model.Instance;
             options.Banner.Username = new SecretStruct(model.Username);
@@ -52,7 +63,22 @@ namespace ZoomConnect.Web.Controllers
                 options.Banner.Password = new SecretStruct(model.Password);
             }
 
-            options.CurrentTerm = model.CurrentTerm;
+            // process term changes - new start/end dates. otherwise allow preferred start/end.
+            if (options.CurrentTerm != model.CurrentTerm)
+            {
+                options.CurrentTerm = model.CurrentTerm;
+
+                // look up new start/end dates
+                var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
+                options.TermStart = term.start_date;
+                options.TermEnd = term.end_date;
+            }
+            else
+            {
+                options.TermStart = model.TermStart;
+                options.TermEnd = model.TermEnd;
+            }
+
             options.CurrentSubject = model.CurrentSubject;
 
             if (model.ZoomApiKey != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomApiKey))
