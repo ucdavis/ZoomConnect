@@ -35,7 +35,7 @@ namespace ZoomConnect.Web.ViewModels
         public bool IsSelected { get; set; }
 
         /// <summary>
-        /// Banner person identifier
+        /// Banner person identifier, also the id for this row in a display list
         /// </summary>
         public decimal Pidm { get; set; }
 
