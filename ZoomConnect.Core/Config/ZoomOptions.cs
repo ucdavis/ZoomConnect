@@ -13,6 +13,9 @@ namespace ZoomConnect.Core.Config
         public string CurrentTerm { get; set; }
         public string CurrentSubject { get; set; }
 
+        public DateTime? TermStart { get; set; }
+        public DateTime? TermEnd { get; set; }
+
         public BannerOptions Banner { get; set; }
         public ZoomApiOptions ZoomApi { get; set; }
     }

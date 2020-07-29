@@ -1,21 +1,6 @@
-﻿@model ZoomConnect.Web.Services.Zoom.CachedMeetingModels
-
-@{
+﻿@{
     ViewData["Title"] = "Test";
 }
 
 <h1>Test</h1>
 
-<p>Goremal Count? @ViewData["TableCount"]</p>
-
-<h2>Meetings Found (@Model.Meetings.Count)</h2>
-<ul>
-    @foreach (var meeting in Model.Meetings)
-    {
-        <li>
-            @meeting.bannerCourse.subj_code @meeting.bannerCourse.crse_numb [@meeting.bannerCourse.seq_numb] -
-            @meeting.bannerCourse.crse_title
-            (@meeting.primaryProf.bannerPerson.last_name)
-        </li>
-    }
-</ul>
