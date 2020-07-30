@@ -30,14 +30,20 @@ namespace ZoomConnect.Web.Services.Zoom
 
                 cacheEntry = _userFinder.Profs;
 
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(cacheEntry.Count)
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-                _cache.Set(_cacheKeyProfs, cacheEntry, cacheEntryOptions);
+                Set(cacheEntry);
 
                 return cacheEntry;
             }
+        }
+
+        public void Set(List<ProfDataModel> updatedCacheEntry)
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSize(updatedCacheEntry.Count)
+                .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+            _cache.Set(_cacheKeyProfs, updatedCacheEntry, cacheEntryOptions);
         }
     }
 }
