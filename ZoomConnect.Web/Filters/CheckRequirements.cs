@@ -24,8 +24,8 @@ namespace ZoomConnect.Web.Filters
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary
                 {
-                    { "controller", "Home" },
-                    { "action", "Setup" }
+                    { "controller", "Setup" },
+                    { "action", "Index" }
                 });
             }
         }
