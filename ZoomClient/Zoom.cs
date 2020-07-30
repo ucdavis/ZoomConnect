@@ -97,9 +97,9 @@ namespace ZoomClient
         /// Create a new Zoom User as licensed user including name and email address
         /// </summary>
         /// <param name="userRequest">user request object with name and email address</param>
-        /// <returns>UserRequest with new id included</returns>
+        /// <returns>UserInfo with new id included</returns>
         /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/usercreate</remarks>
-        public UserRequest CreateUser(UserRequest userRequest)
+        public UserInfo CreateUser(UserRequest userRequest)
         {
             client.Authenticator = NewToken;
 
@@ -111,7 +111,7 @@ namespace ZoomClient
 
             if (response.StatusCode == HttpStatusCode.Created)
             {
-                return JsonConvert.DeserializeObject<UserRequest>(response.Content);
+                return JsonConvert.DeserializeObject<UserInfo>(response.Content);
             }
 
             return null;
