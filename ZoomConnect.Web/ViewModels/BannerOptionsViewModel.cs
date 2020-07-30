@@ -16,5 +16,8 @@ namespace ZoomConnect.Web.ViewModels
 
         public string ZoomApiKey { get; set; }
         public string ZoomApiSecret { get; set; }
+
+        public bool UseCanvas { get; set; }
+        public string CanvasAccessToken { get; set; }
     }
 }

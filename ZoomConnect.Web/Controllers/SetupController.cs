@@ -41,7 +41,10 @@ namespace ZoomConnect.Web.Controllers
                 TermEnd = options.TermEnd,
 
                 ZoomApiKey = options.ZoomApi?.ApiKey,
-                ZoomApiSecret = options.ZoomApi?.ApiSecret
+                ZoomApiSecret = options.ZoomApi?.ApiSecret,
+
+                UseCanvas = options.CanvasApi.UseCanvas,
+                CanvasAccessToken = options.CanvasApi.ApiAccessToken
             };
 
             return View(viewModel);
@@ -89,6 +92,12 @@ namespace ZoomConnect.Web.Controllers
             if (model.ZoomApiSecret != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomApiSecret))
             {
                 options.ZoomApi.ApiSecret = new SecretStruct(model.ZoomApiSecret);
+            }
+
+            options.CanvasApi.UseCanvas = model.UseCanvas;
+            if (model.CanvasAccessToken != _passwordPlaceholder && !String.IsNullOrEmpty(model.CanvasAccessToken))
+            {
+                options.CanvasApi.ApiAccessToken = new SecretStruct(model.CanvasAccessToken);
             }
 
             _secretOptions.Save();
