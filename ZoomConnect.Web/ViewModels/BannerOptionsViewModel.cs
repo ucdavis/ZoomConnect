@@ -11,8 +11,8 @@ namespace ZoomConnect.Web.ViewModels
         public string CurrentTerm { get; set; }
         public string CurrentSubject { get; set; }
 
-        public DateTime? TermStart { get; set; }
-        public DateTime? TermEnd { get; set; }
+        public DateTime TermStart { get; set; }
+        public DateTime TermEnd { get; set; }
 
         public string ZoomApiKey { get; set; }
         public string ZoomApiSecret { get; set; }
