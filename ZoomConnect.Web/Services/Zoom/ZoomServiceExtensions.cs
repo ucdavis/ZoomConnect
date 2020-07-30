@@ -70,5 +70,25 @@ namespace ZoomConnect.Web.Services.Zoom
 
             return meetingModel;
         }
+
+        /// <summary>
+        /// Zoom formatted datetime in local time zone
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static string ToZoomLocalTime(this DateTime date)
+        {
+            return date.ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        /// <summary>
+        /// Zoom meeting agenda string for creating or matching zoom meetings to ssrmeet rows.
+        /// </summary>
+        /// <param name="ssrmeetRow"></param>
+        /// <returns></returns>
+        public static string GetZoomMeetingAgenda(this ssrmeet ssrmeetRow)
+        {
+            return $"ssrmeet.id={ssrmeetRow.surrogate_id}";
+        }
     }
 }
