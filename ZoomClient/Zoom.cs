@@ -10,10 +10,10 @@ using RestSharp.Authenticators;
 using ZoomClient.Domain;
 using ZoomClient.Extensions;
 using System.IO;
-using System.Text.Json;
 using SecretJsonConfig;
 using ZoomConnect.Core.Config;
 using ZoomClient.Domain.Billing;
+using Newtonsoft.Json;
 
 namespace ZoomClient
 {
@@ -48,7 +48,7 @@ namespace ZoomClient
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return JsonSerializer.Deserialize<User>(response.Content);
+                return JsonConvert.DeserializeObject<User>(response.Content);
             }
 
             return null;
@@ -78,7 +78,7 @@ namespace ZoomClient
                 var response = client.Execute(request);
                 Thread.Sleep(RateLimit.Medium);
 
-                var result = JsonSerializer.Deserialize<ZList<User>>(response.Content);
+                var result = JsonConvert.DeserializeObject<ZList<User>>(response.Content);
                 if (result != null && result.Results != null)
                 {
                     users.AddRange(result.Results);
@@ -111,7 +111,7 @@ namespace ZoomClient
 
             if (response.StatusCode == HttpStatusCode.Created)
             {
-                return JsonSerializer.Deserialize<UserRequest>(response.Content);
+                return JsonConvert.DeserializeObject<UserRequest>(response.Content);
             }
 
             return null;
@@ -154,7 +154,7 @@ namespace ZoomClient
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return JsonSerializer.Deserialize<Meeting>(response.Content);
+                return JsonConvert.DeserializeObject<Meeting>(response.Content);
             }
 
             return null;
@@ -198,7 +198,7 @@ namespace ZoomClient
                 var response = client.Execute(request);
                 Thread.Sleep(RateLimit.Medium);
 
-                var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
+                var result = JsonConvert.DeserializeObject<ZList<Meeting>>(response.Content);
                 if (result != null && result.Results != null)
                 {
                     meetings.AddRange(result.Results);
@@ -235,7 +235,7 @@ namespace ZoomClient
 
             Console.Write(response.Content);
 
-            var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
+            var result = JsonConvert.DeserializeObject<ZList<Meeting>>(response.Content);
             return result.Results.ToList();
         }
 
@@ -259,7 +259,7 @@ namespace ZoomClient
                 return null;
             }
 
-            return JsonSerializer.Deserialize<Meeting>(response.Content);
+            return JsonConvert.DeserializeObject<Meeting>(response.Content);
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace ZoomClient
 
             if (response.StatusCode == HttpStatusCode.Created)
             {
-                return JsonSerializer.Deserialize<Meeting>(response.Content);
+                return JsonConvert.DeserializeObject<Meeting>(response.Content);
             }
 
             return null;
@@ -336,7 +336,7 @@ namespace ZoomClient
                 var response = client.Execute(request);
                 Thread.Sleep(RateLimit.Medium);
 
-                var result = JsonSerializer.Deserialize<ZList<Meeting>>(response.Content);
+                var result = JsonConvert.DeserializeObject<ZList<Meeting>>(response.Content);
                 if (result != null && result.Results != null)
                 {
                     meetings.AddRange(result.Results);
@@ -438,7 +438,7 @@ namespace ZoomClient
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return JsonSerializer.Deserialize<PlanUsage>(response.Content);
+                return JsonConvert.DeserializeObject<PlanUsage>(response.Content);
             }
 
             return null;
