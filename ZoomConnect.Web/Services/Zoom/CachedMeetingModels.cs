@@ -30,14 +30,20 @@ namespace ZoomConnect.Web.Services.Zoom
 
                 cacheEntry = _meetingFinder.Meetings;
 
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSize(cacheEntry.Count)
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-                _cache.Set(_cacheKeyMeetings, cacheEntry, cacheEntryOptions);
+                Set(cacheEntry);
 
                 return cacheEntry;
             }
+        }
+
+        public void Set(List<CourseMeetingDataModel> updatedCacheEntry)
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSize(updatedCacheEntry.Count)
+                .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+            _cache.Set(_cacheKeyMeetings, updatedCacheEntry, cacheEntryOptions);
         }
     }
 }
