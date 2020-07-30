@@ -13,9 +13,12 @@ namespace ZoomConnect.Web.Models
     /// </summary>
     public class CourseMeetingDataModel
     {
-        public CourseMeetingDataModel()
+        private DateTime _termStart;
+
+        public CourseMeetingDataModel(DateTime termStart)
         {
             otherProfs = new List<ProfDataModel>();
+            _termStart = termStart;
         }
 
         public ssrmeet bannerMeeting { get; set; }
@@ -165,17 +168,18 @@ namespace ZoomConnect.Web.Models
         }
 
         /// <summary>
-        /// Return DateTime of next occurrence of this meeting.  Returns earliest future start time (next week if start time is past).
+        /// Return DateTime of next occurrence of this meeting.
+        /// Returns earliest future start time after term start (next meeting day if start time is past).
         /// </summary>
         public DateTime NextOccurrence
         {
             get
             {
-                // start tentatively with today's date at the appropriate time, and add days as needed
-                var now = DateTime.Now;
+                // start tentatively with greater of today or term start at the appropriate time, and add days as needed
+                var start = DateTime.Now > _termStart ? DateTime.Now : _termStart;
                 var timePastAdjust = 0;
-                var occurrence = new DateTime(now.Year, now.Month, now.Day, StartHour, StartMinute, 0);
-                var nowInMinutes = now.Hour * 60 + now.Minute;
+                var occurrence = new DateTime(start.Year, start.Month, start.Day, StartHour, StartMinute, 0);
+                var nowInMinutes = start.Hour * 60 + start.Minute;
 
                 // any more occurrences found this week?
                 var todayDOW = (int)DateTime.Now.DayOfWeek;
