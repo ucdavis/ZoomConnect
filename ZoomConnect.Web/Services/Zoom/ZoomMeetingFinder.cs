@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SecretJsonConfig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
@@ -17,18 +19,20 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<ssrmeet> _meetingRepo;
         private CachedRepository<ssbsect> _courseRepo;
         private CachedRepository<sirasgn> _assignmentRepo;
+        private ZoomOptions _options;
 
         private List<CourseMeetingDataModel> _meetings { get; set; }
 
         public ZoomMeetingFinder(ZoomClient.Zoom zoomClient, CachedProfModels profModels,
             CachedRepository<ssrmeet> meetingRepo, CachedRepository<ssbsect> courseRepo,
-            CachedRepository<sirasgn> assignmentRepo)
+            CachedRepository<sirasgn> assignmentRepo, SecretConfigManager<ZoomOptions> optionsManager)
         {
             _zoomClient = zoomClient;
             _profModels = profModels;
             _meetingRepo = meetingRepo;
             _courseRepo = courseRepo;
             _assignmentRepo = assignmentRepo;
+            _options = optionsManager.GetValue().Result;
         }
 
         /// <summary>
@@ -56,14 +60,14 @@ namespace ZoomConnect.Web.Services.Zoom
 
             // First, get all Zoom Meetings for Found ProfDataModels.
             // No zoom meetings can be found without a found Prof<->Zoom User
-            // Get "live" meetings so Agenda will be included, which contains the ssrmeet id.
+            // Get "scheduled" meetings so Agenda will be included, which contains the ssrmeet id.
             var allFoundProfMeetings = new List<CourseMeetingDataModel>();
             _profModels.Profs
                 .Where(p => p.zoomUser != null)
                 .ToList()
                 .ForEach(p =>
                 {
-                    var foundProfMeetings = _zoomClient.GetMeetingsForUser(p.zoomUser.id, "live");
+                    var foundProfMeetings = _zoomClient.GetMeetingsForUser(p.zoomUser.id, "scheduled");
                     foundProfMeetings.ForEach(pm =>
                     {
                         allFoundProfMeetings.Add(new CourseMeetingDataModel(_options.TermStart)
@@ -78,7 +82,7 @@ namespace ZoomConnect.Web.Services.Zoom
             var foundSsrmeetRows = new List<ssrmeet>();
             _meetingRepo.GetAll().ForEach(m =>
             {
-                var foundMeeting = allFoundProfMeetings.FirstOrDefault(pm => pm.zoomMeeting.agenda == $"ssrmeet.id={m.surrogate_id}");
+                var foundMeeting = allFoundProfMeetings.FirstOrDefault(pm => pm.zoomMeeting.agenda == m.GetZoomMeetingAgenda());
                 if (foundMeeting != null)
                 {
                     foundSsrmeetRows.Add(m);
