@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 using CanvasClient.Domain;
@@ -25,7 +26,7 @@ namespace CanvasClient
 
         /// <summary>
         /// A test call that gets only the first account from GET /accounts.
-        /// Checks response to look for invalid token or other errors.
+        /// Checks response to look for expired token or other errors.
         /// </summary>
         /// <returns>null if test passed, error message otherwise.</returns>
         public string TokenErrorCheck()
@@ -42,9 +43,20 @@ namespace CanvasClient
                 var account = JsonSerializer.Deserialize<List<Account>>(response.Content);
                 if (account == null || account.Count == 0)
                 {
-                    return "http status ok but no data returned.";
+                    return "Http status ok but no data returned";
                 }
                 return null;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (response.Headers.Any(h => h.Name.ToLower() == "www-authenticate"))
+                {
+                    return "Unauthorized - Access Token expired or deleted";
+                }
+                else
+                {
+                    return "Unauthorized";
+                }
             }
 
             return response.StatusDescription;
