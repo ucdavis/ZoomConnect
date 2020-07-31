@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using CanvasClient;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,9 +37,11 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test()
+        public IActionResult Test([FromServices] CanvasApi canvasApi)
         {
-            return View();
+            var accounts = canvasApi.ListAccounts();
+
+            return View(accounts);
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache)

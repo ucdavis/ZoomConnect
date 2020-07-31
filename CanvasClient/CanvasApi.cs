@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using CanvasClient.Domain;
+using CanvasClient.Extensions;
 using RestSharp;
 using RestSharp.Authenticators;
 using SecretJsonConfig;
@@ -28,7 +29,7 @@ namespace CanvasClient
         /// A test call that gets only the first account from GET /accounts.
         /// Checks response to look for expired token or other errors.
         /// </summary>
-        /// <returns>null if test passed, error message otherwise.</returns>
+        /// <returns>null if test passed and data was returned, error message otherwise.</returns>
         public string TokenErrorCheck()
         {
             client.Authenticator = ApiToken;
@@ -51,7 +52,7 @@ namespace CanvasClient
             {
                 if (response.Headers.Any(h => h.Name.ToLower() == "www-authenticate"))
                 {
-                    return "Unauthorized - Access Token expired or deleted";
+                    return "Access Token expired or deleted";
                 }
                 else
                 {
@@ -60,6 +61,35 @@ namespace CanvasClient
             }
 
             return response.StatusDescription;
+        }
+
+        /// <summary>
+        /// List Accounts
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>https://canvas.instructure.com/doc/api/all_resources.html#method.accounts.index</remarks>
+        public List<Account> ListAccounts()
+        {
+            client.Authenticator = ApiToken;
+
+            var pagedData = new List<Account>();
+
+            var request = new RestRequest("accounts", Method.GET, DataFormat.Json)
+                .AddParameter("per_page", PageSize);
+
+            do
+            {
+                var response = client.Get<List<Account>>(request);
+                if (response.Data != null)
+                {
+                    pagedData.AddRange(response.Data);
+                }
+
+                request = new RestRequest(response.Headers.NextPageUrl());
+            }
+            while (!String.IsNullOrEmpty(request.Resource));
+
+            return pagedData;
         }
 
         private JwtAuthenticator ApiToken
