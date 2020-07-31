@@ -123,12 +123,13 @@ namespace CanvasClient
         }
 
         /// <summary>
-        /// List active courses in account
+        /// List active courses in the given account and term
         /// </summary>
         /// <param name="accountId">Id of account to search.</param>
+        /// <param name="termId">Id of term to search.</param>
         /// <returns></returns>
         /// <remarks>https://canvas.instructure.com/doc/api/all_resources.html#method.accounts.courses_api</remarks>
-        public List<Course> ListActiveCoursesInAccount(int accountId)
+        public List<Course> ListActiveCourses(int accountId, int termId)
         {
             client.Authenticator = ApiToken;
 
@@ -136,6 +137,8 @@ namespace CanvasClient
 
             var request = new RestRequest("accounts/{account_id}/courses", Method.GET, DataFormat.Json)
                 .AddParameter("account_id", accountId, ParameterType.UrlSegment)
+                .AddParameter("enrollment_term_id", termId)
+                .AddParameter("with_enrollments", true)
                 .AddParameter("per_page", PageSize);
 
             do

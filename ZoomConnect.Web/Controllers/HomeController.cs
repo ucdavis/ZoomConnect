@@ -18,12 +18,12 @@ namespace ZoomConnect.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly SecretConfigManager<ZoomOptions> _secretOptions;
+        private readonly ZoomOptions _options;
 
         public HomeController(ILogger<HomeController> logger, SecretConfigManager<ZoomOptions> secretOptions)
         {
             _logger = logger;
-            _secretOptions = secretOptions;
+            _options = secretOptions.GetValue().Result;
         }
 
         public IActionResult Index()
@@ -40,9 +40,12 @@ namespace ZoomConnect.Web.Controllers
         [TypeFilter(typeof(CheckRequirements))]
         public IActionResult Test([FromServices] CanvasApi canvasApi)
         {
-            var terms = canvasApi.ListEnrollmentTerms();
-            terms = terms.OrderBy(t => t.start_at).ToList();
-            return View(terms);
+            var canvasAccount = _options.CanvasApi.SelectedAccount;
+            var canvasTerm = _options.CanvasApi.EnrollmentTerm;
+            var courses = canvasApi.ListActiveCourses(canvasAccount, canvasTerm);
+            courses = courses.OrderBy(c => c.course_code)
+                .ToList();
+            return View(courses);
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache)
