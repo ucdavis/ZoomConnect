@@ -78,10 +78,13 @@ namespace ZoomConnect.Web.Controllers
                 options.TermStart = term.start_date;
                 options.TermEnd = term.end_date;
 
-                // find term in Canvas and store its id in hidden field
-                var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
-                var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm.description));
-                options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                // if using Canvas, find term in Canvas and store its id in hidden field
+                if (model.UseCanvas)
+                {
+                    var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
+                    var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm.description));
+                    options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                }
             }
             else
             {
