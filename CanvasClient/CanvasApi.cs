@@ -122,6 +122,37 @@ namespace CanvasClient
             return pagedData;
         }
 
+        /// <summary>
+        /// List active courses in account
+        /// </summary>
+        /// <param name="accountId">Id of account to search.</param>
+        /// <returns></returns>
+        /// <remarks>https://canvas.instructure.com/doc/api/all_resources.html#method.accounts.courses_api</remarks>
+        public List<Course> ListActiveCoursesInAccount(int accountId)
+        {
+            client.Authenticator = ApiToken;
+
+            var pagedData = new List<Course>();
+
+            var request = new RestRequest("accounts/{account_id}/courses", Method.GET, DataFormat.Json)
+                .AddParameter("account_id", accountId, ParameterType.UrlSegment)
+                .AddParameter("per_page", PageSize);
+
+            do
+            {
+                var response = client.Get<List<Course>>(request);
+                if (response.Data != null)
+                {
+                    pagedData.AddRange(response.Data);
+                }
+
+                request = new RestRequest(response.Headers.NextPageUrl());
+            }
+            while (!String.IsNullOrEmpty(request.Resource));
+
+            return pagedData;
+        }
+
         private JwtAuthenticator ApiToken
         {
             get
