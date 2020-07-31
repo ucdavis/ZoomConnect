@@ -12,5 +12,6 @@ namespace ZoomConnect.Core.Config
 
         public bool UseCanvas { get; set; }
         public SecretStruct ApiAccessToken { get; set; }
+        public int EnrollmentTerm { get; set; }
     }
 }

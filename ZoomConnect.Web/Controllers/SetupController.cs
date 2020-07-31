@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CanvasClient;
+using CanvasClient.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecretJsonConfig;
@@ -51,7 +53,7 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache)
+        public IActionResult Index(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache, [FromServices] CanvasApi canvasApi)
         {
             if (!ModelState.IsValid)
             {
@@ -75,6 +77,11 @@ namespace ZoomConnect.Web.Controllers
                 var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
                 options.TermStart = term.start_date;
                 options.TermEnd = term.end_date;
+
+                // find term in Canvas and store its id in hidden field
+                var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
+                var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm.description));
+                options.CanvasApi.EnrollmentTerm = canvasTerm.id;
             }
             else
             {
