@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
@@ -39,9 +40,9 @@ namespace ZoomConnect.Web.Controllers
         [TypeFilter(typeof(CheckRequirements))]
         public IActionResult Test([FromServices] CanvasApi canvasApi)
         {
-            var accounts = canvasApi.ListAccounts();
-
-            return View(accounts);
+            var terms = canvasApi.ListEnrollmentTerms();
+            terms = terms.OrderBy(t => t.start_at).ToList();
+            return View(terms);
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache)

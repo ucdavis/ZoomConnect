@@ -1,15 +1,15 @@
-﻿@model List<CanvasClient.Domain.Account>
+﻿@model List<CanvasClient.Domain.EnrollmentTerm>
 @{
     ViewData["Title"] = "Test";
 }
 
 <h1>Test</h1>
 
-<div>@Model.Count accounts </div>
+<div>@Model.Count terms </div>
 
 <ul>
-    @foreach (var acct in @Model)
+    @foreach (var item in @Model)
     {
-        <li><b>@acct.id</b> @acct.name</li>
+        <li>@item.id,@item.name,@item.start_at,@item.end_at)</li>
     }
 </ul>

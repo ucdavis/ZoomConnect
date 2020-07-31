@@ -92,6 +92,36 @@ namespace CanvasClient
             return pagedData;
         }
 
+        /// <summary>
+        /// List Enrollment Terms for root account
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>https://canvas.instructure.com/doc/api/all_resources.html#method.terms_api.index</remarks>
+        public List<EnrollmentTerm> ListEnrollmentTerms()
+        {
+            client.Authenticator = ApiToken;
+
+            var pagedData = new List<EnrollmentTerm>();
+
+            var request = new RestRequest("accounts/{account_id}/terms", Method.GET, DataFormat.Json)
+                .AddParameter("account_id", 1, ParameterType.UrlSegment)
+                .AddParameter("per_page", PageSize);
+
+            do
+            {
+                var response = client.Get<EnrollmentTermList>(request);
+                if (response.Data != null)
+                {
+                    pagedData.AddRange(response.Data.enrollment_terms);
+                }
+
+                request = new RestRequest(response.Headers.NextPageUrl());
+            }
+            while (!String.IsNullOrEmpty(request.Resource));
+
+            return pagedData;
+        }
+
         private JwtAuthenticator ApiToken
         {
             get
