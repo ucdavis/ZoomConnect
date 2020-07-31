@@ -9,7 +9,6 @@ using SecretJsonConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using AspNetCore.Security.CAS;
-using ZoomClient;
 
 namespace ZoomConnect.Web
 {
@@ -44,6 +43,7 @@ namespace ZoomConnect.Web
             services.AddBanner();
             services.AddCachedRepositories();
             services.AddZoomServices();
+            services.AddCanvasServices();
             services.AddSetupRequirements();
         }
 

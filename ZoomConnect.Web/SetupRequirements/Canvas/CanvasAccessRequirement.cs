@@ -1,5 +1,6 @@
 ﻿using SecretJsonConfig;
 using System;
+using CanvasClient;
 using ZoomConnect.Core.Config;
 
 namespace ZoomConnect.Web.SetupRequirements.Canvas
@@ -9,10 +10,12 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
         private RequirementStatus _status = RequirementStatus.Unchecked;
         private string _statusDescription = "";
         private ZoomOptions _options;
+        private CanvasApi _canvasApi;
 
-        public CanvasAccessRequirement(SecretConfigManager<ZoomOptions> optionsManager)
+        public CanvasAccessRequirement(SecretConfigManager<ZoomOptions> optionsManager, CanvasApi canvasApi)
         {
             _options = optionsManager.GetValue().Result;
+            _canvasApi = canvasApi;
         }
 
         public RequirementType Type => RequirementType.Canvas;
@@ -57,8 +60,7 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
             }
 
             // try the access token on a simple call and see if it works.
-            // TODO call canvas API once it's ready
-            return SetStatusAndReturn("");
+            return SetStatusAndReturn(_canvasApi.TokenErrorCheck());
         }
     }
 }
