@@ -10,9 +10,11 @@ using ZoomConnect.Web.Banner.Domain;
 namespace ZoomConnect.Web.SetupRequirements.Canvas
 {
     /// <summary>
-    /// Checks that a Canvas Term can be found matching the selected Banner Term.  Runs after ZoomConnectOptionsRequirement.
+    /// Checks that a Canvas Term can be found matching the selected Banner Term.
+    /// Also checks that the selected Canvas Account can be found.
+    /// Runs after ZoomConnectOptionsRequirement.
     /// </summary>
-    public class CanvasTermRequirement : ISetupRequirement
+    public class CanvasTermAndAccountRequirement : ISetupRequirement
     {
         private RequirementStatus _status = RequirementStatus.Unchecked;
         private string _statusDescription = "";
@@ -20,7 +22,7 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
         private CanvasApi _canvasApi;
         private CachedRepository<stvterm> _bannerTerms;
 
-        public CanvasTermRequirement(SecretConfigManager<ZoomOptions> optionsManager, CanvasApi canvasApi, CachedRepository<stvterm> bannerTerms)
+        public CanvasTermAndAccountRequirement(SecretConfigManager<ZoomOptions> optionsManager, CanvasApi canvasApi, CachedRepository<stvterm> bannerTerms)
         {
             _options = optionsManager.GetValue().Result;
             _canvasApi = canvasApi;
@@ -62,12 +64,18 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
             var bannerTermRow = _bannerTerms.GetAll().FirstOrDefault(t => t.code == _options.CurrentTerm);
             var canvasTerms = _canvasApi.ListEnrollmentTerms();
 
-            if (canvasTerms.Any(t => t.MatchesBannerTermDesc(bannerTermRow.description)))
+            if (!canvasTerms.Any(t => t.MatchesBannerTermDesc(bannerTermRow.description)))
             {
-                return SetStatusAndReturn("");
+               return SetStatusAndReturn($"Canvas EnrollmentTerm could not be found matching '{bannerTermRow.description}'.");
             }
 
-            return SetStatusAndReturn($"Canvas EnrollmentTerm could not be found matching '{bannerTermRow.description}'.");
+            var canvasAccounts = _canvasApi.ListAccounts();
+            if (!canvasAccounts.Any(a => a.id == _options.CanvasApi.SelectedAccount))
+            {
+                return SetStatusAndReturn($"Selected Canvas Account could not be found.");
+            }
+
+            return SetStatusAndReturn("");
         }
     }
 }
