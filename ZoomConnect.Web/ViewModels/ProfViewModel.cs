@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.Services.Zoom;
 
 namespace ZoomConnect.Web.ViewModels
 {
@@ -21,22 +22,20 @@ namespace ZoomConnect.Web.ViewModels
             Courses = String.Join(", ", prof.assignments
                 .OrderBy(a => a.crse_numb)
                 .Select(a => String.Format("{0} {1}", a.subj_code, a.crse_numb)));
-            if (prof.zoomUser == null || String.IsNullOrEmpty(prof.zoomUser.id))
+            ZoomStatus = prof.ZoomStatus();
+            if (ZoomStatus == ZoomUserStatus.Missing)
             {
-                ZoomStatus = ZoomUserStatus.Missing;
                 RowStatusClass = "";
                 RowStatusIcon = "oi oi-x text-danger";
             }
-            else if (String.IsNullOrEmpty(prof.zoomUser.email))
+            else if (ZoomStatus == ZoomUserStatus.Pending)
             {
-                ZoomStatus = ZoomUserStatus.Pending;
                 ZoomUserId = prof.zoomUser.id;
                 RowStatusClass = "table-warning";
                 RowStatusIcon = "oi oi-clock text-warning";
             }
             else
             {
-                ZoomStatus = ZoomUserStatus.Connected;
                 ZoomUserId = prof.zoomUser.id;
                 ZoomUserEmail = prof.zoomUser.email;
                 RowStatusClass = "table-success";

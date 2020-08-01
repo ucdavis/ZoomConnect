@@ -1,4 +1,5 @@
 ﻿@model ZoomConnect.Web.ViewModels.SelectedCoursesViewModel
+@using ZoomConnect.Web.ViewModels;
 
 @{
     ViewData["Title"] = "Courses";
@@ -32,7 +33,7 @@
                     <td>
                         <input type="hidden" name="Courses.Index" value="@course.MeetingId" />
                         <input type="hidden" name="Courses[@course.MeetingId].MeetingId" value="@course.MeetingId" />
-                        @if (Model.SelectedCourses == 0 && !course.IsMeetingConnected && course.IsProfConnected)
+                        @if (Model.SelectedCourses == 0 && !course.IsMeetingConnected && course.ProfZoomStatus == ZoomUserStatus.Connected)
                         {
                             <input type="checkbox" name="Courses[@course.MeetingId].IsSelected" value="true" />
                         }
@@ -46,14 +47,7 @@
                     <td>@course.TimeAndDays</td>
                     <td>@course.Location</td>
                     <td>
-                        @if (course.IsProfConnected)
-                        {
-                            <span class="oi oi-check text-success" title="connected" aria-hidden="true"></span>
-                        }
-                        else
-                        {
-                            <span class="oi oi-x text-danger" title="not connected" aria-hidden="true"></span>
-                        }
+                        <span class="@course.ProfStatusCssClass" title="@course.ProfZoomStatus" aria-hidden="true"></span>
                         @course.Prof
                     </td>
                     <td>@course.NextOccurrence.ToShortDateString()</td>

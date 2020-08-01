@@ -1,5 +1,6 @@
 ﻿using System;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.Services.Zoom;
 
 namespace ZoomConnect.Web.ViewModels
 {
@@ -20,7 +21,19 @@ namespace ZoomConnect.Web.ViewModels
             Location = $"{meeting.bldg_code} {meeting.room_code}";
             Description = $"{section.subj_code} {section.crse_numb} {section.seq_numb} {section.crse_title}";
             Prof = course.primaryProf.bannerPerson.last_name;
-            IsProfConnected = course.primaryProf.zoomUser != null;
+            ProfZoomStatus = course.primaryProf.ZoomStatus();
+            if (ProfZoomStatus == ZoomUserStatus.Connected)
+            {
+                ProfStatusCssClass = "oi oi-check text-success";
+            }
+            else if (ProfZoomStatus == ZoomUserStatus.Pending)
+            {
+                ProfStatusCssClass = "oi oi-clock text-warning";
+            }
+            else    // missing
+            {
+                ProfStatusCssClass = "oi oi-x text-danger";
+            }
             NextOccurrence = course.NextOccurrence;
             IsMeetingConnected = course.zoomMeeting != null;
         }
@@ -61,9 +74,14 @@ namespace ZoomConnect.Web.ViewModels
         public string Prof { get; set; }
 
         /// <summary>
-        /// Is prof connected to Zoom User?
+        /// Status of prof connection to zoom user
         /// </summary>
-        public bool IsProfConnected { get; set; }
+        public ZoomUserStatus ProfZoomStatus { get; set; }
+
+        /// <summary>
+        /// CSS classes for bootstrap/openiconic markup appropriate for prof zoom status
+        /// </summary>
+        public string ProfStatusCssClass { get; set; }
 
         /// <summary>
         /// Next occurrence of this meeting

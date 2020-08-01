@@ -4,6 +4,7 @@ using System.Linq;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Services.Zoom
 {
@@ -36,6 +37,22 @@ namespace ZoomConnect.Web.Services.Zoom
                     (a, p) => new AssignmentModel(a, p)));
 
             return prof;
+        }
+
+        public static ZoomUserStatus ZoomStatus(this ProfDataModel prof)
+        {
+            if (prof.zoomUser == null || String.IsNullOrEmpty(prof.zoomUser.id))
+            {
+                return ZoomUserStatus.Missing;
+            }
+            else if (String.IsNullOrEmpty(prof.zoomUser.email))
+            {
+                return ZoomUserStatus.Pending;
+            }
+            else
+            {
+                return ZoomUserStatus.Connected;
+            }
         }
 
         /// <summary>
