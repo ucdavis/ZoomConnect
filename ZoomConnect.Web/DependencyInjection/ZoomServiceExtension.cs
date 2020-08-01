@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<ZoomClient.Zoom>();
             services.AddScoped<ZoomUserFinder>();
+            services.AddScoped<ZoomUserCreator>();
             services.AddScoped<ZoomMeetingFinder>();
             services.AddScoped<ZoomMeetingCreator>();
             services.AddScoped<CachedProfModels>();
