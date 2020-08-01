@@ -21,11 +21,26 @@ namespace ZoomConnect.Web.ViewModels
             Courses = String.Join(", ", prof.assignments
                 .OrderBy(a => a.crse_numb)
                 .Select(a => String.Format("{0} {1}", a.subj_code, a.crse_numb)));
-            ZoomConnected = prof.zoomUser != null;
-            if (ZoomConnected)
+            if (prof.zoomUser == null || String.IsNullOrEmpty(prof.zoomUser.id))
             {
-                ZoomUserEmail = prof.zoomUser.email;
+                ZoomStatus = ZoomUserStatus.Missing;
+                RowStatusClass = "";
+                RowStatusIcon = "oi oi-x text-danger";
+            }
+            else if (String.IsNullOrEmpty(prof.zoomUser.email))
+            {
+                ZoomStatus = ZoomUserStatus.Pending;
                 ZoomUserId = prof.zoomUser.id;
+                RowStatusClass = "table-warning";
+                RowStatusIcon = "oi oi-clock text-warning";
+            }
+            else
+            {
+                ZoomStatus = ZoomUserStatus.Connected;
+                ZoomUserId = prof.zoomUser.id;
+                ZoomUserEmail = prof.zoomUser.email;
+                RowStatusClass = "table-success";
+                RowStatusIcon = "oi oi-check text-success";
             }
         }
 
@@ -72,7 +87,17 @@ namespace ZoomConnect.Web.ViewModels
         /// <summary>
         /// Prof is connected to a zoom account
         /// </summary>
-        public bool ZoomConnected { get; set; }
+        public ZoomUserStatus ZoomStatus { get; set; }
+
+        /// <summary>
+        /// bootstrap class for status of row based on ZoomStatus
+        /// </summary>
+        public string RowStatusClass { get; set; }
+
+        /// <summary>
+        /// OpenIconic class for icon to show in row based on ZoomStatus
+        /// </summary>
+        public string RowStatusIcon { get; set; }
 
         /// <summary>
         /// Prof zoom user email
