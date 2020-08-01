@@ -36,7 +36,7 @@
                     <td>
                         <input type="hidden" name="Profs.Index" value="@prof.Pidm" />
                         <input type="hidden" name="Profs[@prof.Pidm].Pidm" value="@prof.Pidm" />
-                        @if (Model.SelectedProfs == 0 && prof.ZoomStatus == ZoomUserStatus.Missing && prof.Email != "no email")
+                        @if (Model.SelectedProfs == 0 && prof.CanBeLicensed)
                         {
                             <input type="checkbox" name="Profs[@prof.Pidm].IsSelected" value="true" />
                         }
@@ -71,7 +71,7 @@
         </tbody>
     </table>
 
-    <button type="submit" class="btn btn-primary">Find/Create Zoom Users</button>
+    <button type="submit" class="btn btn-primary">License Zoom Users</button>
     @if (Model.SelectedProfs > 0)
     {
         <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>

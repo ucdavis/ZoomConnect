@@ -51,9 +51,9 @@ namespace ZoomConnect.Web.Controllers
         {
             var profs = RehydrateSelectedProfs(model);
 
-            var created = userCreator.CreateZoomUsers(profs);
+            var created = userCreator.CreateLicensedZoomUsers(profs);
 
-            TempData["Message"] = $"{created.Count} Zoom User(s) created.";
+            TempData["Message"] = $"{created.Count} Zoom User(s) licensed.";
 
             return RedirectToAction("Index");
         }

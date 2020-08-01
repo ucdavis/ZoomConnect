@@ -106,6 +106,13 @@ namespace ZoomConnect.Web.ViewModels
         public string RowStatusIcon { get; set; }
 
         /// <summary>
+        /// Shows if this prof can be licensed (has email and is Basic or not found)
+        /// </summary>
+        public bool CanBeLicensed =>
+            (ZoomStatus == ZoomUserStatus.Missing || ZoomStatus == ZoomUserStatus.Basic) &&
+            Email != "no email";
+
+        /// <summary>
         /// Prof zoom user email
         /// </summary>
         public string ZoomUserEmail { get; set; }

@@ -23,36 +23,54 @@ namespace ZoomConnect.Web.Services.Zoom
             _cachedProfs = cachedProfs;
         }
 
-        public List<UserInfo> CreateZoomUsers(List<ProfDataModel> profs)
+        public List<User> CreateLicensedZoomUsers(List<ProfDataModel> profs)
         {
             var profsFromCache = _cachedProfs.Profs;
 
-            var createdUsers = new List<UserInfo>(profs.Count);
+            var newLicensedUsers = new List<User>(profs.Count);
             foreach (var prof in profs)
             {
-                var request = new UserRequest(prof.primaryEmail.email_address,
-                    prof.bannerPerson.first_name,
-                    prof.bannerPerson.last_name);
+                // look for user in Zoom before creating or updating
+                var currentUser = _zoomClient.GetUser(prof.primaryEmail.email_address);
 
-                var result = _zoomClient.CreateUser(request);
+                // if confirmed not found, create new user
+                User newLicensedUser = null;
+                if (currentUser == null)
+                {
+                    var request = new UserRequest(prof.primaryEmail.email_address,
+                        prof.bannerPerson.first_name,
+                        prof.bannerPerson.last_name);
 
-                // stored created user result back in cached list
-                var createdUser = _zoomClient.GetUser(result?.id);
+                    var result = _zoomClient.CreateUser(request);
+                    newLicensedUser = _zoomClient.GetUser(result?.id);
+                }
+                else if (currentUser.type == PlanType.Basic)
+                {
+                    // update basic users to licensed
+                    var request = new UserUpdate { type = PlanType.Licensed };
+                    var updated = _zoomClient.UpdateUserProfile(currentUser.email, request);
+                    newLicensedUser = updated ? _zoomClient.GetUser(currentUser.id) : null;
+                }
+
+                // stored user result back in cached list
                 var foundInCache = profsFromCache.FirstOrDefault(cp =>
                     cp.primaryEmail != null &&
                     cp.primaryEmail.email_address != null &&
                     cp.primaryEmail.email_address == prof.primaryEmail.email_address);
-                if (foundInCache != null)
+                if (newLicensedUser != null)
                 {
-                    foundInCache.zoomUser = createdUser;
+                    if (foundInCache != null)
+                    {
+                        foundInCache.zoomUser = newLicensedUser;
+                    }
+                    newLicensedUsers.Add(newLicensedUser);
                 }
-                createdUsers.Add(result);
             }
 
             // save meetings back to cache
             _cachedProfs.Set(profsFromCache);
 
-            return createdUsers;
+            return newLicensedUsers;
         }
     }
 }
