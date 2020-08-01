@@ -118,6 +118,28 @@ namespace ZoomClient
         }
 
         /// <summary>
+        /// Update a Zoom User's profile
+        /// </summary>
+        /// <param name="userId">Id of user to update</param>
+        /// <param name="profileChanges">Changes to user's profile.
+        /// Only fill out properties you want changed, others will be ignored.</param>
+        /// <returns>true if updated successfully</returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/userupdate</remarks>
+        public bool UpdateUserProfile(string userId, UserUpdate profileChanges)
+        {
+            client.Authenticator = NewToken;
+
+            var request = new RestRequest("users/{userId}", Method.PATCH, DataFormat.Json)
+                .AddParameter("userId", userId)
+                .AddJsonBody(profileChanges);
+
+            var response = client.Execute(request);
+            Thread.Sleep(RateLimit.Light);
+
+            return (response.StatusCode == HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
         /// Gets details of a Zoom Meeting
         /// </summary>
         /// <param name="meetingId"></param>
