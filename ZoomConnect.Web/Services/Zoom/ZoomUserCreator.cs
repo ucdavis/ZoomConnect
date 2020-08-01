@@ -38,7 +38,10 @@ namespace ZoomConnect.Web.Services.Zoom
 
                 // stored created user result back in cached list
                 var createdUser = _zoomClient.GetUser(result?.id);
-                var foundInCache = profsFromCache.FirstOrDefault(cp => cp.primaryEmail.email_address == createdUser?.email);
+                var foundInCache = profsFromCache.FirstOrDefault(cp =>
+                    cp.primaryEmail != null &&
+                    cp.primaryEmail.email_address != null &&
+                    cp.primaryEmail.email_address == prof.primaryEmail.email_address);
                 if (foundInCache != null)
                 {
                     foundInCache.zoomUser = createdUser;
