@@ -18,7 +18,7 @@ namespace ZoomConnect.Web.ViewModels
             Crn = meeting.crn;
             TimeAndDays = $"{meeting.begin_time}-{meeting.end_time} {course.daysConcat}";
             Location = $"{meeting.bldg_code} {meeting.room_code}";
-            Description = $"{section.subj_code} {section.crse_numb} {section.crse_title}";
+            Description = $"{section.subj_code} {section.crse_numb} {section.seq_numb} {section.crse_title}";
             Prof = course.primaryProf.bannerPerson.last_name;
             IsProfConnected = course.primaryProf.zoomUser != null;
             NextOccurrence = course.NextOccurrence;
