@@ -34,6 +34,13 @@ namespace ZoomConnect.Web.ViewModels
                 RowStatusClass = "table-warning";
                 RowStatusIcon = "oi oi-clock text-warning";
             }
+            else if (ZoomStatus == ZoomUserStatus.Basic)
+            {
+                ZoomUserId = prof.zoomUser.id;
+                ZoomUserEmail = prof.zoomUser.email;
+                RowStatusClass = "table-warning";
+                RowStatusIcon = "oi oi-dollar text-warning";
+            }
             else
             {
                 ZoomUserId = prof.zoomUser.id;

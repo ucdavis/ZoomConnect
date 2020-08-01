@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZoomClient.Domain;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
@@ -48,6 +49,10 @@ namespace ZoomConnect.Web.Services.Zoom
             else if (String.IsNullOrEmpty(prof.zoomUser.email))
             {
                 return ZoomUserStatus.Pending;
+            }
+            else if (prof.zoomUser.type == PlanType.Basic)
+            {
+                return ZoomUserStatus.Basic;
             }
             else
             {

@@ -9,7 +9,7 @@ namespace ZoomClient.Domain
         public string first_name { get; set; }
         public string last_name { get; set; }
         public string email { get; set; }
-        public int type { get; set; }   // enum 1=basic 2=licensed 3=onprem
+        public PlanType type { get; set; }   // enum 1=basic 2=licensed 3=onprem
         public string role_name { get; set; }
         public long pmi { get; set; }
         public bool use_pmi { get; set; }

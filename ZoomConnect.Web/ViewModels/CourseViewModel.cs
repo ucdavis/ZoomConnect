@@ -30,6 +30,10 @@ namespace ZoomConnect.Web.ViewModels
             {
                 ProfStatusCssClass = "oi oi-clock text-warning";
             }
+            else if ( ProfZoomStatus== ZoomUserStatus.Basic)
+            {
+                ProfStatusCssClass = "oi oi-dollar text-warning";
+            }
             else    // missing
             {
                 ProfStatusCssClass = "oi oi-x text-danger";

@@ -6,6 +6,7 @@ namespace ZoomConnect.Web.ViewModels
     {
         Missing,
         Pending,
+        Basic,
         Connected
     }
 }
