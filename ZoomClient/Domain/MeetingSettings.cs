@@ -9,11 +9,12 @@ namespace ZoomClient.Domain
             // fill out defaults
             host_video = false;
             participant_video = false;
-            join_before_host = true;
+            join_before_host = false;
             mute_upon_entry = true;
             approval_type = 2;              // no registration required
             audio = "both";                 // phone / computer
             auto_recording = "cloud";
+            meeting_authentication = true;  // users must authenticate
         }
 
         public bool host_video { get; set; }
