@@ -21,5 +21,10 @@ namespace ZoomConnect.Web.ViewModels
             : $"This action will use {SelectedProfs} of your remaining {RemainingLicenses} licenses.";
 
         public List<ProfViewModel> Profs { get; set; }
+
+        public int ConnectedCount => Profs.Count(p => p.ZoomStatus == ZoomUserStatus.Connected);
+        public int PendingCount => Profs.Count(p => p.ZoomStatus == ZoomUserStatus.Pending);
+        public int BasicCount => Profs.Count(p => p.ZoomStatus == ZoomUserStatus.Basic);
+        public int MissingCount => Profs.Count(p => p.ZoomStatus == ZoomUserStatus.Missing);
     }
 }
