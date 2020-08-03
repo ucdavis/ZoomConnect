@@ -14,5 +14,7 @@ namespace ZoomConnect.Web.ViewModels
         public List<CourseViewModel> Courses { get; set; }
 
         public int SelectedCourses => Courses.Where(c => c.IsSelected).Count();
+
+        public bool IncludeCanvas { get; set; }
     }
 }

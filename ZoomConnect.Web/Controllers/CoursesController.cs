@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SecretJsonConfig;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Zoom;
@@ -21,14 +23,17 @@ namespace ZoomConnect.Web.Controllers
             _meetingModels = meetingModels;
         }
 
-        public IActionResult Index()
+        public IActionResult Index([FromServices] SecretConfigManager<ZoomOptions> optionsManager)
         {
+            var options = optionsManager.GetValue().Result;
+
             var coursesModel = new SelectedCoursesViewModel
             {
                 Courses = _meetingModels.Meetings
                     .Select(m => new CourseViewModel(m))
                     .OrderBy(m => m.Description)
-                    .ToList()
+                    .ToList(),
+                IncludeCanvas = options.CanvasApi?.UseCanvas ?? false
             };
 
             return View(coursesModel);
