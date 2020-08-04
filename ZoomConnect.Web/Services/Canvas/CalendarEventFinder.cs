@@ -37,6 +37,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 {
                     var course = _courses.FirstOrDefault(c => c.sis_course_id == m.CanvasSisCourseId());
                     if (course == null) { return; }
+                    m.canvasCourse = course;
                     var events = _canvasApi.ListCalendarEvents(course.id, _options.TermStart, _options.TermEnd);
                     if (events == null) { return; }
                     m.canvasEvents = events

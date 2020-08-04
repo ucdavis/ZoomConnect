@@ -30,6 +30,7 @@ namespace ZoomConnect.Web.Models
 
         public Meeting zoomMeeting { get; set; }
 
+        public Course canvasCourse { get; set; }
         public List<CalendarEvent> canvasEvents { get; set; }
 
         // Zoom meeting creation helper properties below
