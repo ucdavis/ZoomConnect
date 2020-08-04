@@ -94,6 +94,17 @@ namespace ZoomConnect.Web.Services.Zoom
         }
 
         /// <summary>
+        /// Returns the Canvas Course sis_course_id for a Banner Course (CourseMeetingDataModel), as [TERM_CODE]-[SUBJ_CODE]-[CRSE_NUM]-[SEQ_NUM]-[CRN]
+        /// </summary>
+        /// <param name="meeting"></param>
+        /// <returns></returns>
+        public static string CanvasSisCourseId(this CourseMeetingDataModel meetingModel)
+        {
+            var ssbsect = meetingModel.bannerCourse;
+            return $"{ssbsect.term_code}-{ssbsect.subj_code}-{ssbsect.crse_numb}-{ssbsect.seq_numb}-{ssbsect.crn}";
+        }
+
+        /// <summary>
         /// Zoom formatted datetime in local time zone
         /// </summary>
         /// <param name="date"></param>

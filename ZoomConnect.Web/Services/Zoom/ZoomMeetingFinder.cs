@@ -6,6 +6,7 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.Services.Canvas;
 
 namespace ZoomConnect.Web.Services.Zoom
 {
@@ -19,19 +20,22 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<ssrmeet> _meetingRepo;
         private CachedRepository<ssbsect> _courseRepo;
         private CachedRepository<sirasgn> _assignmentRepo;
+        private CalendarEventFinder _canvasEventFinder;
         private ZoomOptions _options;
 
         private List<CourseMeetingDataModel> _meetings { get; set; }
 
         public ZoomMeetingFinder(ZoomClient.Zoom zoomClient, CachedProfModels profModels,
             CachedRepository<ssrmeet> meetingRepo, CachedRepository<ssbsect> courseRepo,
-            CachedRepository<sirasgn> assignmentRepo, SecretConfigManager<ZoomOptions> optionsManager)
+            CachedRepository<sirasgn> assignmentRepo, CalendarEventFinder canvasEventFinder,
+            SecretConfigManager<ZoomOptions> optionsManager)
         {
             _zoomClient = zoomClient;
             _profModels = profModels;
             _meetingRepo = meetingRepo;
             _courseRepo = courseRepo;
             _assignmentRepo = assignmentRepo;
+            _canvasEventFinder = canvasEventFinder;
             _options = optionsManager.GetValue().Result;
         }
 
@@ -112,6 +116,12 @@ namespace ZoomConnect.Web.Services.Zoom
             missingMeetings.ForEach(m => m.AddProfModels(_profModels, _assignmentRepo));
 
             _meetings.AddRange(missingMeetings);
+
+            // attach Canvas CalendarEvents if using canvas
+            if (_options.CanvasApi.UseCanvas)
+            {
+                _meetings = _canvasEventFinder.AttachEvents(_meetings);
+            }
         }
     }
 }

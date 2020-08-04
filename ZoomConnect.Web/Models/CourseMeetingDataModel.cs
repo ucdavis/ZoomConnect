@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CanvasClient.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoomClient.Domain;
@@ -28,6 +29,8 @@ namespace ZoomConnect.Web.Models
         public List<ProfDataModel> otherProfs { get; set; }
 
         public Meeting zoomMeeting { get; set; }
+
+        public List<CalendarEvent> canvasEvents { get; set; }
 
         // Zoom meeting creation helper properties below
         public string sunday { get { return bannerMeeting?.sun_day ?? ""; } }

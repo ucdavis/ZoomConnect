@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Zoom;
 
@@ -30,7 +31,7 @@ namespace ZoomConnect.Web.ViewModels
             {
                 ProfStatusCssClass = "oi oi-clock text-warning";
             }
-            else if ( ProfZoomStatus== ZoomUserStatus.Basic)
+            else if (ProfZoomStatus== ZoomUserStatus.Basic)
             {
                 ProfStatusCssClass = "oi oi-dollar text-warning";
             }
@@ -40,6 +41,8 @@ namespace ZoomConnect.Web.ViewModels
             }
             NextOccurrence = course.NextOccurrence;
             IsMeetingConnected = course.zoomMeeting != null;
+            IsCanvasEventCreated = course.canvasEvents != null && course.canvasEvents.Any();
+            CanvasStatusCssClass = IsCanvasEventCreated ? "oi oi-check text-success" : "oi oi-x text-danger";
         }
 
         /// <summary>
@@ -96,5 +99,15 @@ namespace ZoomConnect.Web.ViewModels
         /// Is this course meeting connected a Zoom Meeting?
         /// </summary>
         public bool IsMeetingConnected { get; set; }
+
+        /// <summary>
+        /// Does this course have Canvas events created for the connected Zoom Meeting?
+        /// </summary>
+        public bool IsCanvasEventCreated { get; set; }
+
+        /// <summary>
+        /// Css classes for bootstrap/openiconic markup appropriate for canvas event status
+        /// </summary>
+        public string CanvasStatusCssClass { get; set; }
     }
 }
