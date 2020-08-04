@@ -173,37 +173,20 @@ namespace ZoomConnect.Web.Models
 
         /// <summary>
         /// Return DateTime of next occurrence of this meeting.
-        /// Returns earliest future start time after term start (next meeting day if start time is past).
+        /// Returns earliest start time after term start
         /// </summary>
         public DateTime NextOccurrence
         {
             get
             {
-                // start tentatively with greater of today or term start at the appropriate time, and add days as needed
-                var start = DateTime.Now > _termStart ? DateTime.Now : _termStart;
-                var timePastAdjust = 0;
-                var occurrence = new DateTime(start.Year, start.Month, start.Day, StartHour, StartMinute, 0);
-                var nowInMinutes = start.Hour * 60 + start.Minute;
+                // Start with start of term at appropriate time and add days as needed for first occurrence
+                var first = new DateTime(_termStart.Year, _termStart.Month, _termStart.Day, StartHour, StartMinute, 0);
+                var daysInFirstWeek = DayNumbers(0).Where(d => d >= (int)first.DayOfWeek);
+                var offset = (daysInFirstWeek.Count() == 0)
+                    ? 7 - (int)first.DayOfWeek + DayNumbers(0).Min()
+                    : daysInFirstWeek.Min() - (int)first.DayOfWeek;
 
-                // any more occurrences found this week?
-                var todayDOW = (int)DateTime.Now.DayOfWeek;
-                if (nowInMinutes >= StartMinutesTotal)
-                {
-                    timePastAdjust++;
-                }
-                var dayNumbers = this.DayNumbers(0);
-                var futureDays = dayNumbers.Where(d => d >= todayDOW + timePastAdjust);
-
-                var dayAdjust = 0;
-                if (futureDays.Count() == 0)
-                {
-                    dayAdjust = 7 - todayDOW + dayNumbers.Min();
-                }
-                else
-                {
-                    dayAdjust += futureDays.Min() - todayDOW;
-                }
-                return occurrence.AddDays(dayAdjust);
+                return first.AddDays(offset);
             }
         }
 
