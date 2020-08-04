@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,12 +41,16 @@ namespace ZoomConnect.Web.Controllers
         [TypeFilter(typeof(CheckRequirements))]
         public IActionResult Test([FromServices] CanvasApi canvasApi)
         {
-            var canvasAccount = _options.CanvasApi.SelectedAccount;
-            var canvasTerm = _options.CanvasApi.EnrollmentTerm;
-            var courses = canvasApi.ListActiveCourses(canvasAccount, canvasTerm);
-            courses = courses.OrderBy(c => c.course_code)
-                .ToList();
-            return View(courses);
+            //// list active courses
+            //var canvasAccount = _options.CanvasApi.SelectedAccount;
+            //var canvasTerm = _options.CanvasApi.EnrollmentTerm;
+            //var courses = canvasApi.ListActiveCourses(canvasAccount, canvasTerm);
+            //courses = courses.OrderBy(c => c.course_code)
+            //    .ToList();
+
+            // list calendar events
+            var events = canvasApi.ListCalendarEvents(467774, new DateTime(2020, 8, 24), new DateTime(2020, 11, 25));
+            return View(events);
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache)
