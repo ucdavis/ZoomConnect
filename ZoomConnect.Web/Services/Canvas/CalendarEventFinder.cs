@@ -39,7 +39,9 @@ namespace ZoomConnect.Web.Services.Canvas
                     if (course == null) { return; }
                     var events = _canvasApi.ListCalendarEvents(course.id, _options.TermStart, _options.TermEnd);
                     if (events == null) { return; }
-                    m.canvasEvents = events;
+                    m.canvasEvents = events
+                        .Where(e => e.description.Contains(m.zoomMeeting.join_url, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
                 });
 
             return meetingModels;
