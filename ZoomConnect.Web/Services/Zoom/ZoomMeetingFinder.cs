@@ -74,7 +74,7 @@ namespace ZoomConnect.Web.Services.Zoom
                     var foundProfMeetings = _zoomClient.GetMeetingsForUser(p.zoomUser.id, "scheduled");
                     foundProfMeetings.ForEach(pm =>
                     {
-                        allFoundProfMeetings.Add(new CourseMeetingDataModel(_options.TermStart)
+                        allFoundProfMeetings.Add(new CourseMeetingDataModel(_options.TermStart, _options.TermEnd)
                         {
                             zoomMeeting = pm,
                             primaryProf = p
@@ -105,7 +105,7 @@ namespace ZoomConnect.Web.Services.Zoom
             // What's left in ssrmeet are not found in Zoom
             var missingMeetings =_meetingRepo.GetAll()
                 .Where(m => !foundSsrmeetRows.Contains(m))
-                .Select(m => new CourseMeetingDataModel(_options.TermStart)
+                .Select(m => new CourseMeetingDataModel(_options.TermStart, _options.TermEnd)
                 {
                     bannerMeeting = m,
                     bannerCourse = _courseRepo.GetAll().FirstOrDefault(c => c.term_code == m.term_code && c.crn == m.crn)

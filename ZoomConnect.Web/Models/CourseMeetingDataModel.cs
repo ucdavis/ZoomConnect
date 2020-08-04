@@ -15,11 +15,14 @@ namespace ZoomConnect.Web.Models
     public class CourseMeetingDataModel
     {
         private DateTime _termStart;
+        private DateTime _termEnd;
 
-        public CourseMeetingDataModel(DateTime termStart)
+        public CourseMeetingDataModel(DateTime termStart, DateTime termEnd)
         {
             otherProfs = new List<ProfDataModel>();
+            canvasEvents = new List<CalendarEvent>();
             _termStart = termStart;
+            _termEnd = termEnd;
         }
 
         public ssrmeet bannerMeeting { get; set; }
@@ -66,6 +69,17 @@ namespace ZoomConnect.Web.Models
             if (bannerMeeting?.sat_day != null) { days.Add(6 + offset); }
 
             return days;
+        }
+
+        /// <summary>
+        /// List of weekdays for this course, with a start date and number of occurrences for each.
+        /// </summary>
+        /// <returns></returns>
+        public List<WeekdayRecurrence> WeekdayRecurrences()
+        {
+            return DayNumbers(0)
+                .Select(d => new WeekdayRecurrence(NextOccurrence, d, _termEnd))
+                .ToList();
         }
 
         /// <summary>
