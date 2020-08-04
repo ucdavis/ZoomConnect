@@ -1,5 +1,6 @@
 ﻿using System;
 using CanvasClient;
+using ZoomConnect.Web.Services.Canvas;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -8,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddCanvasServices(this IServiceCollection services)
         {
             services.AddScoped<CanvasApi>();
+            services.AddScoped<CachedCanvasCourses>();
 
             return services;
         }
