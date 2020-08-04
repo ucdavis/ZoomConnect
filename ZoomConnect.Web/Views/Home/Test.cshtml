@@ -1,4 +1,4 @@
-﻿@model List<CanvasClient.Domain.CalendarEvent>
+﻿@model List<CanvasClient.Domain.Course>
 @{
     ViewData["Title"] = "Test";
 }
@@ -10,6 +10,6 @@
 <ul>
     @foreach (var item in @Model)
     {
-        <li><b>@item.id</b> - @item.title - @item.description</li>
+        <li><b>@item.id</b> - @item.course_code : @item.sis_course_id</li>
     }
 </ul>

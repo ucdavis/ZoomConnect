@@ -15,6 +15,9 @@ namespace CanvasClient.Domain
         public int enrollment_term_id { get; set; }
         public DateTime? end_at { get; set; }
         public string time_zone { get; set; }
+        /// <summary>
+        /// Use this for linking from Banner, it's formatted as [TERM_CODE]-[SUBJ_CODE]-[CRSE_NUM]-[SEQ_NUM]-[CRN]
+        /// </summary>
         public string sis_course_id { get; set; }
         public string integration_id { get; set; }
         public string workflow_state { get; set; }

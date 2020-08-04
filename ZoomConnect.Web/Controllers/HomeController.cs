@@ -12,6 +12,7 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.Services.Canvas;
 
 namespace ZoomConnect.Web.Controllers
 {
@@ -39,18 +40,17 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CanvasApi canvasApi)
+        public IActionResult Test([FromServices] CachedCanvasCourses canvasCourses)
         {
-            //// list active courses
-            //var canvasAccount = _options.CanvasApi.SelectedAccount;
-            //var canvasTerm = _options.CanvasApi.EnrollmentTerm;
-            //var courses = canvasApi.ListActiveCourses(canvasAccount, canvasTerm);
-            //courses = courses.OrderBy(c => c.course_code)
-            //    .ToList();
+            // list active courses (from cache)
+            var courses = canvasCourses.Courses
+                .OrderBy(c => c.course_code)
+                .ToList();
+            return View(courses);
 
-            // list calendar events
-            var events = canvasApi.ListCalendarEvents(467774, new DateTime(2020, 8, 24), new DateTime(2020, 11, 25));
-            return View(events);
+            //// list calendar events
+            //var events = canvasApi.ListCalendarEvents(467774, new DateTime(2020, 8, 24), new DateTime(2020, 11, 25));
+            //return View(events);
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache)
