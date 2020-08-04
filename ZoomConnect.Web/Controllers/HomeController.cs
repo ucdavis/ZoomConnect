@@ -1,4 +1,5 @@
 ﻿using CanvasClient;
+using CanvasClient.Domain;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,17 +41,31 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedCanvasCourses canvasCourses)
+        public IActionResult Test([FromServices] CachedCanvasCourses canvasCourses, [FromServices] CanvasApi canvasApi)
         {
-            // list active courses (from cache)
-            var courses = canvasCourses.Courses
-                .OrderBy(c => c.course_code)
-                .ToList();
-            return View(courses);
+            //// list active courses (from cache)
+            //var courses = canvasCourses.Courses
+            //    .OrderBy(c => c.course_code)
+            //    .ToList();
+            //return View(courses);
 
-            //// list calendar events
-            //var events = canvasApi.ListCalendarEvents(467774, new DateTime(2020, 8, 24), new DateTime(2020, 11, 25));
-            //return View(events);
+            // add single event
+            var request = new CalendarEventRequest
+            {
+                calendar_event = new EventRequestData
+                {
+                    context_code = "course_467774",
+                    title = "LAW 420",
+                    start_at = new DateTime(2020, 08, 04, 9, 30, 0),
+                    end_at = new DateTime(2020, 08, 04, 10, 0, 0),
+                    description = "<a href='https://law.ucdavis.edu/'>Join with Zoom</a>"
+                }
+            };
+            canvasApi.CreateCalendarEvent(request);
+
+            // list calendar events
+            var events = canvasApi.ListCalendarEvents(467774, new DateTime(2020, 8, 24), new DateTime(2020, 11, 25));
+            return View(events);
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache)
