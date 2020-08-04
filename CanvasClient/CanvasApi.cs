@@ -156,6 +156,41 @@ namespace CanvasClient
             return pagedData;
         }
 
+        /// <summary>
+        /// List calendar events for a given course id, start date, and end date
+        /// </summary>
+        /// <param name="courseId">Id of course to list events for</param>
+        /// <param name="startDate">Start of range to list events for</param>
+        /// <param name="endDate">End of range to list events for</param>
+        /// <returns>List of CalendarEvents matching course and date range.</returns>
+        /// <remarks>https://canvas.instructure.com/doc/api/all_resources.html#method.calendar_events_api.index</remarks>
+        public List<CalendarEvent> ListCalendarEvents(int courseId, DateTime startDate, DateTime endDate)
+        {
+            client.Authenticator = ApiToken;
+
+            var pagedData = new List<CalendarEvent>();
+
+            var request = new RestRequest("calendar_events", Method.GET, DataFormat.Json)
+                .AddParameter("context_codes[]", $"course_{courseId}")
+                .AddParameter("start_date", startDate.ToString("yyyy-MM-dd"))
+                .AddParameter("end_date", endDate.ToString("yyyy-MM-dd"))
+                .AddParameter("per_page", PageSize);
+
+            do
+            {
+                var response = client.Get<List<CalendarEvent>>(request);
+                if (response.Data != null)
+                {
+                    pagedData.AddRange(response.Data);
+                }
+
+                request = new RestRequest(response.Headers.NextPageUrl());
+            }
+            while (!String.IsNullOrEmpty(request.Resource));
+
+            return pagedData;
+        }
+
         private JwtAuthenticator ApiToken
         {
             get
