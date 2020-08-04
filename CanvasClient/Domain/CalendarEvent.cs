@@ -12,7 +12,7 @@ namespace CanvasClient.Domain
         public DateTime created_at { get; set; }
         public DateTime updated_at { get; set; }
         public bool all_day { get; set; }
-        public DateTime all_day_date { get; set; }
+        public DateTime? all_day_date { get; set; }
         public string comments { get; set; }
         public string location_address { get; set; }
         public string location_name { get; set; }

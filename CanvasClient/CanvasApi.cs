@@ -191,6 +191,28 @@ namespace CanvasClient
             return pagedData;
         }
 
+        /// <summary>
+        /// Create a calendar event in a particular course
+        /// </summary>
+        /// <param name="eventRequest"></param>
+        /// <returns>Created CalendarEvent, otherwise null</returns>
+        public CalendarEvent CreateCalendarEvent(CalendarEventRequest eventRequest)
+        {
+            client.Authenticator = ApiToken;
+
+            var request = new RestRequest("calendar_events", Method.POST, DataFormat.Json)
+                .AddJsonBody(eventRequest);
+
+            var response = client.Execute(request);
+
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+               return null;
+            }
+
+            return JsonSerializer.Deserialize<CalendarEvent>(response.Content);
+        }
+
         private JwtAuthenticator ApiToken
         {
             get
