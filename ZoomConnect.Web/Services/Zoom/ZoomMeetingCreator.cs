@@ -25,29 +25,36 @@ namespace ZoomConnect.Web.Services.Zoom
 
         public List<Meeting> CreateZoomMeetings(List<CourseMeetingDataModel> courseMeetings)
         {
-            var sequenceStart = DateTime.Now > _options.TermStart ? DateTime.Now : _options.TermStart;
+            var termStart = _options.TermStart;
             var termEnd = _options.TermEnd;
             var meetingsFromCache = _cachedMeetings.Meetings;
+            var random = new Random();
 
             var createdMeetings = new List<Meeting>(courseMeetings.Count);
-            foreach (var meeting in courseMeetings)
+            courseMeetings.ForEach(meeting =>
             {
+                if (meeting.zoomMeeting != null) { return; }
+                // TODO Look for meeting in Zoom api to make sure it is not already created.
+
                 var request = new MeetingRequest
                 {
                     topic = meeting.MeetingName,
                     start_time = meeting.StartDateTime.ToZoomLocalTime(),
                     duration = meeting.DurationMinutes,
                     agenda = meeting.bannerMeeting.GetZoomMeetingAgenda(),
+                    password = random.Next(100000, 999999).ToString(),
                     recurrence = new Recurrence
                     {
                         type = 2,
                         repeat_interval = 1,
                         weekly_days = String.Join(",", meeting.DayNumbers(1)),
-                        end_times = (int)(termEnd.Subtract(sequenceStart).TotalDays * meeting.DayNumbers(0).Count / 7)
+                        end_times = (int)(termEnd.Subtract(termStart).TotalDays * meeting.DayNumbers(0).Count / 7)
                     }
                 };
 
                 var result = _zoomClient.CreateMeetingForUser(request, meeting.primaryProf.zoomUser.id);
+
+                // TODO Erase meetings occurring on a holiday
 
                 // stored created meeting result back in cached meeting list
                 var foundInCache = meetingsFromCache.FirstOrDefault(cm => cm.bannerMeeting.GetZoomMeetingAgenda() == result.agenda);
@@ -56,7 +63,7 @@ namespace ZoomConnect.Web.Services.Zoom
                     foundInCache.zoomMeeting = result;
                 }
                 createdMeetings.Add(result);
-            }
+            });
 
             // save meetings back to cache
             _cachedMeetings.Set(meetingsFromCache);
