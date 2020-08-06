@@ -26,5 +26,9 @@ namespace ZoomConnect.Core.Config
         /// String of comma-separated domains to allow when Require Auth is turned on (optional).
         /// </summary>
         public string AuthenticationDomains { get; set; }
+        /// <summary>
+        /// String of comma-separated email addresses to serve as alternate hosts to all created meetings.
+        /// </summary>
+        public string AlternateHosts { get; set; }
     }
 }

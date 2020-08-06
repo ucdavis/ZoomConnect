@@ -20,6 +20,7 @@ namespace ZoomConnect.Web.ViewModels
         public bool ZoomRequireMeetingAuthentication { get; set; }
         public string ZoomAuthenticationOptionId { get; set; }
         public string ZoomAuthenticationDomains { get; set; }
+        public string ZoomAlternateHosts { get; set; }
 
         public bool UseCanvas { get; set; }
         public string CanvasAccessToken { get; set; }

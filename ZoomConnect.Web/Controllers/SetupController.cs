@@ -48,6 +48,7 @@ namespace ZoomConnect.Web.Controllers
                 ZoomRequireMeetingAuthentication = options.ZoomApi?.RequireMeetingAuthentication ?? false,
                 ZoomAuthenticationOptionId = options.ZoomApi?.AuthenticationOptionId,
                 ZoomAuthenticationDomains = options.ZoomApi?.AuthenticationDomains,
+                ZoomAlternateHosts = options.ZoomApi?.AlternateHosts,
 
                 UseCanvas = options.CanvasApi.UseCanvas,
                 CanvasAccessToken = options.CanvasApi.ApiAccessToken,
@@ -112,6 +113,7 @@ namespace ZoomConnect.Web.Controllers
             options.ZoomApi.RequireMeetingAuthentication = model.ZoomRequireMeetingAuthentication;
             options.ZoomApi.AuthenticationOptionId = model.ZoomAuthenticationOptionId;
             options.ZoomApi.AuthenticationDomains = model.ZoomAuthenticationDomains;
+            options.ZoomApi.AlternateHosts = model.ZoomAlternateHosts;
 
             options.CanvasApi.UseCanvas = model.UseCanvas;
             options.CanvasApi.SelectedAccount = model.CanvasAccountId;
