@@ -45,6 +45,10 @@ namespace ZoomConnect.Web.Controllers
                 ZoomApiKey = options.ZoomApi?.ApiKey,
                 ZoomApiSecret = options.ZoomApi?.ApiSecret,
 
+                ZoomRequireMeetingAuthentication = options.ZoomApi?.RequireMeetingAuthentication ?? false,
+                ZoomAuthenticationOptionId = options.ZoomApi?.AuthenticationOptionId,
+                ZoomAuthenticationDomains = options.ZoomApi?.AuthenticationDomains,
+
                 UseCanvas = options.CanvasApi.UseCanvas,
                 CanvasAccessToken = options.CanvasApi.ApiAccessToken,
                 CanvasAccountId = options.CanvasApi.SelectedAccount
@@ -104,6 +108,10 @@ namespace ZoomConnect.Web.Controllers
             {
                 options.ZoomApi.ApiSecret = new SecretStruct(model.ZoomApiSecret);
             }
+
+            options.ZoomApi.RequireMeetingAuthentication = model.ZoomRequireMeetingAuthentication;
+            options.ZoomApi.AuthenticationOptionId = model.ZoomAuthenticationOptionId;
+            options.ZoomApi.AuthenticationDomains = model.ZoomAuthenticationDomains;
 
             options.CanvasApi.UseCanvas = model.UseCanvas;
             options.CanvasApi.SelectedAccount = model.CanvasAccountId;
