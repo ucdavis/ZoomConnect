@@ -37,7 +37,7 @@
                     <td>
                         <input type="hidden" name="Courses.Index" value="@course.MeetingId" />
                         <input type="hidden" name="Courses[@course.MeetingId].MeetingId" value="@course.MeetingId" />
-                        @if (Model.SelectedCourses == 0 && !course.IsMeetingConnected && course.ProfZoomStatus == ZoomUserStatus.Connected)
+                        @if (Model.SelectedCourses == 0 && course.ShowCheckbox)
                         {
                             <input type="checkbox" name="Courses[@course.MeetingId].IsSelected" value="true" />
                         }

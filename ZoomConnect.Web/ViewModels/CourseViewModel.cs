@@ -11,10 +11,11 @@ namespace ZoomConnect.Web.ViewModels
         {
         }
 
-        public CourseViewModel(CourseMeetingDataModel course)
+        public CourseViewModel(CourseMeetingDataModel course, bool useCanvas)
         {
             var section = course.bannerCourse;
             var meeting = course.bannerMeeting;
+            UseCanvas = useCanvas;
 
             MeetingId = meeting.surrogate_id;
             Crn = meeting.crn;
@@ -109,5 +110,17 @@ namespace ZoomConnect.Web.ViewModels
         /// Css classes for bootstrap/openiconic markup appropriate for canvas event status
         /// </summary>
         public string CanvasStatusCssClass { get; set; }
+
+        /// <summary>
+        /// Indicates whether the checkbox can be shown to select this course for processing
+        /// </summary>
+        public bool ShowCheckbox =>
+            ProfZoomStatus == ZoomUserStatus.Connected &&
+            (!IsMeetingConnected || (UseCanvas && !IsCanvasEventCreated));
+
+        /// <summary>
+        /// Indicates whether the app is currently configured to use Canvas
+        /// </summary>
+        public bool UseCanvas { get; set; }
     }
 }
