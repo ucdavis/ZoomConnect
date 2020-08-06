@@ -29,8 +29,6 @@ namespace ZoomClient.Domain
         public int registration_type { get; set; }      // 1=register once 2=register each occurrence 3=choose
         public string audio { get; set; }
         public string auto_recording { get; set; }
-        public bool enforce_login { get; set; }
-        public string enforce_login_domains { get; set; }
         public string alternative_hosts { get; set; }
         public bool close_registration { get; set; }
         public bool waiting_room { get; set; }
@@ -45,7 +43,6 @@ namespace ZoomClient.Domain
         // serialization settings
         public bool ShouldSerializeaudio() { return audio != null; }
         public bool ShouldSerializeauto_recording() { return auto_recording != null; }
-        public bool ShouldSerializeenforce_login_domains() { return enforce_login_domains != null; }
         public bool ShouldSerializealternative_hosts() { return alternative_hosts != null; }
         public bool ShouldSerializeglobal_dial_in_countries() { return global_dial_in_countries != null; }
         public bool ShouldSerializecontact_name() { return contact_name != null; }

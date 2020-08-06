@@ -36,6 +36,8 @@ namespace ZoomConnect.Web.Services.Zoom
                 if (meeting.zoomMeeting != null) { return; }
                 // TODO Look for meeting in Zoom api to make sure it is not already created.
 
+                var requireAuth = _options.ZoomApi?.RequireMeetingAuthentication ?? false;
+
                 var request = new MeetingRequest
                 {
                     topic = meeting.MeetingName,
@@ -49,6 +51,13 @@ namespace ZoomConnect.Web.Services.Zoom
                         repeat_interval = 1,
                         weekly_days = String.Join(",", meeting.DayNumbers(1)),
                         end_times = (int)(termEnd.Subtract(termStart).TotalDays * meeting.DayNumbers(0).Count / 7)
+                    },
+                    settings = new MeetingSettings
+                    {
+                        alternative_hosts = _options.ZoomApi?.AlternateHosts,
+                        meeting_authentication = requireAuth,
+                        authentication_option = requireAuth ? _options.ZoomApi?.AuthenticationOptionId : null,
+                        authentication_domains = requireAuth ? _options.ZoomApi?.AuthenticationDomains : null
                     }
                 };
 
