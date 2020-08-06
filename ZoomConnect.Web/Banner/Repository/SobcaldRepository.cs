@@ -31,17 +31,20 @@ namespace ZoomConnect.Web.Banner.Repository
         public override List<sobcald> GetAll()
         {
             var sql =
-                $"SELECT sobcald_date, sobcald_dayt_code " +
+                $"SELECT sobcald_date as \"date\", sobcald_dayt_code as dayt_code " +
                 "FROM sobcald " +
                 "  INNER JOIN stvterm ON stvterm_start_date <= sobcald_date AND stvterm_end_date >= sobcald_date " +
-                "WHERE stvterm_code = :term";
+                "WHERE stvterm_code = :term " +
+                "  AND sobcald_date >= :termStart " +
+                "  AND sobcald_date <= :termEnd";
 
             return Context
                 .Connection
                 .Query<sobcald>(sql, new
                 {
                     term = new DbString { Value = Options.CurrentTerm },
-                    subj = new DbString { Value = Options.CurrentSubject }
+                    termStart = Options.TermStart.Date,
+                    termEnd = Options.TermEnd.Date
                 })
                 .ToList();
         }
