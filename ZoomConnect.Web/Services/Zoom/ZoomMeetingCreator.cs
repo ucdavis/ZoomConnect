@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
+using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Services.Zoom
@@ -14,13 +16,16 @@ namespace ZoomConnect.Web.Services.Zoom
         private ZoomOptions _options;
         private ZoomClient.Zoom _zoomClient;
         private CachedMeetingModels _cachedMeetings;
+        private CachedRepository<sobcald> _cachedHolidays;
 
-        public ZoomMeetingCreator(SecretConfigManager<ZoomOptions> optionsManager, ZoomClient.Zoom zoomClient, CachedMeetingModels cachedMeetings)
+        public ZoomMeetingCreator(SecretConfigManager<ZoomOptions> optionsManager, ZoomClient.Zoom zoomClient,
+            CachedMeetingModels cachedMeetings, CachedRepository<sobcald> cachedHolidays)
         {
             _optionsManager = optionsManager;
             _options = optionsManager.GetValue().Result;
             _zoomClient = zoomClient;
             _cachedMeetings = cachedMeetings;
+            _cachedHolidays = cachedHolidays;
         }
 
         public List<Meeting> CreateZoomMeetings(List<CourseMeetingDataModel> courseMeetings)
@@ -64,6 +69,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 var result = _zoomClient.CreateMeetingForUser(request, meeting.primaryProf.zoomUser.id);
 
                 // TODO Erase meetings occurring on a holiday
+                DeleteHolidays(result);
 
                 // stored created meeting result back in cached meeting list
                 var foundInCache = meetingsFromCache.FirstOrDefault(cm => cm.bannerMeeting.GetZoomMeetingAgenda() == result.agenda);
@@ -78,6 +84,25 @@ namespace ZoomConnect.Web.Services.Zoom
             _cachedMeetings.Set(meetingsFromCache);
 
             return createdMeetings;
+        }
+
+        /// <summary>
+        /// Looks at all occurrences of a meeting and deletes any that overlap a holiday from SOBCALD
+        /// </summary>
+        /// <param name="meeting"></param>
+        private void DeleteHolidays(Meeting meeting)
+        {
+            if (meeting == null || meeting.occurrences == null || meeting.occurrences.Count == 0) { return; }
+
+            // get holidays in a list of YYYYMMDD
+            var holidays = _cachedHolidays.GetAll()
+                .Select(h => h.date.ToString("yyyyMMdd"));
+
+            // delete any occurrences matching a holiday
+            meeting.occurrences
+                .Where(o => holidays.Contains(o.StartDateTimeLocal.ToString("yyyyMMdd")))
+                .ToList()
+                .ForEach(o => _zoomClient.DeleteMeeting(meeting.id, o.occurrence_id));
         }
     }
 }

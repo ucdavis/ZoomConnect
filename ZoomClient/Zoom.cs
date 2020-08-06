@@ -331,6 +331,45 @@ namespace ZoomClient
         }
 
         /// <summary>
+        /// Deletes a meeting by meeting id
+        /// </summary>
+        /// <param name="meetingId">Id of meeting to delete</param>
+        /// <param name="sendReminder">True to send reminder to hosts about deletion.  Defaults to false.</param>
+        /// <returns>true if deleted successfully</returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingdelete</remarks>
+        public bool DeleteMeeting(string meetingId, bool sendReminder = false)
+        {
+            return DeleteMeeting(meetingId, null, sendReminder);
+        }
+
+        /// <summary>
+        /// Deletes a meeting by meeting id and occurrenceId
+        /// </summary>
+        /// <param name="meetingId">Id of meeting to delete</param>
+        /// <param name="occurrenceId">Id of occurrence to delete.  If null or blank, entire meeting will be deleted.</param>
+        /// <param name="sendReminder">True to send reminder to hosts about deletion.  Defaults to false.</param>
+        /// <returns>true if deleted successfully</returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingdelete</remarks>
+        public bool DeleteMeeting(string meetingId, string occurrenceId, bool sendReminder = false)
+        {
+            client.Authenticator = NewToken;
+
+            var request = new RestRequest("meetings/{meetingId}", Method.DELETE, DataFormat.Json)
+                .AddParameter("meetingId", meetingId, ParameterType.UrlSegment)
+                .AddParameter("schedule_for_reminder", sendReminder, ParameterType.QueryString);
+
+            if (!String.IsNullOrEmpty(occurrenceId))
+            {
+                request = request.AddParameter("occurrence_id", occurrenceId, ParameterType.QueryString);
+            }
+
+            var response = client.Execute(request);
+            Thread.Sleep(RateLimit.Light);
+
+            return response.StatusCode == HttpStatusCode.NoContent;
+        }
+
+        /// <summary>
         /// Gets recordings for the given user in the last 3 months.
         /// Stops after one page of results for now.
         /// </summary>
