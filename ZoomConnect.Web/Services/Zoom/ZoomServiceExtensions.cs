@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CanvasClient.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoomClient.Domain;
@@ -102,6 +103,41 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             var ssbsect = meetingModel.bannerCourse;
             return $"{ssbsect.term_code}-{ssbsect.subj_code}-{ssbsect.crse_numb}-{ssbsect.seq_numb}-{ssbsect.crn}";
+        }
+
+        /// <summary>
+        /// Create a list of Canvas CalendarEvent requests, one for each weekday of the course meeting.
+        /// Canvas recurrence differs from Zoom so we have to do one for each weekday.
+        /// </summary>
+        /// <param name="meetingModel"></param>
+        public static List<CalendarEventRequest> NewCanvasCalendarRequests(this CourseMeetingDataModel meetingModel)
+        {
+            if (meetingModel == null || meetingModel.canvasCourse == null || meetingModel.bannerCourse == null)
+            {
+                return null;
+            }
+
+            var requests = new List<CalendarEventRequest>(meetingModel.DayNumbers(0).Count);
+            meetingModel.WeekdayRecurrences().ForEach(wr =>
+            {
+                requests.Add(new CalendarEventRequest
+                {
+                    calendar_event = new EventRequestData
+                    {
+                        context_code = $"course_{meetingModel.canvasCourse.id}",
+                        title = $"{meetingModel.bannerCourse.subj_code} {meetingModel.bannerCourse.crse_numb} Zoom",
+                        start_at = wr.startDateTime,
+                        end_at = wr.startDateTime.AddMinutes(meetingModel.DurationMinutes),
+                        description = $"<a href='{meetingModel.zoomMeeting.join_url}'>Join with Zoom</a>",
+                        duplicate = new EventRecurrence
+                        {
+                            count = wr.occurrences
+                        }
+                    }
+                });
+            });
+
+            return requests;
         }
 
         /// <summary>
