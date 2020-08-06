@@ -213,6 +213,23 @@ namespace CanvasClient
             return JsonSerializer.Deserialize<CalendarEvent>(response.Content);
         }
 
+        /// <summary>
+        /// Delete a calendar event by id
+        /// </summary>
+        /// <param name="eventId">Id of CalendarEvent to delete</param>
+        /// <returns>true if deleted successfully</returns>
+        public bool DeleteCalendarEvent(int eventId)
+        {
+            client.Authenticator = ApiToken;
+
+            var request = new RestRequest("calendar_events/{id}", Method.DELETE, DataFormat.Json)
+                .AddParameter("id", eventId, ParameterType.UrlSegment);
+
+            var response = client.Execute(request);
+
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         private JwtAuthenticator ApiToken
         {
             get

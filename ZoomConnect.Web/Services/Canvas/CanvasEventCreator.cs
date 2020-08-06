@@ -4,8 +4,9 @@ using SecretJsonConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ZoomConnect.Core.Config;
+using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Zoom;
 
@@ -16,14 +17,17 @@ namespace ZoomConnect.Web.Services.Canvas
         private CanvasApi _canvasApi;
         private CachedMeetingModels _cachedMeetings;
         private CachedCanvasCourses _cachedCourses;
+        private CachedRepository<sobcald> _holidayRepository;
         private ZoomOptions _options;
 
-        public CanvasEventCreator(CanvasApi canvasApi, CachedMeetingModels cachedMeetings, CachedCanvasCourses cachedCourses,
+        public CanvasEventCreator(CanvasApi canvasApi, CachedMeetingModels cachedMeetings,
+            CachedCanvasCourses cachedCourses, CachedRepository<sobcald> holidayRepository,
             SecretConfigManager<ZoomOptions> optionsManager)
         {
             _canvasApi = canvasApi;
             _cachedMeetings = cachedMeetings;
             _cachedCourses = cachedCourses;
+            _holidayRepository = holidayRepository;
             _options = optionsManager.GetValue().Result;
         }
 
@@ -71,6 +75,10 @@ namespace ZoomConnect.Web.Services.Canvas
                     }
                 });
 
+                // delete any events created on holidays
+                var newEvents = _canvasApi.ListCalendarEvents(canvasCourse.id, _options.TermStart, _options.TermEnd);
+                DeleteHolidays(newEvents);
+
                 // store created CalendarEvents back in cached meetings list
                 var foundInCache = meetingsFromCache.FirstOrDefault(cm => cm.bannerMeeting.surrogate_id == m.bannerMeeting.surrogate_id);
                 if (foundInCache != null)
@@ -85,5 +93,17 @@ namespace ZoomConnect.Web.Services.Canvas
             return createdEvents;
         }
 
+        private void DeleteHolidays(List<CalendarEvent> createdEvents)
+        {
+            if (createdEvents == null || !createdEvents.Any()) { return; }
+
+            // get banner holidays into list of YYYYMMDD strings
+            var holidays = _holidayRepository.GetAll()
+                .Select(h => h.date.ToString("yyyyMMdd"));
+
+            createdEvents.Where(e => holidays.Contains(e.start_at.ToString("yyyyMMdd")))
+                .ToList()
+                .ForEach(e => _canvasApi.DeleteCalendarEvent(e.id));
+        }
     }
 }
