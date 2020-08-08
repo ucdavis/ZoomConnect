@@ -130,7 +130,7 @@ namespace ZoomClient
             client.Authenticator = NewToken;
 
             var request = new RestRequest("users/{userId}", Method.PATCH, DataFormat.Json)
-                .AddParameter("userId", userId)
+                .AddParameter("userId", userId, ParameterType.UrlSegment)
                 .AddJsonBody(profileChanges);
 
             var response = client.Execute(request);
