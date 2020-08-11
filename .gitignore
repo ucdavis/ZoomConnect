@@ -13,6 +13,9 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# logging files
+log-zc*.txt
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

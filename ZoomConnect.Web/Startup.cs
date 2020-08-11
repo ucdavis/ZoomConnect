@@ -9,6 +9,7 @@ using SecretJsonConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using AspNetCore.Security.CAS;
+using Serilog;
 
 namespace ZoomConnect.Web
 {
@@ -65,6 +66,8 @@ namespace ZoomConnect.Web
             app.UseAuthentication();
 
             app.UseStaticFiles();
+
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

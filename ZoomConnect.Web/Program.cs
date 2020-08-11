@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+
+// https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/
 
 namespace ZoomConnect.Web
 {
@@ -13,7 +16,26 @@ namespace ZoomConnect.Web
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.File("log-zc-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            try
+            {
+                Log.Information("App starting up");
+                CreateHostBuilder(args).Build().Run();
+                Log.Information("App stopping");
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application startup failed");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -21,6 +43,7 @@ namespace ZoomConnect.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                .UseSerilog();
     }
 }
