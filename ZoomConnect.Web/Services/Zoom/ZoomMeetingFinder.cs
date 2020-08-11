@@ -66,7 +66,9 @@ namespace ZoomConnect.Web.Services.Zoom
             // No zoom meetings can be found without a found Prof<->Zoom User
             // Get "scheduled" meetings so Agenda will be included, which contains the ssrmeet id.
             var allFoundProfMeetings = new List<CourseMeetingDataModel>();
-            _profModels.Profs
+            var cachedProfs = _profModels.Profs;
+
+            cachedProfs
                 .Where(p => p.zoomUser != null)
                 .ToList()
                 .ForEach(p =>
@@ -96,7 +98,7 @@ namespace ZoomConnect.Web.Services.Zoom
                     foundMeeting.bannerCourse = _courseRepo.GetAll().FirstOrDefault(c => c.term_code == m.term_code && c.crn == m.crn);
 
                     // add other found profs to meeting model
-                    foundMeeting.AddProfModels(_profModels, _assignmentRepo, false);
+                    foundMeeting.AddProfModels(cachedProfs, _assignmentRepo, false);
 
                     _meetings.Add(foundMeeting);
                 }
@@ -113,7 +115,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 .ToList();
 
             // add primary and other profs to meeting model
-            missingMeetings.ForEach(m => m.AddProfModels(_profModels, _assignmentRepo));
+            missingMeetings.ForEach(m => m.AddProfModels(cachedProfs, _assignmentRepo));
 
             _meetings.AddRange(missingMeetings);
 
