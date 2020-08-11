@@ -14,6 +14,7 @@ using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Canvas;
+using ZoomConnect.Web.Services.Zoom;
 
 namespace ZoomConnect.Web.Controllers
 {
@@ -68,9 +69,10 @@ namespace ZoomConnect.Web.Controllers
             return View(events);
         }
 
-        public IActionResult Refresh([FromServices] SizedCache sizedCache)
+        public IActionResult Refresh([FromServices] SizedCache sizedCache, [FromServices] ILogger<HomeController> logger)
         {
             sizedCache.ResetCache();
+            logger.LogInformation("Dumping cache by request");
 
             return RedirectToAction("Index");
         }

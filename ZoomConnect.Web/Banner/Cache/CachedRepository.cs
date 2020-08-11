@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ZoomConnect.Web.Banner.Domain;
 using Microsoft.Extensions.Caching.Memory;
 using ZoomConnect.Web.Banner.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace ZoomConnect.Web.Banner.Cache
 {
@@ -10,13 +11,15 @@ namespace ZoomConnect.Web.Banner.Cache
     {
         private AbstractRepository<TTable> _repository;
         private IMemoryCache _cache;
+        private ILogger<CachedRepository<TTable>> _logger;
         private string _cacheKeyRows;
         private string _cacheKeyTest;
 
-        public CachedRepository(AbstractRepository<TTable> repository, SizedCache cache)
+        public CachedRepository(AbstractRepository<TTable> repository, SizedCache cache, ILogger<CachedRepository<TTable>> logger)
         {
             _repository = repository;
             _cache = cache.Cache;
+            _logger = logger;
             var typename = typeof(TTable).Name;
             _cacheKeyRows = $"{typename}_rows";
             _cacheKeyTest = $"{typename}_test";
@@ -27,6 +30,7 @@ namespace ZoomConnect.Web.Banner.Cache
             // see if test result is cached
             if (_cache.TryGetValue(_cacheKeyTest, out bool cacheEntry))
             {
+                _logger.LogInformation($"Found {typeof(TTable).Name} in cache");
                 return cacheEntry;
             }
 
@@ -64,6 +68,8 @@ namespace ZoomConnect.Web.Banner.Cache
                 .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
             _cache.Set(_cacheKeyRows, cacheEntry, cacheEntryOptions);
+
+            _logger.LogInformation($"Added {cacheEntry.Count} {typeof(TTable).Name} to cache");
 
             return cacheEntry;
         }

@@ -1,6 +1,7 @@
 ﻿using CanvasClient;
 using CanvasClient.Domain;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,18 @@ namespace ZoomConnect.Web.Services.Canvas
         private List<Course> _courses;
         private ZoomOptions _options;
         private IMemoryCache _cache;
+        private ILogger<CachedCalendarEvents> _logger;
         private const string _cacheKeyCalendarEvents = "foundCalendarEvents";
 
         public CachedCalendarEvents(CanvasApi canvasApi, CachedMeetingModels zoomMeetings, CachedCanvasCourses courses, 
-            SecretConfigManager<ZoomOptions> optionsManager, SizedCache cache)
+            SecretConfigManager<ZoomOptions> optionsManager, SizedCache cache, ILogger<CachedCalendarEvents> logger)
         {
             _canvasApi = canvasApi;
             _zoomMeetings = zoomMeetings;
             _courses = courses.Courses;
             _options = optionsManager.GetValue().Result;
             _cache = cache.Cache;
+            _logger = logger;
         }
 
         public List<CalendarEvent> Events
@@ -37,6 +40,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 // see if courses are cached
                 if (_cache.TryGetValue(_cacheKeyCalendarEvents, out List<CalendarEvent> cacheEntry))
                 {
+                    _logger.LogInformation("Found CalendarEvents in cache");
                     return cacheEntry;
                 }
 
@@ -69,6 +73,8 @@ namespace ZoomConnect.Web.Services.Canvas
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
 
             _cache.Set(_cacheKeyCalendarEvents, updatedCacheEntry, cacheEntryOptions);
+
+            _logger.LogInformation($"Added {updatedCacheEntry.Count} CalendarEvents to cache");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CanvasClient;
 using CanvasClient.Domain;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using System;
 using System.Collections.Generic;
@@ -14,13 +15,16 @@ namespace ZoomConnect.Web.Services.Canvas
         private CanvasApi _canvasApi;
         private ZoomOptions _options;
         private IMemoryCache _cache;
+        private ILogger<CachedCanvasCourses> _logger;
         private const string _cacheKeyCanvasCourses= "foundCanvasCourses";
 
-        public CachedCanvasCourses(CanvasApi canvasApi, SecretConfigManager<ZoomOptions> optionsManager, SizedCache cache)
+        public CachedCanvasCourses(CanvasApi canvasApi, SecretConfigManager<ZoomOptions> optionsManager,
+            SizedCache cache, ILogger<CachedCanvasCourses> logger)
         {
             _canvasApi = canvasApi;
             _options = optionsManager.GetValue().Result;
             _cache = cache.Cache;
+            _logger = logger;
         }
 
         public List<Course> Courses
@@ -30,6 +34,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 // see if courses are cached
                 if (_cache.TryGetValue(_cacheKeyCanvasCourses, out List<Course> cacheEntry))
                 {
+                    _logger.LogInformation("Found CanvasCourses in cache");
                     return cacheEntry;
                 }
 
@@ -51,6 +56,8 @@ namespace ZoomConnect.Web.Services.Canvas
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
 
             _cache.Set(_cacheKeyCanvasCourses, updatedCacheEntry, cacheEntryOptions);
+
+            _logger.LogInformation($"Added {updatedCacheEntry.Count} CanvasCourses to cache");
         }
     }
 }

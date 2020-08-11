@@ -69,16 +69,14 @@ namespace ZoomConnect.Web.Services.Zoom
         /// <param name="assignmentRepo"></param>
         /// <param name="includePrimary"></param>
         /// <returns></returns>
-        public static CourseMeetingDataModel AddProfModels(this CourseMeetingDataModel meetingModel, CachedProfModels profModels, CachedRepository<sirasgn> assignmentRepo, bool includePrimary = true)
+        public static CourseMeetingDataModel AddProfModels(this CourseMeetingDataModel meetingModel, List<ProfDataModel> profModels, CachedRepository<sirasgn> assignmentRepo, bool includePrimary = true)
         {
-            var allProfModels = profModels.Profs;
-
             assignmentRepo.GetAll()
                 .Where(a => a.crn == meetingModel.bannerCourse.crn)
                 .ToList()
                 .ForEach(a =>
                 {
-                    var prof = allProfModels.FirstOrDefault(p => p.bannerPerson.pidm == a.pidm);
+                    var prof = profModels.FirstOrDefault(p => p.bannerPerson.pidm == a.pidm);
                     if (prof == null) { return; }
 
                     if (a.primary_ind == "Y" && includePrimary)

@@ -6,6 +6,7 @@ using CanvasClient;
 using CanvasClient.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
@@ -59,7 +60,8 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache, [FromServices] CanvasApi canvasApi)
+        public IActionResult Index(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache,
+            [FromServices] CanvasApi canvasApi, [FromServices] ILogger<HomeController> logger)
         {
             if (!ModelState.IsValid)
             {
@@ -124,6 +126,7 @@ namespace ZoomConnect.Web.Controllers
 
             _secretOptions.Save();
             sizedCache.ResetCache();
+            logger.LogInformation("Dumping cache after settings update");
 
             return RedirectToAction("Index", "Home");
         }

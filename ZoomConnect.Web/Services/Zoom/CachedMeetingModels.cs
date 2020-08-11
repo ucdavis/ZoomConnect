@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using ZoomConnect.Web.Banner.Cache;
@@ -10,12 +11,14 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         private ZoomMeetingFinder _meetingFinder;
         private IMemoryCache _cache;
+        private ILogger<CachedMeetingModels> _logger;
         private const string _cacheKeyMeetings = "foundMeetingModels";
 
-        public CachedMeetingModels(ZoomMeetingFinder meetingFinder, SizedCache cache)
+        public CachedMeetingModels(ZoomMeetingFinder meetingFinder, SizedCache cache, ILogger<CachedMeetingModels> logger)
         {
             _meetingFinder = meetingFinder;
             _cache = cache.Cache;
+            _logger = logger;
         }
 
         public List<CourseMeetingDataModel> Meetings
@@ -25,6 +28,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 // see if found meetings are cached
                 if (_cache.TryGetValue(_cacheKeyMeetings, out List<CourseMeetingDataModel> cacheEntry))
                 {
+                    _logger.LogInformation("Found CourseMeetingDataModels in cache");
                     return cacheEntry;
                 }
 
@@ -44,6 +48,8 @@ namespace ZoomConnect.Web.Services.Zoom
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
 
             _cache.Set(_cacheKeyMeetings, updatedCacheEntry, cacheEntryOptions);
+
+            _logger.LogInformation($"Added {updatedCacheEntry.Count} CourseMeetingDataModels to cache");
         }
     }
 }

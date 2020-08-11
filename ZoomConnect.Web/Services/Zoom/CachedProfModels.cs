@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using ZoomConnect.Web.Banner.Cache;
@@ -10,12 +11,14 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         private ZoomUserFinder _userFinder;
         private IMemoryCache _cache;
+        private ILogger<CachedProfModels> _logger;
         private const string _cacheKeyProfs = "profModels";
 
-        public CachedProfModels(ZoomUserFinder userFinder, SizedCache cache)
+        public CachedProfModels(ZoomUserFinder userFinder, SizedCache cache, ILogger<CachedProfModels> logger)
         {
             _userFinder = userFinder;
             _cache = cache.Cache;
+            _logger = logger;
         }
 
         public List<ProfDataModel> Profs
@@ -25,6 +28,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 // see if found profs are cached
                 if (_cache.TryGetValue(_cacheKeyProfs, out List<ProfDataModel> cacheEntry))
                 {
+                    _logger.LogInformation("Found ProfDataModels in cache");
                     return cacheEntry;
                 }
 
@@ -44,6 +48,8 @@ namespace ZoomConnect.Web.Services.Zoom
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
 
             _cache.Set(_cacheKeyProfs, updatedCacheEntry, cacheEntryOptions);
+
+            _logger.LogInformation($"Added {updatedCacheEntry.Count} ProfDataModels to cache");
         }
     }
 }
