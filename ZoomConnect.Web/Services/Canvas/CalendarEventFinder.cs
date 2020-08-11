@@ -41,7 +41,7 @@ namespace ZoomConnect.Web.Services.Canvas
                     var events = _canvasApi.ListCalendarEvents(course.id, _options.TermStart, _options.TermEnd);
                     if (events == null) { return; }
                     m.canvasEvents = events
-                        .Where(e => e.description.Contains(m.zoomMeeting.join_url, StringComparison.OrdinalIgnoreCase))
+                        .Where(e => e.description != null && e.description.Contains(m.zoomMeeting.join_url, StringComparison.OrdinalIgnoreCase))
                         .ToList();
                 });
 
