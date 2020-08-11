@@ -505,6 +505,33 @@ namespace ZoomClient
             return null;
         }
 
+        /// <summary>
+        /// Get Participant Report for a meeting
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <remarks>
+        /// https://marketplace.zoom.us/docs/api-reference/zoom-api/reports/reportmeetingparticipants
+        /// Compare to Zoom Reports : Active Host Report
+        /// </remarks>
+        public List<Participant>GetParticipantReport(string meetingId)
+        {
+            client.Authenticator = NewToken;
+
+            var request = new RestRequest("/report/meetings/{meetingId}/participants", Method.GET, DataFormat.Json)
+                .AddParameter("meetingId", meetingId, ParameterType.UrlSegment);
+
+            var response = client.Execute(request);
+            Thread.Sleep(RateLimit.Heavy);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var result = JsonConvert.DeserializeObject<ZList<Participant>>(response.Content);
+                return result.Results.ToList();
+            }
+
+            return null;
+        }
+
         private JwtAuthenticator NewToken
         {
             get

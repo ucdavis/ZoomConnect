@@ -14,7 +14,7 @@ namespace ZoomClient.JSON
         /// </summary>
         private readonly List<string> _resultsProperties = new List<string>
         {
-            "users", "meetings"
+            "users", "meetings", "participants"
         };
 
         public override bool CanWrite => false;
