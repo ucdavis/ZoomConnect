@@ -9,6 +9,7 @@ namespace ZoomConnect.Web.SetupRequirements
         Exchange,
         Mediasite,
         Canvas,
+        Email,
         Box,
         Photo
     }

@@ -28,5 +28,23 @@ namespace ZoomConnect.Web.Services
                 client.Disconnect(true);
             }
         }
+
+        public bool Test()
+        {
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(_options.EmailOptions.smtpHost, 587, false);
+                    client.Authenticate(_options.EmailOptions.username, _options.EmailOptions.password.Value);
+                    client.Disconnect(true);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

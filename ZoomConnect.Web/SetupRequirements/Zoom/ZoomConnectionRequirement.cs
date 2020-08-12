@@ -36,7 +36,7 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
 
             bool resultOk = user != null;
             _status = resultOk ? RequirementStatus.Completed : RequirementStatus.Missing;
-            _statusDescription = resultOk ? "" : "Test conection failed, please check your Zoom API credentials.";
+            _statusDescription = resultOk ? "" : "Test connection failed, please check your Zoom API credentials.";
 
             return resultOk;
         }

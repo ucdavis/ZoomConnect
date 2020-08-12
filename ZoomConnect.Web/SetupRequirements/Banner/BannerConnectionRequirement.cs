@@ -36,7 +36,7 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
             bool testResult = _testRepository.TestConnection();
 
             _status = testResult ? RequirementStatus.Completed : RequirementStatus.Missing;
-            _statusDescription = testResult ? "" : "Test conection failed, please check your instance and credentials.";
+            _statusDescription = testResult ? "" : "Test connection failed, please check your instance and credentials.";
 
             return testResult;
         }
