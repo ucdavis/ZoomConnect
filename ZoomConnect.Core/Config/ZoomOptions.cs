@@ -9,6 +9,7 @@ namespace ZoomConnect.Core.Config
             Banner = new BannerOptions();
             ZoomApi = new ZoomApiOptions();
             CanvasApi = new CanvasApiOptions();
+            EmailOptions = new EmailOptions();
         }
 
         public string CurrentTerm { get; set; }
@@ -20,5 +21,6 @@ namespace ZoomConnect.Core.Config
         public BannerOptions Banner { get; set; }
         public ZoomApiOptions ZoomApi { get; set; }
         public CanvasApiOptions CanvasApi { get; set; }
+        public EmailOptions EmailOptions { get; set; }
     }
 }

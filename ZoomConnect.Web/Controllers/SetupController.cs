@@ -43,8 +43,8 @@ namespace ZoomConnect.Web.Controllers
                 TermStart = options.TermStart,
                 TermEnd = options.TermEnd,
 
-                ZoomApiKey = options.ZoomApi?.ApiKey,
-                ZoomApiSecret = options.ZoomApi?.ApiSecret,
+                ZoomApiKey = String.IsNullOrEmpty(options.ZoomApi?.ApiKey.Value) ? "" : _passwordPlaceholder,
+                ZoomApiSecret = String.IsNullOrEmpty(options.ZoomApi?.ApiSecret.Value) ? "" : _passwordPlaceholder,
 
                 ZoomRequireMeetingAuthentication = options.ZoomApi?.RequireMeetingAuthentication ?? false,
                 ZoomAuthenticationOptionId = options.ZoomApi?.AuthenticationOptionId,
@@ -52,8 +52,12 @@ namespace ZoomConnect.Web.Controllers
                 ZoomAlternateHosts = options.ZoomApi?.AlternateHosts,
 
                 UseCanvas = options.CanvasApi.UseCanvas,
-                CanvasAccessToken = options.CanvasApi.ApiAccessToken,
-                CanvasAccountId = options.CanvasApi.SelectedAccount
+                CanvasAccessToken = String.IsNullOrEmpty(options.CanvasApi.ApiAccessToken) ? "" : _passwordPlaceholder,
+                CanvasAccountId = options.CanvasApi.SelectedAccount,
+
+                smtpHost = options.EmailOptions?.smtpHost,
+                smtpUsername = options.EmailOptions?.username,
+                smtpPassword = String.IsNullOrEmpty(options.EmailOptions?.password.Value) ? "" : _passwordPlaceholder
             };
 
             return View(viewModel);
@@ -122,6 +126,13 @@ namespace ZoomConnect.Web.Controllers
             if (model.CanvasAccessToken != _passwordPlaceholder && !String.IsNullOrEmpty(model.CanvasAccessToken))
             {
                 options.CanvasApi.ApiAccessToken = new SecretStruct(model.CanvasAccessToken);
+            }
+
+            options.EmailOptions.smtpHost = model.smtpHost;
+            options.EmailOptions.username = model.smtpUsername;
+            if (model.smtpPassword != _passwordPlaceholder && !String.IsNullOrEmpty(model.smtpPassword))
+            {
+                options.EmailOptions.password = new SecretStruct(model.smtpPassword);
             }
 
             _secretOptions.Save();
