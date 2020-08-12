@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MimeKit;
 using SecretJsonConfig;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
+using ZoomConnect.Web.Services;
 using ZoomConnect.Web.Services.Canvas;
 using ZoomConnect.Web.Services.Zoom;
 
@@ -42,31 +45,27 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedCanvasCourses canvasCourses, [FromServices] CanvasApi canvasApi)
+        public IActionResult Test([FromServices] ParticipantReportService participantReportService, [FromServices] EmailService emailService)
         {
-            //// list active courses (from cache)
-            //var courses = canvasCourses.Courses
-            //    .OrderBy(c => c.course_code)
-            //    .ToList();
-            //return View(courses);
+            var messages = new List<MimeMessage>();
 
-            // add single event
-            var request = new CalendarEventRequest
-            {
-                calendar_event = new EventRequestData
+            participantReportService.PrepareReports()
+                .ForEach(r =>
                 {
-                    context_code = "course_467774",
-                    title = "LAW 420",
-                    start_at = new DateTime(2020, 08, 04, 9, 30, 0),
-                    end_at = new DateTime(2020, 08, 04, 10, 0, 0),
-                    description = "<a href='https://law.ucdavis.edu/'>Join with Zoom</a>"
-                }
-            };
-            canvasApi.CreateCalendarEvent(request);
+                    var msg = new MimeMessage();
+                    msg.From.Add(MailboxAddress.Parse(_options.EmailOptions.username));
+                    msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
+                    msg.Subject = r.subject;
+                    msg.Body = new TextPart("plain")
+                    {
+                        Text = String.Join("\r\n", r.participants.Select(p => $"{p.name} : {Math.Ceiling(p.duration / 60.0)} minute(s)"))
+                    };
+                    messages.Add(msg);
+                });
 
-            // list calendar events
-            var events = canvasApi.ListCalendarEvents(467774, new DateTime(2020, 8, 24), new DateTime(2020, 11, 25));
-            return View(events);
+            emailService.Send(messages);
+
+            return new EmptyResult();
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache, [FromServices] ILogger<HomeController> logger)

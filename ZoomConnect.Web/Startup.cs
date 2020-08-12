@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using AspNetCore.Security.CAS;
 using Serilog;
+using ZoomConnect.Web.Services;
 
 namespace ZoomConnect.Web
 {
@@ -46,6 +47,7 @@ namespace ZoomConnect.Web
             services.AddZoomServices();
             services.AddCanvasServices();
             services.AddSetupRequirements();
+            services.AddScoped<EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

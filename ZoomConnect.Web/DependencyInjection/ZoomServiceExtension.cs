@@ -14,6 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ZoomMeetingCreator>();
             services.AddScoped<CachedProfModels>();
             services.AddScoped<CachedMeetingModels>();
+            services.AddScoped<ParticipantReportService>();
 
             return services;
         }
