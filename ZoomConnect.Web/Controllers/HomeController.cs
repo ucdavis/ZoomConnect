@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services;
@@ -45,33 +46,42 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] ParticipantReportService participantReportService, [FromServices] EmailService emailService)
+        public IActionResult Test([FromServices] CachedRepository<spriden_student> studentRepo)
         {
-            var messages = new List<MimeMessage>();
-            var ccList = _options.EmailOptions?.ParticipantReportCcList ?? "";
-
-            var ccAddresses = ccList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(e => MailboxAddress.Parse(e))
+            // student view
+            var students = studentRepo.GetAll()
+                .OrderBy(s => s.last_name)
+                .ThenBy(s => s.first_name)
                 .ToList();
 
-            participantReportService.PrepareReports()
-                .ForEach(r =>
-                {
-                    var msg = new MimeMessage();
-                    msg.From.Add(MailboxAddress.Parse(_options.EmailOptions.Username));
-                    msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
-                    msg.Cc.AddRange(ccAddresses);
-                    msg.Subject = r.subject;
-                    msg.Body = new TextPart("plain")
-                    {
-                        Text = String.Join("\r\n", r.participants.Select(p => $"{p.name} : {Math.Ceiling(p.duration / 60.0)} minute(s)"))
-                    };
-                    messages.Add(msg);
-                });
+            return View(students);
 
-            emailService.Send(messages);
+            //// participant report ([FromServices] ParticipantReportService participantReportService, [FromServices] EmailService emailService)
+            //var messages = new List<MimeMessage>();
+            //var ccList = _options.EmailOptions?.ParticipantReportCcList ?? "";
 
-            return new EmptyResult();
+            //var ccAddresses = ccList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            //    .Select(e => MailboxAddress.Parse(e))
+            //    .ToList();
+
+            //participantReportService.PrepareReports()
+            //    .ForEach(r =>
+            //    {
+            //        var msg = new MimeMessage();
+            //        msg.From.Add(MailboxAddress.Parse(_options.EmailOptions.Username));
+            //        msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
+            //        msg.Cc.AddRange(ccAddresses);
+            //        msg.Subject = r.subject;
+            //        msg.Body = new TextPart("plain")
+            //        {
+            //            Text = String.Join("\r\n", r.participants.Select(p => $"{p.name} : {Math.Ceiling(p.duration / 60.0)} minute(s)"))
+            //        };
+            //        messages.Add(msg);
+            //    });
+
+            //emailService.Send(messages);
+
+            //return new EmptyResult();
         }
 
         public IActionResult Refresh([FromServices] SizedCache sizedCache, [FromServices] ILogger<HomeController> logger)

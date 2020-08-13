@@ -26,6 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<AbstractRepository<sirasgn>, SirasgnRepository>();
             services.AddScoped<AbstractRepository<sobcald>, SobcaldRepository>();
             services.AddScoped<AbstractRepository<spriden>, SpridenRepository>();
+            services.AddScoped<AbstractRepository<spriden_student>, StudentRepository>();
             services.AddScoped<AbstractRepository<ssbsect>, SsbsectRepository>();
             services.AddScoped<AbstractRepository<ssrmeet>, SsrmeetRepository>();
             services.AddScoped<AbstractRepository<stvsubj>, StvsubjRepository>();

@@ -1,15 +1,15 @@
-﻿@model ZoomConnect.Web.Models.ParticipantReportModel
+﻿@model List<ZoomConnect.Web.Banner.Domain.spriden_student>
 @{
     ViewData["Title"] = "Test";
 }
 
 <h1>Test</h1>
 
-<div>@Model.participants.Count Participants</div>
+<div>@Model.Count Students</div>
 
 <ul>
-    @foreach (var item in @Model.participants)
+    @foreach (var item in @Model)
     {
-        <li><b>@item.name</b> - @(Math.Ceiling(item.duration / 60.0)) minute(s) starting @item.join_time</li>
+        <li><b>@item.id</b> - @item.last_name, @item.first_name - @item.email - @item.degc - @item.classlevel  </li>
     }
 </ul>

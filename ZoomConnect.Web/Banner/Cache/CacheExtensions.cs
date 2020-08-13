@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ICachedRepository, CachedRepository<sirasgn>>();
             services.AddScoped<ICachedRepository, CachedRepository<sobcald>>();
             services.AddScoped<ICachedRepository, CachedRepository<spriden>>();
+            services.AddScoped<ICachedRepository, CachedRepository<spriden_student>>();
             services.AddScoped<ICachedRepository, CachedRepository<ssbsect>>();
             services.AddScoped<ICachedRepository, CachedRepository<ssrmeet>>();
             services.AddScoped<ICachedRepository, CachedRepository<stvsubj>>();
