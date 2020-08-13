@@ -55,11 +55,22 @@ namespace ZoomClient
         }
 
         /// <summary>
-        /// Gets all Zoom users on this account.
+        /// Gets all Zoom users in active status on this account.
         /// </summary>
         /// <returns></returns>
         /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/users</remarks>
         public List<User> GetUsers()
+        {
+            return GetUsers("active");
+        }
+
+        /// <summary>
+        /// Gets all Zoom users of the specified status on this account.
+        /// </summary>
+        /// <param name="userStatus">Status of users to return.  "active", "inactive", "pending" are allowed.</param>
+        /// <returns></returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/users</remarks>
+        public List<User> GetUsers(string userStatus)
         {
             var page = 0;
             var pages = 1;
@@ -70,7 +81,7 @@ namespace ZoomClient
                 page++;
 
                 var request = new RestRequest("users", Method.GET, DataFormat.Json)
-                    .AddParameter("status", "active")
+                    .AddParameter("status", userStatus)
                     .AddParameter("page_size", PageSize)
                     .AddParameter("page_number", page);
 
