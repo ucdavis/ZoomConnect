@@ -20,8 +20,8 @@ namespace ZoomConnect.Web.Services
         {
             using (var client = new SmtpClient())
             {
-                client.Connect(_options.EmailOptions.smtpHost, 587, false);
-                client.Authenticate(_options.EmailOptions.username, _options.EmailOptions.password.Value);
+                client.Connect(_options.EmailOptions.SmtpHost, 587, false);
+                client.Authenticate(_options.EmailOptions.Username, _options.EmailOptions.Password.Value);
 
                 messages.ForEach(m => client.Send(m));
 
@@ -35,8 +35,8 @@ namespace ZoomConnect.Web.Services
             {
                 using (var client = new SmtpClient())
                 {
-                    client.Connect(_options.EmailOptions.smtpHost, 587, false);
-                    client.Authenticate(_options.EmailOptions.username, _options.EmailOptions.password.Value);
+                    client.Connect(_options.EmailOptions.SmtpHost, 587, false);
+                    client.Authenticate(_options.EmailOptions.Username, _options.EmailOptions.Password.Value);
                     client.Disconnect(true);
                 }
                 return true;

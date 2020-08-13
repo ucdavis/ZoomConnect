@@ -48,13 +48,19 @@ namespace ZoomConnect.Web.Controllers
         public IActionResult Test([FromServices] ParticipantReportService participantReportService, [FromServices] EmailService emailService)
         {
             var messages = new List<MimeMessage>();
+            var ccList = _options.EmailOptions?.ParticipantReportCcList ?? "";
+
+            var ccAddresses = ccList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(e => MailboxAddress.Parse(e))
+                .ToList();
 
             participantReportService.PrepareReports()
                 .ForEach(r =>
                 {
                     var msg = new MimeMessage();
-                    msg.From.Add(MailboxAddress.Parse(_options.EmailOptions.username));
+                    msg.From.Add(MailboxAddress.Parse(_options.EmailOptions.Username));
                     msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
+                    msg.Cc.AddRange(ccAddresses);
                     msg.Subject = r.subject;
                     msg.Body = new TextPart("plain")
                     {

@@ -26,8 +26,9 @@ namespace ZoomConnect.Web.ViewModels
         public string CanvasAccessToken { get; set; }
         public int CanvasAccountId { get; set; }
 
-        public string smtpHost { get; set; }
-        public string smtpUsername { get; set; }
-        public string smtpPassword { get; set; }
+        public string SmtpHost { get; set; }
+        public string SmtpUsername { get; set; }
+        public string SmtpPassword { get; set; }
+        public string ParticipantReportCcList { get; set; }
     }
 }

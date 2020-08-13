@@ -40,9 +40,9 @@ namespace ZoomConnect.Web.SetupRequirements.Email
                 return false;
             }
 
-            if (String.IsNullOrEmpty(_options.EmailOptions.smtpHost) ||
-                String.IsNullOrEmpty(_options.EmailOptions.username) ||
-                String.IsNullOrEmpty(_options.EmailOptions.password.Value))
+            if (String.IsNullOrEmpty(_options.EmailOptions.SmtpHost) ||
+                String.IsNullOrEmpty(_options.EmailOptions.Username) ||
+                String.IsNullOrEmpty(_options.EmailOptions.Password.Value))
             {
                 _status = RequirementStatus.Missing;
                 _statusDescription = "Email server and/or credentials are not filled out.";

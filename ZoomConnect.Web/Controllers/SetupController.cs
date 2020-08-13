@@ -55,9 +55,10 @@ namespace ZoomConnect.Web.Controllers
                 CanvasAccessToken = String.IsNullOrEmpty(options.CanvasApi.ApiAccessToken) ? "" : _passwordPlaceholder,
                 CanvasAccountId = options.CanvasApi.SelectedAccount,
 
-                smtpHost = options.EmailOptions?.smtpHost,
-                smtpUsername = options.EmailOptions?.username,
-                smtpPassword = String.IsNullOrEmpty(options.EmailOptions?.password.Value) ? "" : _passwordPlaceholder
+                SmtpHost = options.EmailOptions?.SmtpHost,
+                SmtpUsername = options.EmailOptions?.Username,
+                SmtpPassword = String.IsNullOrEmpty(options.EmailOptions?.Password.Value) ? "" : _passwordPlaceholder,
+                ParticipantReportCcList = options.EmailOptions?.ParticipantReportCcList
             };
 
             return View(viewModel);
@@ -128,12 +129,13 @@ namespace ZoomConnect.Web.Controllers
                 options.CanvasApi.ApiAccessToken = new SecretStruct(model.CanvasAccessToken);
             }
 
-            options.EmailOptions.smtpHost = model.smtpHost;
-            options.EmailOptions.username = model.smtpUsername;
-            if (model.smtpPassword != _passwordPlaceholder && !String.IsNullOrEmpty(model.smtpPassword))
+            options.EmailOptions.SmtpHost = model.SmtpHost;
+            options.EmailOptions.Username = model.SmtpUsername;
+            if (model.SmtpPassword != _passwordPlaceholder && !String.IsNullOrEmpty(model.SmtpPassword))
             {
-                options.EmailOptions.password = new SecretStruct(model.smtpPassword);
+                options.EmailOptions.Password = new SecretStruct(model.SmtpPassword);
             }
+            options.EmailOptions.ParticipantReportCcList = model.ParticipantReportCcList;
 
             _secretOptions.Save();
             sizedCache.ResetCache();
