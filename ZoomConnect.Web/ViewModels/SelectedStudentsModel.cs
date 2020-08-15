@@ -11,7 +11,7 @@ namespace ZoomConnect.Web.ViewModels
             Students = new List<StudentViewModel>();
         }
 
-        public int SelectedStudents => Students.Where(p => p.IsSelected).Count();
+        public int SelectedStudents => Students.Where(s => s.IsSelected).Count();
         public int RemainingLicenses { get; set; }
         public string AlertClass => SelectedStudents > RemainingLicenses
             ? "alert-danger"

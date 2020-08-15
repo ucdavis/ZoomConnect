@@ -1,88 +1,88 @@
 ﻿@model ZoomConnect.Web.ViewModels.SelectedStudentsModel
-@using ZoomConnect.Web.ViewModels;
+    @using ZoomConnect.Web.ViewModels;
 
-@{
-    ViewData["Title"] = "Students";
-}
-
-<h1>Students</h1>
-
-@if (Model.SelectedStudents > 0)
-{
-    <div class="alert @Model.AlertClass" role="alert">@Model.AlertMessage</div>
-}
-
-<form asp-controller="Students" asp-action="@(Model.SelectedStudents == 0 ? "Index" : "Create")" method="post">
-
-    <div class="row">
-        @if (Model.ConnectedCount > 0)
-        {
-            <div class="col col-sm-3 text-success"><span class="oi oi-check" aria-hidden="true"></span> @Model.ConnectedCount Connected</div>
-        }
-        @if (Model.PendingCount > 0)
-        {
-            <div class="col col-sm-3 text-warning"><span class="oi oi-clock" aria-hidden="true"></span> @Model.PendingCount Pending</div>
-        }
-        @if (Model.BasicCount > 0)
-        {
-            <div class="col col-sm-3 text-warning"><span class="oi oi-dollar" aria-hidden="true"></span> @Model.BasicCount Basic</div>
-        }
-        @if (Model.MissingCount > 0)
-        {
-            <div class="col col-sm-3 text-danger"><span class="oi oi-x" aria-hidden="true"></span> @Model.MissingCount Missing</div>
-        }
-        @if (Model.InactiveCount > 0)
-        {
-            <div class="col col-sm-3 text-danger"><span class="oi oi-ban" aria-hidden="true"></span> @Model.InactiveCount Inactive</div>
-        }
-    </div>
-
-    <table class="table table-sm">
-        <thead>
-            <tr>
-                <td>
-                    @if (Model.SelectedStudents == 0)
-                    {
-                        <input type="checkbox" id="SelectAll" title="Select All" />
-                    }
-                </td>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Class</th>
-                <th scope="col">Zoom Acct</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var student in Model.Students)
-            {
-                <tr class="@student.RowStatusClass">
-                    <td>
-                        <input type="hidden" name="Students.Index" value="@student.Pidm" />
-                        <input type="hidden" name="Students[@student.Pidm].Pidm" value="@student.Pidm" />
-                        @if (Model.SelectedStudents == 0 && student.CanBeLicensed)
-                        {
-                            <input type="checkbox" name="Students[@student.Pidm].IsSelected" value="true" />
-                        }
-                        else if (Model.SelectedStudents > 0)
-                        {
-                            <input type="hidden" name="Students[@student.Pidm].IsSelected" value="true" />
-                        }
-                    </td>
-                    <td>@student.Name</td>
-                    <td>@student.Email</td>
-                    <td>@student.ClassLevel</td>
-                    <td>
-                        <span class="@student.RowStatusIcon" title="@student.ZoomStatus" aria-hidden="true"></span>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <button type="submit" class="btn btn-primary">License Zoom Users</button>
-    @if (Model.SelectedStudents > 0)
-    {
-        <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>
+    @{
+        ViewData["Title"] = "Students";
     }
 
-</form>
+    <h1>Students</h1>
+
+    @if (Model.SelectedStudents > 0)
+    {
+        <div class="alert @Model.AlertClass" role="alert">@Model.AlertMessage</div>
+    }
+
+    <form asp-controller="Students" asp-action="@(Model.SelectedStudents == 0 ? "Index" : "Create")" method="post">
+
+        <div class="row">
+            @if (Model.ConnectedCount > 0)
+            {
+                <div class="col col-sm-3 text-success"><span class="oi oi-check" aria-hidden="true"></span> @Model.ConnectedCount Connected</div>
+            }
+            @if (Model.PendingCount > 0)
+            {
+                <div class="col col-sm-3 text-warning"><span class="oi oi-clock" aria-hidden="true"></span> @Model.PendingCount Pending</div>
+            }
+            @if (Model.BasicCount > 0)
+            {
+                <div class="col col-sm-3 text-warning"><span class="oi oi-dollar" aria-hidden="true"></span> @Model.BasicCount Basic</div>
+            }
+            @if (Model.MissingCount > 0)
+            {
+                <div class="col col-sm-3 text-danger"><span class="oi oi-x" aria-hidden="true"></span> @Model.MissingCount Missing</div>
+            }
+            @if (Model.InactiveCount > 0)
+            {
+                <div class="col col-sm-3 text-danger"><span class="oi oi-ban" aria-hidden="true"></span> @Model.InactiveCount Inactive</div>
+            }
+        </div>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <td>
+                        @if (Model.SelectedStudents == 0)
+                        {
+                            <input type="checkbox" id="SelectAll" title="Select All" />
+                        }
+                    </td>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Zoom Acct</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.Students)
+                {
+                    <tr class="@student.RowStatusClass">
+                        <td>
+                            @if (Model.SelectedStudents == 0 && student.CanBeLicensed)
+                            {
+                                <input type="hidden" name="Students.Index" value="@student.Pidm" />
+                                <input type="hidden" name="Students[@student.Pidm].Pidm" value="@student.Pidm" />
+                                <input type="checkbox" name="Students[@student.Pidm].IsSelected" value="true" />
+                            }
+                            @*else if (Model.SelectedStudents > 0)
+                            {
+                                <input type="hidden" name="Students[@student.Pidm].IsSelected" value="true" />
+                            }*@
+                        </td>
+                        <td>@student.Name</td>
+                        <td>@student.Email</td>
+                        <td>@student.ClassLevel</td>
+                        <td>
+                            <span class="@student.RowStatusIcon" title="@student.ZoomStatus" aria-hidden="true"></span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">License Zoom Users</button>
+        @if (Model.SelectedStudents > 0)
+        {
+            <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>
+        }
+
+    </form>
