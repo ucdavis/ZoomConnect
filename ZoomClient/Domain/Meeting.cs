@@ -11,6 +11,11 @@ namespace ZoomClient.Domain
         public string uuid { get; set; }
         public string id { get; set; }
         public string host_id { get; set; }
+        /// <summary>
+        /// Email of host. May only be filled after GetCloudRecordingsForAccount.
+        /// Not populated by GetCloudRecordingsForUser.
+        /// </summary>
+        public string host_email { get; set; }
 
         public string topic { get; set; }
         public int type { get; set; }        // 1=instant, 2=scheduled, 3=recurring without fixed time, 8=recurring with fixed time

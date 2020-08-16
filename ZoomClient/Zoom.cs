@@ -382,7 +382,6 @@ namespace ZoomClient
 
         /// <summary>
         /// Gets recordings for the given user in the last 3 months.
-        /// Stops after one page of results for now.
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
@@ -415,11 +414,48 @@ namespace ZoomClient
                 }
 
                 pages = result.page_count;
-                page = pages;           // stop after one page for now
             }
             while (page < pages);
 
-            // TODO prep for deprecation of page_number in favor of next_page_token (see ZList)
+            return meetings;
+        }
+
+        /// <summary>
+        /// Gets recordings for the given account id ("me" by default) for the past 7 days.
+        /// </summary>
+        /// <param name="accountId">Defaults to "me". Calling account must have rights.</param>
+        /// <returns></returns>
+        public List<Meeting> GetCloudRecordingsForAccount(string accountId = "me")
+        {
+            List<Meeting> meetings = new List<Meeting>();
+            string nextPageToken = "";
+
+            do
+            {
+                var request = new RestRequest("accounts/{accountId}/recordings", Method.GET, DataFormat.Json)
+                    .AddParameter("accountId", accountId, ParameterType.UrlSegment)
+                    .AddParameter("page_size", PageSize)
+                    .AddParameter("from", DateTime.Now.AddDays(-7).ToZoomUTCFormat())
+                    .AddParameter("to", DateTime.Now.ToZoomUTCFormat());
+
+                if (nextPageToken != "")
+                {
+                    request = request.AddParameter("next_page_token", nextPageToken);
+                }
+
+                client.Authenticator = NewToken;
+                var response = client.Execute(request);
+                Thread.Sleep(RateLimit.Medium);
+
+                var result = JsonConvert.DeserializeObject<ZList<Meeting>>(response.Content);
+                if (result != null && result.Results != null)
+                {
+                    meetings.AddRange(result.Results);
+                }
+
+                nextPageToken = result.next_page_token;
+            }
+            while (nextPageToken != "");
 
             return meetings;
         }
