@@ -7,12 +7,18 @@ using ZoomConnect.Web.Filters;
 
 namespace ZoomConnect.Web.Controllers
 {
+    [CorsAllowAll]
     [TypeFilter(typeof(CmdKeyAuthorize))]
     public class CmdController : Controller
     {
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult CloudDownload()
+        {
+            return Content("CloudDownloader");
         }
     }
 }
