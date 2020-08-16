@@ -7,7 +7,7 @@ using ZoomConnect.Web.Filters;
 
 namespace ZoomConnect.Web.Controllers
 {
-    [TypeFilter(typeof(CheckRequirements))]
+    [TypeFilter(typeof(CmdKeyAuthorize))]
     public class CmdController : Controller
     {
         public IActionResult Index()

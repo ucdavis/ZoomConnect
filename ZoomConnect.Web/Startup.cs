@@ -47,8 +47,8 @@ namespace ZoomConnect.Web
             services.AddZoomServices();
             services.AddCanvasServices();
             services.AddSetupRequirements();
+            services.AddCommandKey();
             services.AddScoped<EmailService>();
-            services.AddTransient<CmdKeyService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
