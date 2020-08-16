@@ -7,9 +7,9 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
     {
         private RequirementStatus _status = RequirementStatus.Unchecked;
         private string _statusDescription = "";
-        private Zoom _zoomClient;
+        private ZoomClient.Zoom _zoomClient;
 
-        public ZoomConnectionRequirement(Zoom zoomClient)
+        public ZoomConnectionRequirement(ZoomClient.Zoom zoomClient)
         {
             _zoomClient = zoomClient;
         }

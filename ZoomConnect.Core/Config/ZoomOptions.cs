@@ -18,6 +18,8 @@ namespace ZoomConnect.Core.Config
         public DateTime TermStart { get; set; }
         public DateTime TermEnd { get; set; }
 
+        public string DownloadDirectory { get; set; }
+
         /// <summary>
         /// Date of last Participant Report.
         /// Updated by participant report service.  Do not display to user.

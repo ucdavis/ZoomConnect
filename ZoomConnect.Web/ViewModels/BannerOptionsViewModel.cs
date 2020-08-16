@@ -14,6 +14,8 @@ namespace ZoomConnect.Web.ViewModels
         public DateTime TermStart { get; set; }
         public DateTime TermEnd { get; set; }
 
+        public string DownloadDirectory { get; set; }
+
         public string ZoomApiKey { get; set; }
         public string ZoomApiSecret { get; set; }
 

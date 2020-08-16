@@ -44,6 +44,8 @@ namespace ZoomConnect.Web.Controllers
                 CurrentTerm = options.CurrentTerm,
                 CurrentSubject = options.CurrentSubject,
 
+                DownloadDirectory = options.DownloadDirectory,
+
                 TermStart = options.TermStart,
                 TermEnd = options.TermEnd,
 
@@ -108,6 +110,8 @@ namespace ZoomConnect.Web.Controllers
                 options.TermStart = model.TermStart;
                 options.TermEnd = model.TermEnd;
             }
+
+            options.DownloadDirectory = model.DownloadDirectory;
 
             options.CurrentSubject = model.CurrentSubject;
 
