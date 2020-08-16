@@ -11,6 +11,7 @@ using SecretJsonConfig;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
+using ZoomConnect.Web.Services;
 using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
@@ -20,12 +21,15 @@ namespace ZoomConnect.Web.Controllers
     {
         private SecretConfigManager<ZoomOptions> _secretOptions;
         private CachedRepository<stvterm> _termRepository;
+        private ILogger<HomeController> _logger;
         private const string _passwordPlaceholder = "*********";
 
-        public SetupController(SecretConfigManager<ZoomOptions> secretOptions, CachedRepository<stvterm> termRepository)
+        public SetupController(SecretConfigManager<ZoomOptions> secretOptions, CachedRepository<stvterm> termRepository,
+            ILogger<HomeController> logger)
         {
             _secretOptions = secretOptions;
             _termRepository = termRepository;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -66,7 +70,7 @@ namespace ZoomConnect.Web.Controllers
 
         [HttpPost]
         public IActionResult Index(BannerOptionsViewModel model, [FromServices] SizedCache sizedCache,
-            [FromServices] CanvasApi canvasApi, [FromServices] ILogger<HomeController> logger)
+            [FromServices] CanvasApi canvasApi)
         {
             if (!ModelState.IsValid)
             {
@@ -139,7 +143,41 @@ namespace ZoomConnect.Web.Controllers
 
             _secretOptions.Save();
             sizedCache.ResetCache();
-            logger.LogInformation("Dumping cache after settings update");
+            _logger.LogInformation("Dumping cache after settings update");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult CmdKey()
+        {
+            var options = _secretOptions.GetValue().Result;
+            var cmdKeyOptions = options?.CmdKeyOptions ?? new CmdKeyOptions();
+
+            return View(cmdKeyOptions);
+        }
+
+        [HttpPost]
+        public IActionResult CmdKey(bool confirm, [FromServices] CmdKeyService cmdKeyService)
+        {
+            if (confirm)
+            {
+                _logger.LogInformation("Generating new CmdKey by request.");
+
+                // generate and save new key
+                var newKey = cmdKeyService.GenerateKey();
+                var options = _secretOptions.GetValue().Result;
+                var cmdKeyOptions = options?.CmdKeyOptions ?? new CmdKeyOptions();
+
+                cmdKeyOptions.CmdKey = new SecretStruct(newKey);
+                cmdKeyOptions.CreatedBy = User.Identity.Name;
+                cmdKeyOptions.CreatedDate = DateTime.Now;
+
+                options.CmdKeyOptions = cmdKeyOptions;
+
+                _secretOptions.Save();
+
+                TempData["Message"] = $"New CmdKey Created: '{cmdKeyOptions.CmdKey.Value}'";
+            }
 
             return RedirectToAction("Index", "Home");
         }

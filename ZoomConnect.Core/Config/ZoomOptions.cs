@@ -28,5 +28,6 @@ namespace ZoomConnect.Core.Config
         public ZoomApiOptions ZoomApi { get; set; }
         public CanvasApiOptions CanvasApi { get; set; }
         public EmailOptions EmailOptions { get; set; }
+        public CmdKeyOptions CmdKeyOptions { get; set; }
     }
 }
