@@ -80,13 +80,13 @@ namespace ZoomConnect.Web.Controllers
             var output = new StringBuilder(80 * profRecordings.Count);
             output.AppendFormat("\r\nRecordings will be saved to [{0}].\r\n", downloadDirectory);
 
-            output.AppendLine("MEETING_ID TYPE SIZE     START            END    ACTION");
+            output.AppendLine(" MEETING_ID  TYPE SIZE     START            END    ACTION");
             foreach (var meeting in connectedRecordings)
             {
                 var recordingFiles = meeting.recording_files; //.Where(r => r.file_type.ToUpper() == "MP4" || r.file_type.ToUpper() == "M4A");
                 foreach (var recording in recordingFiles)
                 {
-                    output.AppendFormat(" {0, -9} {1, -4} {2, 8} {3:yyyy-MM-dd HH:mm}-{4:HH:mm}  ",
+                    output.AppendFormat(" {0, -11} {1, -4} {2, 8} {3:yyyy-MM-dd HH:mm}-{4:HH:mm}  ",
                         meeting.id, recording.file_type, recording.file_size.ShortFileSize(), recording.RecordingStartDateTime, recording.RecordingEndDateTime);
 
                     if (recording.status.ToUpper() != "COMPLETED")
@@ -107,13 +107,13 @@ namespace ZoomConnect.Web.Controllers
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
-                            output.AppendFormat("x - status={0}, not downloaded.", response.StatusCode);
+                            output.AppendFormat("N - status={0}, not downloaded.", response.StatusCode);
                         }
                         else
                         {
-                            output.Append("✓, trashing ");
+                            output.Append("*, trashing ");
                             var deleted = _zoomClient.DeleteRecording(recording.meeting_id, recording.id);
-                            output.AppendFormat("{0} [{1}]", deleted ? "✓" : "x", filename);
+                            output.AppendFormat("{0} [{1}]", deleted ? "Y" : "N", filename);
                         }
                     }
                     output.AppendLine();
