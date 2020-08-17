@@ -16,9 +16,9 @@ namespace ZoomConnect.Web.ViewModels
             var section = course.bannerCourse;
             var meeting = course.bannerMeeting;
             UseCanvas = useCanvas;
-
             MeetingId = meeting.surrogate_id;
             Crn = meeting.crn;
+            HasStartAndEndTime = meeting.begin_time != null && meeting.end_time != null;
             TimeAndDays = $"{meeting.begin_time}-{meeting.end_time} {course.daysConcat}";
             Location = $"{meeting.bldg_code} {meeting.room_code}";
             Description = $"{section.subj_code} {section.crse_numb} {section.seq_numb} {section.crse_title}";
@@ -60,6 +60,11 @@ namespace ZoomConnect.Web.ViewModels
         /// Banner course section identifier
         /// </summary>
         public string Crn { get; set; }
+
+        /// <summary>
+        /// Start and End Time are not null
+        /// </summary>
+        public bool HasStartAndEndTime { get; set; }
 
         /// <summary>
         /// Start and End Time and concatenated Days of week
@@ -115,8 +120,10 @@ namespace ZoomConnect.Web.ViewModels
         /// Indicates whether the checkbox can be shown to select this course for processing
         /// </summary>
         public bool ShowCheckbox =>
-            ProfZoomStatus == ZoomUserStatus.Connected &&
-            (!IsMeetingConnected || (UseCanvas && !IsCanvasEventCreated));
+            ProfZoomStatus == ZoomUserStatus.Connected &&   // course has a prof connected to zoom
+            HasStartAndEndTime &&                           // meeting start and end are filled out
+            (!IsMeetingConnected ||                         // and either meeting is not connected to zoom
+            (UseCanvas && !IsCanvasEventCreated));          // or we use canvas and canvas events are not created
 
         /// <summary>
         /// Indicates whether the app is currently configured to use Canvas

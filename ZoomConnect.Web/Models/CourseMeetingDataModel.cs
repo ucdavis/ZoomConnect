@@ -122,7 +122,7 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
-                if (bannerMeeting == null) { return 0; }
+                if (bannerMeeting == null || bannerMeeting.begin_time == null) { return 0; }
                 return int.Parse(bannerMeeting.begin_time.Substring(0, 2));
             }
         }
@@ -134,7 +134,7 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
-                if (bannerMeeting == null) { return 0; }
+                if (bannerMeeting == null || bannerMeeting.begin_time == null) { return 0; }
                 return int.Parse(bannerMeeting.begin_time.Substring(2, 2));
             }
         }
@@ -157,7 +157,7 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
-                if (bannerMeeting == null) { return 0; }
+                if (bannerMeeting == null || bannerMeeting.end_time == null) { return 0; }
                 return int.Parse(bannerMeeting.end_time.Substring(0, 2));
             }
         }
@@ -169,7 +169,7 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
-                if (bannerMeeting == null) { return 0; }
+                if (bannerMeeting == null || bannerMeeting.end_time == null) { return 0; }
                 return int.Parse(bannerMeeting.end_time.Substring(2, 2));
             }
         }
@@ -193,6 +193,9 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
+                // no days in meeting? no occurrence.
+                if (DayNumbers(0).Count == 0) { return DateTime.MinValue; }
+
                 // Start with start of term at appropriate time and add days as needed for first occurrence
                 var first = new DateTime(_termStart.Year, _termStart.Month, _termStart.Day, StartHour, StartMinute, 0);
                 var daysInFirstWeek = DayNumbers(0).Where(d => d >= (int)first.DayOfWeek);

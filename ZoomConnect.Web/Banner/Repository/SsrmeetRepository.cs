@@ -42,9 +42,9 @@ namespace ZoomConnect.Web.Banner.Repository
                 "FROM ssrmeet " +
                 "  INNER JOIN ssbsect ON ssrmeet_term_code = ssbsect_term_code AND ssrmeet_crn = ssbsect_crn " +
                 "WHERE SSRMEET_TERM_CODE = :term " +
-                "  AND ssbsect_subj_code = :subj " +
-                "  AND ssrmeet_begin_time IS NOT NULL " +
-                "  AND ssrmeet_end_time IS NOT NULL ";
+                "  AND ssbsect_subj_code = :subj ";// +
+                //"  AND ssrmeet_begin_time IS NOT NULL " +
+                //"  AND ssrmeet_end_time IS NOT NULL ";
 
             return Context
                 .Connection
