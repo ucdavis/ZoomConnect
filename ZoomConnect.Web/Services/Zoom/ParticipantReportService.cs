@@ -12,6 +12,7 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         private CachedMeetingModels _meetingModels;
         private ZoomClient.Zoom _zoomClient;
+        private SecretConfigManager<ZoomOptions> _configManager;
         private ZoomOptions _options;
         private ILogger<ParticipantReportService> _logger;
 
@@ -20,6 +21,7 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             _meetingModels = meetingModels;
             _zoomClient = zoomClient;
+            _configManager = configManager;
             _options = configManager.GetValue().Result;
             _logger = logger;
         }
@@ -49,6 +51,9 @@ namespace ZoomConnect.Web.Services.Zoom
                         reportModels.AddRange(newInstances);
                     }
                 });
+
+            _options.LastParticipantReportDate = DateTime.Now;
+            _configManager.Save();
 
             // prepare report bodies by getting participant report for each model created above
             reportModels.ForEach(rm =>
