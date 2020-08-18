@@ -147,12 +147,12 @@ namespace ZoomConnect.Web.Controllers
                 {
                     var msg = new MimeMessage();
                     msg.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
-                    msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
+                    msg.To.Add(MailboxAddress.Parse(r.hostEmail));
                     msg.Cc.AddRange(ccAddresses);
                     msg.Subject = r.subject;
-                    msg.Body = new TextPart("plain")
+                    msg.Body = new TextPart("html")
                     {
-                        Text = String.Join("\r\n", r.participants.Select(p => $"{p.name} : {Math.Ceiling(p.duration / 60.0)} minute(s)"))
+                        Text = r.participants.HtmlReport()
                     };
                     messages.Add(msg);
                 });
