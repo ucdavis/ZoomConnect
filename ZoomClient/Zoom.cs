@@ -266,8 +266,6 @@ namespace ZoomClient
                 return null;
             }
 
-            Console.Write(response.Content);
-
             var result = JsonConvert.DeserializeObject<ZList<Meeting>>(response.Content);
             return result.Results.ToList();
         }
