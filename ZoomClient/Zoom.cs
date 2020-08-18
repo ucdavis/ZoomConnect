@@ -560,21 +560,38 @@ namespace ZoomClient
         /// </remarks>
         public List<Participant>GetParticipantReport(string meetingId)
         {
-            client.Authenticator = NewToken;
+            string nextPageToken = "";
+            var participants = new List<Participant>();
 
-            var request = new RestRequest("/report/meetings/{meetingId}/participants", Method.GET, DataFormat.Json)
-                .AddParameter("meetingId", meetingId, ParameterType.UrlSegment);
-
-            var response = client.Execute(request);
-            Thread.Sleep(RateLimit.Heavy);
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            do
             {
-                var result = JsonConvert.DeserializeObject<ZList<Participant>>(response.Content);
-                return result.Results.ToList();
-            }
+                var request = new RestRequest("/report/meetings/{meetingId}/participants", Method.GET, DataFormat.Json)
+                    .AddParameter("meetingId", meetingId, ParameterType.UrlSegment);
 
-            return null;
+                if (nextPageToken != "")
+                {
+                    request = request.AddParameter("next_page_token", nextPageToken);
+                }
+
+                client.Authenticator = NewToken;
+                var response = client.Execute(request);
+                Thread.Sleep(RateLimit.Heavy);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var result = JsonConvert.DeserializeObject<ZList<Participant>>(response.Content);
+                    participants.AddRange(result.Results);
+
+                    nextPageToken = result.next_page_token;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            while (nextPageToken != "");
+
+            return participants;
         }
 
         private JwtAuthenticator NewToken
