@@ -32,5 +32,17 @@ namespace ZoomConnect.Web.ViewModels
         public string SmtpUsername { get; set; }
         public string SmtpPassword { get; set; }
         public string ParticipantReportCcList { get; set; }
+
+        public string MediasiteEndpoint { get; set; }
+        public string MediasiteRootFolder { get; set; }
+        public string MediasiteUsername { get; set; }
+        public string MediasitePassword { get; set; }
+        public string MediasiteApiKey { get; set; }
+
+        public string MediasitePlayerId { get; set; }
+        public string MediasiteTemplateId { get; set; }
+
+        public string MediasiteUploadDirectory { get; set; }
+
     }
 }

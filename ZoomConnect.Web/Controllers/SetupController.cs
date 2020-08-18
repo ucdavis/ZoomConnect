@@ -64,7 +64,17 @@ namespace ZoomConnect.Web.Controllers
                 SmtpHost = options.EmailOptions?.SmtpHost,
                 SmtpUsername = options.EmailOptions?.Username,
                 SmtpPassword = String.IsNullOrEmpty(options.EmailOptions?.Password.Value) ? "" : _passwordPlaceholder,
-                ParticipantReportCcList = options.EmailOptions?.ParticipantReportCcList
+                ParticipantReportCcList = options.EmailOptions?.ParticipantReportCcList,
+
+                // mediasite settings
+                MediasiteEndpoint = options.MediasiteOptions?.Endpoint,
+                MediasiteRootFolder = options.MediasiteOptions?.RootFolder,
+                MediasiteUsername = options.MediasiteOptions?.Username,
+                MediasitePlayerId = options.MediasiteOptions?.PlayerId,
+                MediasiteTemplateId = options.MediasiteOptions?.TemplateId,
+                MediasiteUploadDirectory = options.MediasiteOptions?.UploadDirectory,
+                MediasitePassword = String.IsNullOrEmpty(options.MediasiteOptions?.Password.Value) ? "" : _passwordPlaceholder,
+                MediasiteApiKey = String.IsNullOrEmpty(options.MediasiteOptions?.ApiKey.Value) ? "" : _passwordPlaceholder
             };
 
             return View(viewModel);
@@ -144,6 +154,22 @@ namespace ZoomConnect.Web.Controllers
                 options.EmailOptions.Password = new SecretStruct(model.SmtpPassword);
             }
             options.EmailOptions.ParticipantReportCcList = model.ParticipantReportCcList;
+
+            // mediasite settings
+            options.MediasiteOptions.Endpoint = model.MediasiteEndpoint;
+            options.MediasiteOptions.RootFolder = model.MediasiteRootFolder;
+            options.MediasiteOptions.Username = model.MediasiteUsername;
+            options.MediasiteOptions.PlayerId = model.MediasitePlayerId;
+            options.MediasiteOptions.TemplateId = model.MediasiteTemplateId;
+            options.MediasiteOptions.UploadDirectory = model.MediasiteUploadDirectory;
+            if (model.MediasitePassword != _passwordPlaceholder && !String.IsNullOrEmpty(model.MediasitePassword))
+            {
+                options.MediasiteOptions.Password = new SecretStruct(model.MediasitePassword);
+            }
+            if (model.MediasiteApiKey != _passwordPlaceholder && !string.IsNullOrEmpty(model.MediasiteApiKey))
+            {
+                options.MediasiteOptions.ApiKey = new SecretStruct(model.MediasiteApiKey);
+            }
 
             _secretOptions.Save();
             sizedCache.ResetCache();

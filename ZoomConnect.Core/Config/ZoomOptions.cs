@@ -10,6 +10,7 @@ namespace ZoomConnect.Core.Config
             ZoomApi = new ZoomApiOptions();
             CanvasApi = new CanvasApiOptions();
             EmailOptions = new EmailOptions();
+            MediasiteOptions = new MediasiteOptions();
         }
 
         public string CurrentTerm { get; set; }
@@ -31,5 +32,6 @@ namespace ZoomConnect.Core.Config
         public CanvasApiOptions CanvasApi { get; set; }
         public EmailOptions EmailOptions { get; set; }
         public CmdKeyOptions CmdKeyOptions { get; set; }
+        public MediasiteOptions MediasiteOptions { get; set; }
     }
 }
