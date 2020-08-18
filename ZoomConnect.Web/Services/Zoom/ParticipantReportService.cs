@@ -41,7 +41,7 @@ namespace ZoomConnect.Web.Services.Zoom
                         .Select(i => new ParticipantReportModel
                         {
                             hostEmail = m.primaryProf.primaryEmail.email_address,
-                            subject = $"{m.bannerCourse.subj_code} {m.bannerCourse.crse_numb} Zoom Attendance for {i.StartDateTimeLocal}",
+                            subject = $"{m.bannerCourse.subj_code} {m.bannerCourse.crse_numb} {m.primaryProf.bannerPerson.last_name} - Attendance on {i.StartDateTimeLocal}",
                             instanceId = i.uuid
                         });
                     if (newInstances != null)
