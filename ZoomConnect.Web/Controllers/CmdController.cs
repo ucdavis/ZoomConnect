@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit;
 using SecretJsonConfig;
 using ZoomClient;
 using ZoomClient.Extensions;
@@ -13,6 +14,7 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Filters;
+using ZoomConnect.Web.Services;
 using ZoomConnect.Web.Services.Zoom;
 
 namespace ZoomConnect.Web.Controllers
@@ -25,16 +27,21 @@ namespace ZoomConnect.Web.Controllers
         private CachedRepository<goremal> _goremal;
         private CachedRepository<ssbsect> _ssbsect;
         private CachedRepository<ssrmeet> _ssrmeet;
+        private ParticipantReportService _participantService;
+        private EmailService _emailService;
         private ZoomOptions _zoomOptions;
 
         public CmdController(ZoomClient.Zoom zoomClient, CachedRepository<goremal> goremal,
             CachedRepository<ssbsect> ssbsect, CachedRepository<ssrmeet> ssrmeet,
+            ParticipantReportService participantService, EmailService emailService,
             SecretConfigManager<ZoomOptions> optionsManager)
         {
             _zoomClient = zoomClient;
             _goremal = goremal;
             _ssbsect = ssbsect;
             _ssrmeet = ssrmeet;
+            _participantService = participantService;
+            _emailService = emailService;
             _zoomOptions = optionsManager.GetValue().Result;
         }
 
@@ -126,5 +133,38 @@ namespace ZoomConnect.Web.Controllers
         // mediasite upload
 
         // participant report
+        public IActionResult ParticipantReport()
+        {
+            var messages = new List<MimeMessage>();
+            var ccList = _zoomOptions.EmailOptions?.ParticipantReportCcList ?? "";
+
+            var ccAddresses = ccList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(e => MailboxAddress.Parse(e))
+                .ToList();
+
+            _participantService.PrepareReports()
+                .ForEach(r =>
+                {
+                    var msg = new MimeMessage();
+                    msg.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
+                    msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
+                    msg.Cc.AddRange(ccAddresses);
+                    msg.Subject = r.subject;
+                    msg.Body = new TextPart("plain")
+                    {
+                        Text = String.Join("\r\n", r.participants.Select(p => $"{p.name} : {Math.Ceiling(p.duration / 60.0)} minute(s)"))
+                    };
+                    messages.Add(msg);
+                });
+
+            _emailService.Send(messages);
+
+            var subjects = messages.Select(m => m.Subject)
+                .ToList();
+
+            var subjectLines = String.Join(Environment.NewLine, subjects);
+
+            return Content(subjectLines);
+        }
     }
 }
