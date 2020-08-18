@@ -111,7 +111,7 @@ namespace ZoomConnect.Web.Controllers
                         }
                         else
                         {
-                            output.Append("*, trashing ");
+                            output.Append("Y, trashing ");
                             var deleted = _zoomClient.DeleteRecording(recording.meeting_id, recording.id);
                             output.AppendFormat("{0} [{1}]", deleted ? "Y" : "N", filename);
                         }
