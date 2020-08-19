@@ -32,7 +32,7 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             var termStart = _options.TermStart;
             var termEnd = _options.TermEnd;
-            var meetingsFromCache = _cachedMeetings.Meetings;
+            var meetingsFromCache = _cachedMeetings.Courses;
             var random = new Random();
 
             var createdMeetings = new List<Meeting>(courseMeetings.Count);
@@ -81,7 +81,7 @@ namespace ZoomConnect.Web.Services.Zoom
             });
 
             // save meetings back to cache
-            _cachedMeetings.Set(meetingsFromCache);
+            _cachedMeetings.SetCourses(meetingsFromCache);
 
             return createdMeetings;
         }
