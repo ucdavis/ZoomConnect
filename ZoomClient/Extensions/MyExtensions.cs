@@ -43,21 +43,21 @@ namespace ZoomClient.Extensions
         }
 
         /// <summary>
-        /// Returns 9-digit meeting id prefix of passed in string (a filename).
-        /// If string does not start with 9-digit id followed by underscore (_), returns empty string.
+        /// Returns 9 to 11-digit meeting id prefix of passed in string (a filename).
+        /// If string does not start with 9 to 11 digit id followed by underscore (_), returns empty string.
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
         public static string MeetingIdPrefix(this String str)
         {
             var firstUnderscore = str.IndexOf("_");
-            if (firstUnderscore != 9)
+            if (firstUnderscore < 9 || firstUnderscore > 11)
             {
                 return "";
             }
-            var meetingIdString = str.Substring(0, 9);
-            var meetingId = 0;
-            if (int.TryParse(meetingIdString, out meetingId))
+            var meetingIdString = str.Substring(0, firstUnderscore);
+            var meetingId = 0L;
+            if (long.TryParse(meetingIdString, out meetingId))
             {
                 return meetingIdString;
             }
@@ -66,20 +66,20 @@ namespace ZoomClient.Extensions
 
         /// <summary>
         /// Returns 18-char meeting id prefix of passed in string (a filename).
-        /// If string does not start with 9-digit id, underscore, 8-digit date, underscore, it returns empty string.
+        /// If string does not start with 9 to 11-digit id, underscore, 8-digit date, underscore, it returns empty string.
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
         public static string SessionIdPrefix(this String str)
         {
-            var match = Regex.Match(str, "^([0-9]{9})_([0-9]{8})_.*");
+            var match = Regex.Match(str, "^([0-9]{9,11})_([0-9]{8})_.*");
             if (!match.Success)
             {
                 return "";
             }
 
-            var meetingId = 0;
-            if (!int.TryParse(match.Groups[1].Value, out meetingId))
+            var meetingId = 0L;
+            if (!long.TryParse(match.Groups[1].Value, out meetingId))
             {
                 return "";
             }
@@ -90,7 +90,7 @@ namespace ZoomClient.Extensions
                 return "";
             }
 
-            return match.Groups[0].Value.Substring(0, 18);
+            return $"{match.Groups[1].Value}_{match.Groups[2].Value}";
         }
 
         /// <summary>
@@ -101,15 +101,14 @@ namespace ZoomClient.Extensions
         /// <returns></returns>
         public static DateTime? ExtractRecordingDatePart(this String str)
         {
-            if (!Regex.IsMatch(str, "^[0-9]{9}_[0-9]{8}_[0-9]{4}-.*"))
+            var match = Regex.Match(str, "^[0-9]{9,11}_([0-9]{8}_[0-9]{4})-.*");
+            if (!match.Success)
             {
                 return null;
             }
 
-            var datePart = str.Substring(10, 13);
-            DateTime dateValue = DateTime.MinValue;
-
-            if (DateTime.TryParseExact(datePart, "yyyyMMdd_HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
+            var dateValue = DateTime.MinValue;
+            if (DateTime.TryParseExact(match.Groups[1].Value, "yyyyMMdd_HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
             {
                 return dateValue;
             }
