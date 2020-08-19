@@ -30,7 +30,7 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             // check last run time (default to today's meetings)
             var lastRunDate = _options?.LastParticipantReportDate ?? DateTime.Now.Date;
-            var meetings = _meetingModels.Meetings;
+            var meetings = _meetingModels.Courses;
 
             // get meetings with past instances after last run time
             List<ParticipantReportModel> reportModels = new List<ParticipantReportModel>();

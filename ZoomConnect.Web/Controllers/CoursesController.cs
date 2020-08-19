@@ -30,7 +30,7 @@ namespace ZoomConnect.Web.Controllers
         {
             var coursesModel = new SelectedCoursesViewModel
             {
-                Courses = _meetingModels.Meetings
+                Courses = _meetingModels.Courses
                     .Select(m => new CourseViewModel(m, _options.CanvasApi?.UseCanvas ?? false))
                     .OrderBy(m => m.Description)
                     .ToList(),
@@ -75,7 +75,7 @@ namespace ZoomConnect.Web.Controllers
                 .Where(c => c.IsSelected)
                 .Select(c => c.MeetingId);
 
-            return _meetingModels.Meetings
+            return _meetingModels.Courses
                 .Where(m => selectedMeetingIds.Contains(m.bannerMeeting.surrogate_id))
                 .OrderBy(m => m.bannerCourse.subj_code)
                 .ThenBy(m => m.bannerCourse.crse_numb)

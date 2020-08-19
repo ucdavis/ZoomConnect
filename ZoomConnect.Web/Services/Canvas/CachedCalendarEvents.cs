@@ -47,7 +47,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 // otherwise get Calendar Events only for linked Zoom Meetings.
                 List<CalendarEvent> calendarEvents = new List<CalendarEvent>();
 
-                _zoomMeetings.Meetings
+                _zoomMeetings.Courses
                     .Where(m => m.zoomMeeting != null)
                     .ToList()
                     .ForEach(m =>

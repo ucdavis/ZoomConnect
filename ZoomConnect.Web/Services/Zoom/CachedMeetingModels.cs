@@ -12,7 +12,8 @@ namespace ZoomConnect.Web.Services.Zoom
         private ZoomMeetingFinder _meetingFinder;
         private IMemoryCache _cache;
         private ILogger<CachedMeetingModels> _logger;
-        private const string _cacheKeyMeetings = "foundMeetingModels";
+        private const string _cacheKeyCourses = "foundMeetingCourses";
+        private const string _cacheKeyMeetings = "foundCourseMeetings";
 
         public CachedMeetingModels(ZoomMeetingFinder meetingFinder, SizedCache cache, ILogger<CachedMeetingModels> logger)
         {
@@ -21,26 +22,57 @@ namespace ZoomConnect.Web.Services.Zoom
             _logger = logger;
         }
 
-        public List<CourseMeetingDataModel> Meetings
+        public List<CourseMeetingDataModel> Courses
         {
             get
             {
-                // see if found meetings are cached
-                if (_cache.TryGetValue(_cacheKeyMeetings, out List<CourseMeetingDataModel> cacheEntry))
+                // see if found courses are cached
+                if (_cache.TryGetValue(_cacheKeyCourses, out List<CourseMeetingDataModel> cacheEntry))
                 {
-                    _logger.LogInformation("Found CourseMeetingDataModels in cache");
+                    _logger.LogInformation("Found Meeting Courses in cache");
                     return cacheEntry;
                 }
 
-                cacheEntry = _meetingFinder.Meetings;
-
-                Set(cacheEntry);
+                cacheEntry = _meetingFinder.Courses;
+                SetCourses(cacheEntry);
+                SetMeetings(_meetingFinder.Meetings);
 
                 return cacheEntry;
             }
         }
 
-        public void Set(List<CourseMeetingDataModel> updatedCacheEntry)
+        public List<ZoomMeetingCourseModel> Meetings
+        {
+            get
+            {
+                // see if found meetings are cached
+                if (_cache.TryGetValue(_cacheKeyMeetings, out List<ZoomMeetingCourseModel> cacheEntry))
+                {
+                    _logger.LogInformation("Found Course Meetings in cache");
+                    return cacheEntry;
+                }
+
+                cacheEntry = _meetingFinder.Meetings;
+                SetMeetings(cacheEntry);
+                SetCourses(_meetingFinder.Courses);
+
+                return cacheEntry;
+            }
+        }
+
+        public void SetCourses(List<CourseMeetingDataModel> updatedCacheEntry)
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSize(updatedCacheEntry.Count)
+                .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+            _cache.Set(_cacheKeyCourses, updatedCacheEntry, cacheEntryOptions);
+
+            _logger.LogInformation($"Added {updatedCacheEntry.Count} Meeting Courses to cache");
+        }
+
+        public void SetMeetings(List<ZoomMeetingCourseModel> updatedCacheEntry)
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(updatedCacheEntry.Count)
@@ -49,7 +81,7 @@ namespace ZoomConnect.Web.Services.Zoom
 
             _cache.Set(_cacheKeyMeetings, updatedCacheEntry, cacheEntryOptions);
 
-            _logger.LogInformation($"Added {updatedCacheEntry.Count} CourseMeetingDataModels to cache");
+            _logger.LogInformation($"Added {updatedCacheEntry.Count} Course Meetings to cache");
         }
     }
 }

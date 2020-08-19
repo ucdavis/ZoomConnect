@@ -37,7 +37,7 @@ namespace ZoomConnect.Web.Services.Canvas
         /// </summary>
         public List<CalendarEvent> FindOrCreateCanvasEvents(List<CourseMeetingDataModel> meetingModels)
         {
-            var meetingsFromCache = _cachedMeetings.Meetings;
+            var meetingsFromCache = _cachedMeetings.Courses;
             var createdEvents = new List<CalendarEvent>();
 
             meetingModels.ForEach(m =>
@@ -88,7 +88,7 @@ namespace ZoomConnect.Web.Services.Canvas
             });
 
             // save meetings back to cache
-            _cachedMeetings.Set(meetingsFromCache);
+            _cachedMeetings.SetCourses(meetingsFromCache);
 
             return createdEvents;
         }

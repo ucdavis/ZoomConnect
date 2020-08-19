@@ -23,7 +23,8 @@ namespace ZoomConnect.Web.Services.Zoom
         private CalendarEventFinder _canvasEventFinder;
         private ZoomOptions _options;
 
-        private List<CourseMeetingDataModel> _meetings { get; set; }
+        private List<CourseMeetingDataModel> _courseMeetings { get; set; }
+        private List<ZoomMeetingCourseModel> _zoomMeetings { get; set; }
 
         public ZoomMeetingFinder(ZoomClient.Zoom zoomClient, CachedProfModels profModels,
             CachedRepository<ssrmeet> meetingRepo, CachedRepository<ssbsect> courseRepo,
@@ -40,18 +41,34 @@ namespace ZoomConnect.Web.Services.Zoom
         }
 
         /// <summary>
-        /// Course Meetings linked where possible to found Zoom meetings by prof-zoomuser and ssrmeet id
+        /// Course Meetings linked where possible to primary found Zoom meeting by prof-zoomuser and ssrmeet id
         /// </summary>
-        public List<CourseMeetingDataModel> Meetings
+        public List<CourseMeetingDataModel> Courses
         {
             get
             {
-                if (_meetings == null)
+                if (_courseMeetings == null)
                 {
                     Find();
                 }
 
-                return _meetings;
+                return _courseMeetings;
+            }
+        }
+
+        /// <summary>
+        /// Course Meetings linked where possible to all found Zoom meetings by prof-zoomuser and ssrmeet id
+        /// </summary>
+        public List<ZoomMeetingCourseModel> Meetings
+        {
+            get
+            {
+                if (_zoomMeetings == null)
+                {
+                    Find();
+                }
+
+                return _zoomMeetings;
             }
         }
 
@@ -60,7 +77,13 @@ namespace ZoomConnect.Web.Services.Zoom
         /// </summary>
         private void Find()
         {
-            _meetings = new List<CourseMeetingDataModel>();
+            _courseMeetings = new List<CourseMeetingDataModel>();
+            _zoomMeetings = new List<ZoomMeetingCourseModel>();
+
+            var ssrmeetByAgenda = _meetingRepo.GetAll()
+                .ToDictionary(m => m.GetZoomMeetingAgenda());
+            var ssbsectByCrn = _courseRepo.GetAll()
+                .ToDictionary(c => c.crn);
 
             // First, get all Zoom Meetings for Found ProfDataModels.
             // No zoom meetings can be found without a found Prof<->Zoom User
@@ -81,6 +104,22 @@ namespace ZoomConnect.Web.Services.Zoom
                             zoomMeeting = pm,
                             primaryProf = p
                         });
+
+                        if (pm.agenda != null && ssrmeetByAgenda.ContainsKey(pm.agenda))
+                        {
+                            var mtg = ssrmeetByAgenda[pm.agenda];
+                            var sect = ssbsectByCrn[mtg.crn];
+                            _zoomMeetings.Add(new ZoomMeetingCourseModel
+                            {
+                                ZoomMeetingId = pm.id,
+                                ProfLastName = p.bannerPerson.last_name,
+                                Term = mtg.term_code,
+                                Crn = mtg.crn,
+                                Subject = sect.subj_code,
+                                CourseNum = sect.crse_numb,
+                                CourseTitle = sect.crse_title
+                            });
+                        }
                     });
                 });
 
@@ -100,7 +139,7 @@ namespace ZoomConnect.Web.Services.Zoom
                     // add other found profs to meeting model
                     foundMeeting.AddProfModels(cachedProfs, _assignmentRepo, false);
 
-                    _meetings.Add(foundMeeting);
+                    _courseMeetings.Add(foundMeeting);
                 }
             });
 
@@ -117,12 +156,12 @@ namespace ZoomConnect.Web.Services.Zoom
             // add primary and other profs to meeting model
             missingMeetings.ForEach(m => m.AddProfModels(cachedProfs, _assignmentRepo));
 
-            _meetings.AddRange(missingMeetings);
+            _courseMeetings.AddRange(missingMeetings);
 
             // attach Canvas CalendarEvents if using canvas
             if (_options.CanvasApi.UseCanvas)
             {
-                _meetings = _canvasEventFinder.AttachEvents(_meetings);
+                _courseMeetings = _canvasEventFinder.AttachEvents(_courseMeetings);
             }
         }
     }
