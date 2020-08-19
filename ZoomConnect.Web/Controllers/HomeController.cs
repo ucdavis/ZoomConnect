@@ -46,15 +46,23 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [TypeFilter(typeof(CheckRequirements))]
-        public IActionResult Test([FromServices] CachedRepository<spriden_student> studentRepo)
+        public IActionResult Test([FromServices] CachedMeetingModels meetingModels)
         {
-            // student view
-            var students = studentRepo.GetAll()
-                .OrderBy(s => s.last_name)
-                .ThenBy(s => s.first_name)
+            // all zoom meetings tied to Banner... should have multiple zoom meetings per ssrmeet in some cases
+            var models = meetingModels.Meetings
+                .OrderBy(m => m.Subject)
+                .ThenBy(m => m.CourseNum)
                 .ToList();
 
-            return View(students);
+            return View(models);
+
+            //// student view
+            //var students = studentRepo.GetAll()
+            //    .OrderBy(s => s.last_name)
+            //    .ThenBy(s => s.first_name)
+            //    .ToList();
+
+            //return View(students);
 
             //// participant report ([FromServices] ParticipantReportService participantReportService, [FromServices] EmailService emailService)
             //var messages = new List<MimeMessage>();
