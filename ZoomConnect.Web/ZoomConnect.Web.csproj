@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CanvasClient\CanvasClient.csproj" />
+    <ProjectReference Include="..\MediasiteUtil\MediasiteUtil.csproj" />
     <ProjectReference Include="..\SecretJsonConfig\SecretJsonConfig.csproj" />
     <ProjectReference Include="..\ZoomClient\ZoomClient.csproj" />
     <ProjectReference Include="..\ZoomConnect.Core\ZoomConnect.Core.csproj" />
