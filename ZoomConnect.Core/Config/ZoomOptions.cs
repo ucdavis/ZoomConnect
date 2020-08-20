@@ -20,6 +20,7 @@ namespace ZoomConnect.Core.Config
         public DateTime TermEnd { get; set; }
 
         public string DownloadDirectory { get; set; }
+        public string ProfilePhotoDirectory { get; set; }
 
         /// <summary>
         /// Date of last Participant Report.

@@ -45,5 +45,6 @@ namespace ZoomConnect.Web.ViewModels
         public string MediasiteUploadDirectory { get; set; }
         public string MediasiteReportToEmail { get; set; }
         public string MediasiteReportReplyToEmail { get; set; }
+        public string ProfilePhotoDirectory { get; set; }
     }
 }

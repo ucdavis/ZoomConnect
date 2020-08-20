@@ -45,6 +45,7 @@ namespace ZoomConnect.Web.Controllers
                 CurrentSubject = options.CurrentSubject,
 
                 DownloadDirectory = options.DownloadDirectory,
+                ProfilePhotoDirectory = options.ProfilePhotoDirectory,
 
                 TermStart = options.TermStart,
                 TermEnd = options.TermEnd,
@@ -124,6 +125,7 @@ namespace ZoomConnect.Web.Controllers
             }
 
             options.DownloadDirectory = model.DownloadDirectory;
+            options.ProfilePhotoDirectory = model.ProfilePhotoDirectory;
 
             options.CurrentSubject = model.CurrentSubject;
 
