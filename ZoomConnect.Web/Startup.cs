@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Http;
 using AspNetCore.Security.CAS;
 using Serilog;
 using ZoomConnect.Web.Services;
+using System.Collections.Generic;
+using ZoomConnect.Web.Services.Mediasite;
+using MediasiteUtil;
 
 namespace ZoomConnect.Web
 {
@@ -30,6 +33,8 @@ namespace ZoomConnect.Web
 
             // add secrets file so credentials stay encrypted on disk
             services.UseSecretJsonConfig<ZoomOptions>("ZoomSecrets.json");
+            // add writable file for mediasite jobs pending
+            services.UseSecretJsonConfig<List<MediasiteJob>>("MediasiteJobs.json");
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -49,6 +54,7 @@ namespace ZoomConnect.Web
             services.AddSetupRequirements();
             services.AddCommandKey();
             services.AddScoped<EmailService>();
+            services.AddScoped<MediasiteClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

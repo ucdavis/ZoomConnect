@@ -10,7 +10,6 @@ namespace ZoomConnect.Web.Models
     /// <summary>
     /// Represents one course meeting in the currently selected term/subj.
     /// Holds links to relevant rows in Banner, Zoom, etc.
-    /// Translates
     /// </summary>
     public class CourseMeetingDataModel
     {

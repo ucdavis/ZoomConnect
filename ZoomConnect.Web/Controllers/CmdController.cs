@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using MediasiteUtil;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using SecretJsonConfig;
@@ -14,7 +15,9 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Filters;
+using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services;
+using ZoomConnect.Web.Services.Mediasite;
 using ZoomConnect.Web.Services.Zoom;
 
 namespace ZoomConnect.Web.Controllers
@@ -87,13 +90,13 @@ namespace ZoomConnect.Web.Controllers
             var output = new StringBuilder(80 * profRecordings.Count);
             output.AppendFormat("\r\nRecordings will be saved to [{0}].\r\n", downloadDirectory);
 
-            output.AppendLine(" MEETING_ID  TYPE SIZE     START            END    ACTION");
+            output.AppendLine("  MEETING_ID  TYPE SIZE     START            END    ACTION");
             foreach (var meeting in connectedRecordings)
             {
                 var recordingFiles = meeting.recording_files; //.Where(r => r.file_type.ToUpper() == "MP4" || r.file_type.ToUpper() == "M4A");
                 foreach (var recording in recordingFiles)
                 {
-                    output.AppendFormat(" {0, -11} {1, -4} {2, 8} {3:yyyy-MM-dd HH:mm}-{4:HH:mm}  ",
+                    output.AppendFormat(" {0, -12} {1, -4} {2, 8} {3:yyyy-MM-dd HH:mm}-{4:HH:mm}  ",
                         meeting.id, recording.file_type, recording.file_size.ShortFileSize(), recording.RecordingStartDateTime, recording.RecordingEndDateTime);
 
                     if (recording.status.ToUpper() != "COMPLETED")
@@ -131,6 +134,247 @@ namespace ZoomConnect.Web.Controllers
         }
 
         // mediasite upload
+        public IActionResult MediasiteUpload([FromServices] SecretConfigManager<List<MediasiteJob>> jobsFile,
+            [FromServices] MediasiteClient mediasite, [FromServices] CachedMeetingModels meetingModels,
+            [FromServices] SecretConfigManager<List<MediasiteJob>> mediasiteJobsFile)
+        {
+            var mediasiteOptions = _zoomOptions.MediasiteOptions;
+            var msClient = new MediasiteClient(mediasiteOptions.Endpoint,
+                mediasiteOptions.Username, mediasiteOptions.Password,
+                mediasiteOptions.ApiKey, mediasiteOptions.RootFolder);
+            var lawMp4Template = msClient.GetTemplates().First(t => t.Id == mediasiteOptions.TemplateId);
+            var cachedMeetings = meetingModels.Meetings;
+
+            //
+            // PREP
+            //
+
+            // prep output directory
+            var output = new StringBuilder();
+            var outDir = Path.Combine(_zoomOptions.MediasiteOptions.UploadDirectory, "out");
+            if (!Directory.Exists(outDir))
+            {
+                output.AppendFormat("Creating dir {0}", outDir);
+                Directory.CreateDirectory(outDir);
+            }
+
+            //
+            // MONITOR OUTSTANDING JOB STATUS, CLEANUP OLD JOBS
+            //
+
+            output.AppendLine("Checking pending jobs...");
+
+            var ignorePendingJobSessionIds = new List<String>();
+            var emails = new List<MimeMessage>();
+            var jobRows = mediasiteJobsFile.GetValue().Result ?? new List<MediasiteJob>();
+            jobRows = jobRows.Where(j => j.Status != "Failed" && j.Status != "Successful").ToList();
+            jobRows.ForEach(j =>
+            {
+                // session id includes zoom meeting id plus year, month, day of recording.
+                // this should be sufficient to group additional files related to the same teaching session
+                // without getting recordings for the same class but on different days.
+                var sessionId = j.FileName.SessionIdPrefix();
+                output.AppendFormat("{0} ", sessionId);
+                // update job status for each pending job
+                var jobStatus = msClient.GetJob(j.JobId);
+                j.Status = jobStatus == null ? "missing" : jobStatus.Status;
+                j.Tries++;
+
+                output.AppendFormat("{0} ", j.Status);
+
+                if (j.Status == "Successful")
+                {
+                    if (j.ExternalId == null || j.ExternalId.Length < 9)
+                    {
+                        output.Append(" meeting id missing, no cleanup to do.");
+                    }
+                    else
+                    {
+                        Directory.GetFiles(_zoomOptions.MediasiteOptions.UploadDirectory, sessionId + "_*.MP4")
+                            .ToList()
+                            .ForEach(f =>
+                            {
+                                Directory.Move(f, Path.Combine(outDir, Path.GetFileName(f)));
+                                output.Append(".");
+                            });
+
+                        bool emailOk = false;
+                        try
+                        {
+                            var parsedFilename = new PresentationFileName(j.FileName);
+                            if (parsedFilename.isOk)
+                            {
+                                var mail = new MimeMessage();
+                                mail.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
+                                mail.To.Add(MailboxAddress.Parse(_zoomOptions.MediasiteOptions.ReportToEmail));
+                                mail.ReplyTo.Add(MailboxAddress.Parse(_zoomOptions.MediasiteOptions.ReportReplyToEmail));
+                                mail.Subject = "Video Edit";
+                                mail.Body = new TextPart("html")
+                                {
+                                    Text = String.Format("<p>The following presentation is uploaded to Mediasite, please process according to procedures.</p><p>FOLDER: {0}<br/>PRESENTATION: {1}<br/>TIME: {2}</p>",
+                                        parsedFilename.Folder, j.PresentationName, parsedFilename.CourseDateTime.Value.ToShortTimeString())
+                                };
+                                emailOk = true;
+                                emails.Add(mail);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            output.Append(ex.ToString());
+                        }
+                        output.AppendFormat(" meeting files moved to {0}; email {1} ", outDir, emailOk ? "sent" : "failed");
+                    }
+                }
+                else
+                {
+                    ignorePendingJobSessionIds.Add(sessionId);
+                    output.Append("ignoring files for this job.");
+                }
+
+                output.AppendLine();
+            });
+
+            _emailService.Send(emails);
+            mediasiteJobsFile.Save();
+
+            output.AppendFormat("\r\nProcessing new files...\r\n");
+
+            //
+            // GET MP4s IN UPLOAD DIRECTORY
+            //
+
+            var dirInfo = new DirectoryInfo(_zoomOptions.MediasiteOptions.UploadDirectory);
+            dirInfo
+                .GetFiles("*.MP4")
+                .ToList()
+                .Where(f => f.Name.SessionIdPrefix() != "")
+                .Where(f => !ignorePendingJobSessionIds.Contains(f.Name.SessionIdPrefix()))
+                .GroupBy(f => f.Name.SessionIdPrefix(), f => f, (key, g) => new MeetingFileGroup
+                {
+                    // grouped by meeting key so we only process one file per meeting (the largest one)
+                    meetingId = key.Substring(0, key.IndexOf("_")),
+                    files = g.OrderByDescending(s => s.Length).ToList()
+                })
+                .ToList()
+                .ForEach(m =>
+                {
+                    output.AppendFormat("{0, -12}", m.meetingId);
+
+                    // find term and crn for meeting
+                    var bannerMeeting = cachedMeetings.FirstOrDefault(cm => cm.ZoomMeetingId == m.meetingId);
+                    if (bannerMeeting != null)
+                    {
+                        m.meetingModel = bannerMeeting;
+                        m.termCrn = String.Format("{0}-{1}", bannerMeeting.Term, bannerMeeting.Crn);
+                        output.AppendFormat("{0, -13}", m.termCrn);
+                    }
+                    else
+                    {
+                        output.Append("No banner meeting found.");
+                    }
+
+                    // find mediasite folder
+                    if (!String.IsNullOrEmpty(m.termCrn))
+                    {
+                        var matchingFolders = msClient.FindFoldersStartingWith(m.termCrn, mediasiteOptions.RootFolder)
+                            .OrderBy(f => f.Name.Length);
+                        if (matchingFolders.Count() > 0)
+                        {
+                            m.msFolderId = matchingFolders.First().Id;
+                            output.Append("MS Folder found. ");
+                        }
+                        else
+                        {
+                            // gotta create folder
+                            m.msFolderId = msClient.CreateFolder(m.termCrn, mediasiteOptions.RootFolder).Id;
+                            output.Append("MS Folder added. ");
+                        }
+                    }
+
+                    // create presentation
+                    if (!String.IsNullOrEmpty(m.msFolderId))
+                    {
+                        m.parsedFileName = new PresentationFileName(m.selectedFile.Name);
+
+                        if (!m.parsedFileName.isOk)
+                        {
+                            output.Append("Bad filename format, not uploading. ");
+                            m.presentation = null;
+                        }
+                        else
+                        {
+                            // get presentation name [PROF - LAW ### - TITLE_M/D/YYYY - Zoom]
+                            var presentationName = String.Format("{0} - {1} {2} - {3}_{4:M/d/yyyy HH:mm} - Zoom",
+                                m.meetingModel.ProfLastName, m.meetingModel.Subject,
+                                m.meetingModel.CourseNum, m.meetingModel.CourseTitle,
+                                m.parsedFileName.CourseDateTime.Value);
+
+                            output.AppendFormat("{0, -60} .", presentationName.FirstChars(60));
+
+                            if (msClient.FindPresentationsInFolder(m.msFolderId).Any(p => p.Title == presentationName))
+                            {
+                                output.AppendFormat(" Presentation already exists. ");
+                                output.AppendFormat(m.selectedFile.RenameOrDeleteWithPrefix('D')
+                                    ? "Renamed with 'D' prefix. "
+                                    : "Deleted ('D' prefix already exists). ");
+                            }
+                            else
+                            {
+                                m.presentation = msClient.CreatePresentation(lawMp4Template, m.msFolderId, mediasiteOptions.PlayerId, presentationName, m.parsedFileName.CourseDateTime.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        output.Append("MS Folder not found or created. ");
+                    }
+
+                    if (m.presentation != null)
+                    {
+                        // upload media to presentation
+                        var uploadResponse = msClient.UploadMediaFileWithResponse(m.presentation.Id, m.selectedFile.FullName, m.selectedFile.Length, m.parsedFileName.GuidFileName);
+
+                        if (uploadResponse.success && (uploadResponse.InnerResponse == null || uploadResponse.InnerResponse.success))
+                        {
+                            // add job row to table
+                            var jobid = uploadResponse.InnerResponse.content;
+                            var newJobRow = new MediasiteJob
+                            {
+                                App = "ZoomConnect",
+                                JobId = jobid,
+                                ExternalId = m.meetingId,
+                                FileName = m.selectedFile.Name,
+                                PresentationName = m.presentation.Title
+                            };
+                            var jobs = mediasiteJobsFile.GetValue().Result;
+                            if (jobs == null)
+                            {
+                                jobs = new List<MediasiteJob>();
+                            }
+                            jobs.Add(newJobRow);
+                            mediasiteJobsFile.Save();
+
+                            output.AppendFormat("upload job id {0}", jobid);
+                        }
+                        else
+                        {
+                            var response = uploadResponse.success ? uploadResponse.InnerResponse : uploadResponse;
+                            output.AppendFormat("upload failed [{0} {1} {2}] ", response.statusCode, response.statusDescription, response.errorMessage);
+                            output.AppendFormat(m.selectedFile.RenameOrDeleteWithPrefix('X')
+                                ? "renaming with 'X' prefix. "
+                                : "deleting ('X' prefix already exists). ");
+                        }
+                    }
+                    else
+                    {
+                        output.Append("Presentation not created.");
+                    }
+
+                    output.AppendLine();
+                });
+
+            return Content(output.ToString());
+        }
 
         // participant report
         public IActionResult ParticipantReport()
