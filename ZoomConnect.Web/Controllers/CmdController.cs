@@ -410,5 +410,73 @@ namespace ZoomConnect.Web.Controllers
 
             return Content(subjectLines);
         }
+
+        /// <summary>
+        /// Uploads jpg profile photos found in zoom photo directory.
+        /// Files must be named with student id e.g. "999999999.jpg"
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult ProfilePhotos([FromServices] CachedRepository<spriden_student> studentRepo)
+        {
+            if (_zoomOptions.ProfilePhotoDirectory == null || !Directory.Exists(_zoomOptions.ProfilePhotoDirectory))
+            {
+                return Content("Profile Photo Directory not configured. Check Setup page.");
+            }
+
+            // prep output dir
+            var outDir = Path.Combine(_zoomOptions.ProfilePhotoDirectory, "out");
+            if (!Directory.Exists(outDir))
+            {
+                Directory.CreateDirectory(outDir);
+            }
+
+            // prep a line of output per file in directory
+            var outputDictionary = new Dictionary<string, string>();
+
+            // get all jpg photos in directory
+            var dirInfo = new DirectoryInfo(_zoomOptions.ProfilePhotoDirectory);
+            var photoFiles = dirInfo.GetFiles("*.jpg").ToList();
+
+            if (photoFiles.Count == 0) { return Content("No files to upload."); }
+
+            // index person and email rows to find zoom account email from student id.
+            var emailById = studentRepo.GetAll().ToDictionary(s => s.id);
+
+            // push each photo up to zoom profile
+            photoFiles.ForEach(f =>
+            {
+                var studentId = f.Name.Substring(0, f.Name.Length - 4);
+                if (!emailById.ContainsKey(studentId))
+                {
+                    outputDictionary.Add(f.Name, "Not found by id");
+                    return;
+                }
+
+                var success = _zoomClient.UploadProfilePicture(emailById[studentId].email, f.FullName);
+                outputDictionary.Add(f.Name, success ? "Uploaded" : "Failed");
+            });
+
+            // move successful files
+            outputDictionary.Where(o => o.Value == "Uploaded")
+                .ToList()
+                .ForEach(o =>
+                {
+                    var inFile = Path.Combine(dirInfo.FullName, o.Key);
+                    var outFile = Path.Combine(outDir, o.Key);
+                    if (System.IO.File.Exists(outFile))
+                    {
+                        System.IO.File.Delete(inFile);
+                    }
+                    else
+                    {
+                        Directory.Move(inFile, outFile);
+                    }
+                });
+
+            // prep report
+            var output = String.Join("\r\n", outputDictionary.Select(o => $"{o.Key}\t{o.Value}"));
+
+            return Content(output);
+        }
     }
 }
