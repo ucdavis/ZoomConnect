@@ -74,7 +74,9 @@ namespace ZoomConnect.Web.Controllers
                 MediasiteTemplateId = options.MediasiteOptions?.TemplateId,
                 MediasiteUploadDirectory = options.MediasiteOptions?.UploadDirectory,
                 MediasitePassword = String.IsNullOrEmpty(options.MediasiteOptions?.Password.Value) ? "" : _passwordPlaceholder,
-                MediasiteApiKey = String.IsNullOrEmpty(options.MediasiteOptions?.ApiKey.Value) ? "" : _passwordPlaceholder
+                MediasiteApiKey = String.IsNullOrEmpty(options.MediasiteOptions?.ApiKey.Value) ? "" : _passwordPlaceholder,
+                MediasiteReportToEmail = options.MediasiteOptions?.ReportToEmail,
+                MediasiteReportReplyToEmail = options.MediasiteOptions?.ReportReplyToEmail
             };
 
             return View(viewModel);
@@ -162,6 +164,8 @@ namespace ZoomConnect.Web.Controllers
             options.MediasiteOptions.PlayerId = model.MediasitePlayerId;
             options.MediasiteOptions.TemplateId = model.MediasiteTemplateId;
             options.MediasiteOptions.UploadDirectory = model.MediasiteUploadDirectory;
+            options.MediasiteOptions.ReportToEmail = model.MediasiteReportToEmail;
+            options.MediasiteOptions.ReportReplyToEmail = model.MediasiteReportReplyToEmail;
             if (model.MediasitePassword != _passwordPlaceholder && !String.IsNullOrEmpty(model.MediasitePassword))
             {
                 options.MediasiteOptions.Password = new SecretStruct(model.MediasitePassword);

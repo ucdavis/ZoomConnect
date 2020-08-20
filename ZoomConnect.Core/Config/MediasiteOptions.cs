@@ -15,5 +15,7 @@ namespace ZoomConnect.Core.Config
         public string TemplateId { get; set; }
 
         public string UploadDirectory { get; set; }
+        public string ReportToEmail { get; set; }
+        public string ReportReplyToEmail { get; set; }
     }
 }
