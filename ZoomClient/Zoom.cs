@@ -14,6 +14,7 @@ using SecretJsonConfig;
 using ZoomConnect.Core.Config;
 using ZoomClient.Domain.Billing;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace ZoomClient
 {
@@ -23,11 +24,13 @@ namespace ZoomClient
         private RestClient client = null;
         private int PageSize = 80;
         private ZoomApiOptions _zoomOptions;
+        private ILogger<Zoom> _logger;
 
-        public Zoom(SecretConfigManager<ZoomOptions> zoomOptions)
+        public Zoom(SecretConfigManager<ZoomOptions> zoomOptions, ILogger<Zoom> logger)
         {
             client = new RestClient(BaseUrl);
             _zoomOptions = zoomOptions.GetValue().Result.ZoomApi;
+            _logger = logger;
         }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace ZoomClient
             {
                 return JsonConvert.DeserializeObject<User>(response.Content);
             }
+            _logger.LogWarning($"Zoom.GetUser returned {response.StatusCode} - {response.StatusDescription}");
 
             return null;
         }
@@ -124,6 +128,7 @@ namespace ZoomClient
             {
                 return JsonConvert.DeserializeObject<UserInfo>(response.Content);
             }
+            _logger.LogWarning($"Zoom.CreateUser returned {response.StatusCode} - {response.StatusDescription}");
 
             return null;
         }
@@ -592,6 +597,37 @@ namespace ZoomClient
             while (nextPageToken != "");
 
             return participants;
+        }
+
+        /// <summary>
+        /// Upload a user's profile picture
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>true if successful</returns>
+        /// <remarks>https://marketplace.zoom.us/docs/api-reference/zoom-api/users/userpicture</remarks>
+        public bool UploadProfilePicture(string userId, string imagePath)
+        {
+            // fail if no image or no userid
+            if (String.IsNullOrEmpty(userId) || !File.Exists(imagePath)) { return false; }
+
+            client.Authenticator = NewToken;
+
+            var request = new RestRequest("/users/{userId}/picture", Method.POST, DataFormat.None)
+                .AddParameter("userId", userId, ParameterType.UrlSegment);
+
+            request.AddFile("pic_file", imagePath, "multipart/form-data");
+
+            var response = client.Execute(request);
+            Thread.Sleep(RateLimit.Medium);
+
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                return true;
+            }
+
+            _logger.LogWarning($"Zoom.UploadProfilePicture returned {response.StatusCode} - {response.StatusDescription}");
+
+            return false;
         }
 
         private JwtAuthenticator NewToken
