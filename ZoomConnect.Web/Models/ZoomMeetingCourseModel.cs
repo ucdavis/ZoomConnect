@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ZoomClient.Domain;
 
 namespace ZoomConnect.Web.Models
 {
@@ -19,6 +15,7 @@ namespace ZoomConnect.Web.Models
         public string Term { get; set; }
         public string Crn { get; set; }
         public string ProfLastName { get; set; }
+        public string ProfEmail { get; set; }
         public string Subject { get; set; }
         public string CourseNum { get; set; }
         public string CourseTitle { get; set; }

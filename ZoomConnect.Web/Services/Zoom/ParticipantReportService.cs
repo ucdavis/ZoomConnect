@@ -30,20 +30,19 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             // check last run time (default to today's meetings)
             var lastRunDate = _options?.LastParticipantReportDate ?? DateTime.Now.Date;
-            var meetings = _meetingModels.Courses;
 
             // get meetings with past instances after last run time
             List<ParticipantReportModel> reportModels = new List<ParticipantReportModel>();
-            meetings.Where(m => m.zoomMeeting != null)
+            _meetingModels.Meetings
                 .ToList()
                 .ForEach(m =>
                 {
-                    var newInstances = _zoomClient.GetPastMeetingInstances(m.zoomMeeting.id)
+                    var newInstances = _zoomClient.GetPastMeetingInstances(m.ZoomMeetingId)
                         .Where(i => i.EndDateTime > lastRunDate)
                         .Select(i => new ParticipantReportModel
                         {
-                            hostEmail = m.primaryProf.primaryEmail.email_address,
-                            subject = $"{m.bannerCourse.subj_code} {m.bannerCourse.crse_numb} {m.primaryProf.bannerPerson.last_name} - Attendance on {i.StartDateTimeLocal}",
+                            hostEmail = m.ProfEmail,
+                            subject = $"{m.Subject} {m.CourseNum} {m.ProfLastName} - Attendance on {i.StartDateTimeLocal}",
                             instanceId = i.uuid
                         });
                     if (newInstances != null)
