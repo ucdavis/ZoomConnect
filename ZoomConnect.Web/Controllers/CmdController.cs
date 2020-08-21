@@ -179,6 +179,7 @@ namespace ZoomConnect.Web.Controllers
                 var jobStatus = msClient.GetJob(j.JobId);
                 j.Status = jobStatus == null ? "missing" : jobStatus.Status;
                 j.Tries++;
+                j.ModifiedDate = DateTime.Now;
 
                 output.AppendFormat("{0} ", j.Status);
 
@@ -344,7 +345,9 @@ namespace ZoomConnect.Web.Controllers
                                 JobId = jobid,
                                 ExternalId = m.meetingId,
                                 FileName = m.selectedFile.Name,
-                                PresentationName = m.presentation.Title
+                                PresentationName = m.presentation.Title,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now
                             };
                             var jobs = mediasiteJobsFile.GetValue().Result;
                             if (jobs == null)
