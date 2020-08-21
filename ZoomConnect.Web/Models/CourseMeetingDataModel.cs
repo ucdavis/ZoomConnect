@@ -33,7 +33,14 @@ namespace ZoomConnect.Web.Models
         public Meeting zoomMeeting { get; set; }
 
         public Course canvasCourse { get; set; }
+        /// <summary>
+        /// Canvas Events for this course containing the zoomMeeting join url
+        /// </summary>
         public List<CalendarEvent> canvasEvents { get; set; }
+        /// <summary>
+        /// Canvas Events for this course not containing the zoomMeeting join url
+        /// </summary>
+        public List<CalendarEvent> otherEvents { get; set; }
 
         // Zoom meeting creation helper properties below
         public string sunday { get { return bannerMeeting?.sun_day ?? ""; } }

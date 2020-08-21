@@ -43,6 +43,9 @@ namespace ZoomConnect.Web.Services.Canvas
                     m.canvasEvents = events
                         .Where(e => e.description != null && e.description.Contains(m.zoomMeeting.join_url, StringComparison.OrdinalIgnoreCase))
                         .ToList();
+                    m.otherEvents = events
+                        .Where(e => e.description != null && !e.description.Contains(m.zoomMeeting.join_url, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
                 });
 
             return meetingModels;
