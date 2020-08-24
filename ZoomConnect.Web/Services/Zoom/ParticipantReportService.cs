@@ -30,6 +30,7 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             // check last run time (default to today's meetings)
             var lastRunDate = _options?.LastParticipantReportDate ?? DateTime.Now.Date;
+            var newRunDate = DateTime.Now;
 
             // get meetings with past instances after last run time
             List<ParticipantReportModel> reportModels = new List<ParticipantReportModel>();
@@ -51,9 +52,6 @@ namespace ZoomConnect.Web.Services.Zoom
                     }
                 });
 
-            _options.LastParticipantReportDate = DateTime.Now;
-            _configManager.Save();
-
             // prepare report bodies by getting participant report for each model created above
             reportModels.ForEach(rm =>
             {
@@ -61,6 +59,9 @@ namespace ZoomConnect.Web.Services.Zoom
                     .OrderBy(pr => pr.name)
                     .ToList();
             });
+
+            _options.LastParticipantReportDate = newRunDate;
+            _configManager.Save();
 
             return reportModels;
         }
