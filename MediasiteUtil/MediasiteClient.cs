@@ -436,6 +436,7 @@ namespace MediasiteUtil
 		{
 			var fileNameOnly = Path.GetFileName(filePath);
 			var uploadClient = new RestClient("https://mediasite.ucdavis.edu/mediasite/");
+			uploadClient.ReadWriteTimeout = 8 * 60 * 1000;	// 8 minute timeout for upload to stream
 			uploadClient.Authenticator = new MediasiteUtil.Models.Auth(_config.Username, _config.Password, _config.ApiKey);
 			var request = new RestRequest(String.Format("FileServer/Presentation/{0}/{1}", presentationId, sendAsName), Method.PUT);
 			Response<string> responseObject;
