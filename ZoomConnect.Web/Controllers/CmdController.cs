@@ -75,7 +75,7 @@ namespace ZoomConnect.Web.Controllers
             var connectedRecordings = profRecordings.Where(r =>
             {
                 var meetingDetail = _zoomClient.GetMeetingDetails(r.id);
-                return meetingAgendas.ContainsKey(meetingDetail.agenda);
+                return meetingAgendas.ContainsKey(meetingDetail?.agenda ?? "");
             });
 
             // directory setup
