@@ -390,6 +390,8 @@ namespace ZoomConnect.Web.Controllers
                 .ToList();
 
             _participantService.PrepareReports()
+                .Where(r => r.participants.Count > 5)
+                .ToList()
                 .ForEach(r =>
                 {
                     var msg = new MimeMessage();
