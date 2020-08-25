@@ -3,6 +3,7 @@ using SecretJsonConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Models;
 
@@ -55,9 +56,13 @@ namespace ZoomConnect.Web.Services.Zoom
             // prepare report bodies by getting participant report for each model created above
             reportModels.ForEach(rm =>
             {
-                rm.participants = _zoomClient.GetParticipantReport(rm.instanceId)
-                    .OrderBy(pr => pr.name)
-                    .ToList();
+                var participants = _zoomClient.GetParticipantReport(rm.instanceId);
+
+                rm.participants = participants == null
+                    ? new List<Participant>()
+                    : participants
+                        .OrderBy(pr => pr.name ?? "")
+                        .ToList();
             });
 
             _options.LastParticipantReportDate = newRunDate;
