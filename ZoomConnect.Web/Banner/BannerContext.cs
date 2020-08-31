@@ -1,4 +1,5 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using Microsoft.Extensions.Logging;
+using Oracle.ManagedDataAccess.Client;
 using SecretJsonConfig;
 using System;
 using System.Data;
@@ -12,21 +13,24 @@ namespace ZoomConnect.Web.Banner
     public class BannerContext : IDisposable
     {
         private ZoomOptions _zoomOptions;
+        private ILogger<BannerContext> _logger;
         private bool disposed = false;
 
         public IDbConnection Connection { get; set; }
 
-        public BannerContext(SecretConfigManager<ZoomOptions> zoomOptions)
+        public BannerContext(SecretConfigManager<ZoomOptions> zoomOptions, ILogger<BannerContext> logger)
         {
             _zoomOptions = zoomOptions.GetValue().Result;
+            _logger = logger;
+
             Connection = new OracleConnection(_zoomOptions.Banner.GetConnectionString());
             try
             {
                 Connection.Open();
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO log entry for failed connection
+                logger.LogError(ex.ToString());
             }
         }
 
