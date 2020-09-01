@@ -37,16 +37,12 @@ namespace ZoomConnect.Web.Controllers
 
         public IActionResult Index()
         {
-            _requirementManager.CheckAllRequirements();
             var options = _secretOptions.GetValue().Result;
             var viewModel = new BannerOptionsViewModel
             {
                 Instance = options.Banner?.Instance,
                 Username = options.Banner?.Username.Value,
                 Password = String.IsNullOrEmpty(options.Banner?.Password.Value) ? "" : _passwordPlaceholder,
-                FailedBannerRequirements = _requirementManager.MissingRequirements()
-                    .Where(r => r.Type == RequirementType.Banner)
-                    .ToList(),
 
                 CurrentTerm = options.CurrentTerm,
                 CurrentSubject = options.CurrentSubject,
@@ -84,8 +80,10 @@ namespace ZoomConnect.Web.Controllers
                 MediasitePassword = String.IsNullOrEmpty(options.MediasiteOptions?.Password.Value) ? "" : _passwordPlaceholder,
                 MediasiteApiKey = String.IsNullOrEmpty(options.MediasiteOptions?.ApiKey.Value) ? "" : _passwordPlaceholder,
                 MediasiteReportToEmail = options.MediasiteOptions?.ReportToEmail,
-                MediasiteReportReplyToEmail = options.MediasiteOptions?.ReportReplyToEmail
+                MediasiteReportReplyToEmail = options.MediasiteOptions?.ReportReplyToEmail,
             };
+
+            CheckRequirements(viewModel);
 
             return View(viewModel);
         }
@@ -185,10 +183,17 @@ namespace ZoomConnect.Web.Controllers
             }
 
             _secretOptions.Save();
+
+            // re-check requirements and redirect Home only if all pass
+            if (CheckRequirements(model))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             sizedCache.ResetCache();
             _logger.LogInformation("Dumping cache after settings update");
 
-            return RedirectToAction("Index", "Home");
+            return View(model);
         }
 
         public IActionResult CmdKey()
@@ -223,6 +228,26 @@ namespace ZoomConnect.Web.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        private bool CheckRequirements(BannerOptionsViewModel model)
+        {
+            var success = _requirementManager.CheckAllRequirements();
+
+            model.FailedBannerRequirements = GetMissingRequirement(RequirementType.Banner);
+            model.FailedZoomRequirements = GetMissingRequirement(RequirementType.Zoom);
+            model.FailedCanvasRequirements = GetMissingRequirement(RequirementType.Canvas);
+            model.FailedEmailRequirements = GetMissingRequirement(RequirementType.Email);
+            model.FailedMediasiteRequirements = GetMissingRequirement(RequirementType.Mediasite);
+
+            return success;
+        }
+
+        private List<ISetupRequirement> GetMissingRequirement(RequirementType requirementType)
+        {
+            return _requirementManager.MissingRequirements()
+                .Where(r => r.Type == requirementType)
+                .ToList();
         }
     }
 }

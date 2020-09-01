@@ -10,7 +10,7 @@
 
 
     <fieldset>
-        <legend>Banner Connection</legend>
+        <legend>Banner</legend>
 
         <div class="form-group">
             <label class="col-md-4" asp-for="Instance"></label>
@@ -60,120 +60,144 @@
         <input class="col-md-4" asp-for="ProfilePhotoDirectory" />
     </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ZoomApiKey"></label>
-        <input class="col-md-4" type="password" asp-for="ZoomApiKey" />
-    </div>
+    <fieldset>
+        <legend>Zoom</legend>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ZoomApiSecret"></label>
-        <input class="col-md-4" type="password" asp-for="ZoomApiSecret" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ZoomApiKey"></label>
+            <input class="col-md-4" type="password" asp-for="ZoomApiKey" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ZoomRequireMeetingAuthentication"></label>
-        <input class="col-md-4" asp-for="ZoomRequireMeetingAuthentication" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ZoomApiSecret"></label>
+            <input class="col-md-4" type="password" asp-for="ZoomApiSecret" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ZoomAuthenticationOptionId"></label>
-        <input class="col-md-4" asp-for="ZoomAuthenticationOptionId" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ZoomRequireMeetingAuthentication"></label>
+            <input class="col-md-4" asp-for="ZoomRequireMeetingAuthentication" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ZoomAuthenticationDomains"></label>
-        <input class="col-md-4" asp-for="ZoomAuthenticationDomains" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ZoomAuthenticationOptionId"></label>
+            <input class="col-md-4" asp-for="ZoomAuthenticationOptionId" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ZoomAlternateHosts"></label>
-        <input class="col-md-4" asp-for="ZoomAlternateHosts" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ZoomAuthenticationDomains"></label>
+            <input class="col-md-4" asp-for="ZoomAuthenticationDomains" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="UseCanvas"></label>
-        <input class="col-md-4" asp-for="UseCanvas" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ZoomAlternateHosts"></label>
+            <input class="col-md-4" asp-for="ZoomAlternateHosts" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="CanvasAccessToken"></label>
-        <input class="col-md-4" type="password" asp-for="CanvasAccessToken" />
-    </div>
+        @await Html.PartialAsync("_SetupRequirements", Model.FailedZoomRequirements)
+    </fieldset>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="CanvasAccountId"></label>
-        <input class="col-md-4" asp-for="CanvasAccountId" />
-    </div>
+    <fieldset>
+        <legend>Canvas</legend>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="SmtpHost"></label>
-        <input class="col-md-4" asp-for="SmtpHost" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="UseCanvas"></label>
+            <input class="col-md-4" asp-for="UseCanvas" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="SmtpUsername"></label>
-        <input class="col-md-4" asp-for="SmtpUsername" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="CanvasAccessToken"></label>
+            <input class="col-md-4" type="password" asp-for="CanvasAccessToken" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="SmtpPassword"></label>
-        <input class="col-md-4" asp-for="SmtpPassword" type="password" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="CanvasAccountId"></label>
+            <input class="col-md-4" asp-for="CanvasAccountId" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ParticipantReportCcList"></label>
-        <input class="col-md-4" asp-for="ParticipantReportCcList" />
-    </div>
+        @await Html.PartialAsync("_SetupRequirements", Model.FailedCanvasRequirements)
+    </fieldset>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteEndpoint"></label>
-        <input class="col-md-4" asp-for="MediasiteEndpoint" />
-    </div>
+    <fieldset>
+        <legend>Email Notifications</legend>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteRootFolder"></label>
-        <input class="col-md-4" asp-for="MediasiteRootFolder" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="SmtpHost"></label>
+            <input class="col-md-4" asp-for="SmtpHost" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteUsername"></label>
-        <input class="col-md-4" asp-for="MediasiteUsername" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="SmtpUsername"></label>
+            <input class="col-md-4" asp-for="SmtpUsername" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasitePassword"></label>
-        <input class="col-md-4" asp-for="MediasitePassword" type="password" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="SmtpPassword"></label>
+            <input class="col-md-4" asp-for="SmtpPassword" type="password" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteApiKey"></label>
-        <input class="col-md-4" asp-for="MediasiteApiKey" type="password" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ParticipantReportCcList"></label>
+            <input class="col-md-4" asp-for="ParticipantReportCcList" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasitePlayerId"></label>
-        <input class="col-md-4" asp-for="MediasitePlayerId" />
-    </div>
+        @await Html.PartialAsync("_SetupRequirements", Model.FailedEmailRequirements)
+    </fieldset>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteTemplateId"></label>
-        <input class="col-md-4" asp-for="MediasiteTemplateId" />
-    </div>
+    <fieldset>
+        <legend>Mediasite</legend>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteUploadDirectory"></label>
-        <input class="col-md-4" asp-for="MediasiteUploadDirectory" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteEndpoint"></label>
+            <input class="col-md-4" asp-for="MediasiteEndpoint" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteReportToEmail"></label>
-        <input class="col-md-4" asp-for="MediasiteReportToEmail" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteRootFolder"></label>
+            <input class="col-md-4" asp-for="MediasiteRootFolder" />
+        </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="MediasiteReportReplyToEmail"></label>
-        <input class="col-md-4" asp-for="MediasiteReportReplyToEmail" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteUsername"></label>
+            <input class="col-md-4" asp-for="MediasiteUsername" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasitePassword"></label>
+            <input class="col-md-4" asp-for="MediasitePassword" type="password" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteApiKey"></label>
+            <input class="col-md-4" asp-for="MediasiteApiKey" type="password" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasitePlayerId"></label>
+            <input class="col-md-4" asp-for="MediasitePlayerId" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteTemplateId"></label>
+            <input class="col-md-4" asp-for="MediasiteTemplateId" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteUploadDirectory"></label>
+            <input class="col-md-4" asp-for="MediasiteUploadDirectory" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteReportToEmail"></label>
+            <input class="col-md-4" asp-for="MediasiteReportToEmail" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="MediasiteReportReplyToEmail"></label>
+            <input class="col-md-4" asp-for="MediasiteReportReplyToEmail" />
+        </div>
+
+        @await Html.PartialAsync("_SetupRequirements", Model.FailedMediasiteRequirements)
+    </fieldset>
 
     <div class="form-group">
         <div class="col-md-4">

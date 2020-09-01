@@ -9,6 +9,10 @@ namespace ZoomConnect.Web.ViewModels
         public BannerOptionsViewModel()
         {
             FailedBannerRequirements = new List<ISetupRequirement>();
+            FailedZoomRequirements = new List<ISetupRequirement>();
+            FailedCanvasRequirements = new List<ISetupRequirement>();
+            FailedEmailRequirements = new List<ISetupRequirement>();
+            FailedMediasiteRequirements = new List<ISetupRequirement>();
         }
 
         public string Instance { get; set; }
@@ -31,15 +35,19 @@ namespace ZoomConnect.Web.ViewModels
         public string ZoomAuthenticationOptionId { get; set; }
         public string ZoomAuthenticationDomains { get; set; }
         public string ZoomAlternateHosts { get; set; }
+        public string ProfilePhotoDirectory { get; set; }
+        public List<ISetupRequirement> FailedZoomRequirements { get; set; }
 
         public bool UseCanvas { get; set; }
         public string CanvasAccessToken { get; set; }
         public int CanvasAccountId { get; set; }
+        public List<ISetupRequirement> FailedCanvasRequirements { get; set; }
 
         public string SmtpHost { get; set; }
         public string SmtpUsername { get; set; }
         public string SmtpPassword { get; set; }
         public string ParticipantReportCcList { get; set; }
+        public List<ISetupRequirement> FailedEmailRequirements { get; set; }
 
         public string MediasiteEndpoint { get; set; }
         public string MediasiteRootFolder { get; set; }
@@ -53,6 +61,6 @@ namespace ZoomConnect.Web.ViewModels
         public string MediasiteUploadDirectory { get; set; }
         public string MediasiteReportToEmail { get; set; }
         public string MediasiteReportReplyToEmail { get; set; }
-        public string ProfilePhotoDirectory { get; set; }
+        public List<ISetupRequirement> FailedMediasiteRequirements { get; set; }
     }
 }
