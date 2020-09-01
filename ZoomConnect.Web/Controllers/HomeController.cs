@@ -92,6 +92,7 @@ namespace ZoomConnect.Web.Controllers
             //return new EmptyResult();
         }
 
+        [Authorize("ConfiguredAdmins")]
         public IActionResult Refresh([FromServices] SizedCache sizedCache, [FromServices] ILogger<HomeController> logger)
         {
             sizedCache.ResetCache();

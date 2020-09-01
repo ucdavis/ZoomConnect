@@ -14,6 +14,7 @@ using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
 {
+    [Authorize("ConfiguredAdmins")]
     public class ReportsController : Controller
     {
         private ZoomOptions _options;

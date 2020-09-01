@@ -14,6 +14,8 @@ using ZoomConnect.Web.Services;
 using System.Collections.Generic;
 using ZoomConnect.Web.Services.Mediasite;
 using MediasiteUtil;
+using ZoomConnect.Web.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ZoomConnect.Web
 {
@@ -46,6 +48,13 @@ namespace ZoomConnect.Web
                     options.CasServerUrlBase = Configuration["CasBaseUrl"];   // Set in `appsettings.json` file.
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 });
+
+            services.AddSingleton<IAuthorizationHandler, ListedUserHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ConfiguredAdmins", policy => policy.Requirements.Add(new ListedUserRequirement("AdminUsers")));
+            });
 
             services.AddBanner();
             services.AddCachedRepositories();

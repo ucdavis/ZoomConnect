@@ -13,7 +13,7 @@ using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
 {
-    [Authorize]
+    [Authorize("ConfiguredAdmins")]
     [TypeFilter(typeof(CheckRequirements))]
     public class CoursesController : Controller
     {

@@ -16,7 +16,7 @@ using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
 {
-    [Authorize]
+    [Authorize("ConfiguredAdmins")]
     public class SetupController : Controller
     {
         private SecretConfigManager<ZoomOptions> _secretOptions;
