@@ -65,7 +65,7 @@ namespace ZoomConnect.Web.SetupRequirements.Zoom
             // fail if directory does not exist
             if (!Directory.Exists(_options.DownloadDirectory))
             {
-                return SetStatusAndReturn("Download Directory does not exist");
+                return SetStatusAndReturn("Download Directory does not exist or app identity does not have rights to see it.");
             }
 
             //// fail if no read/write rights to directory
