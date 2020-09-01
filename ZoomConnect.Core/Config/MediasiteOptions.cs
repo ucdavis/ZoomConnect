@@ -5,6 +5,8 @@ namespace ZoomConnect.Core.Config
 {
     public class MediasiteOptions
     {
+        public bool UseMediasite { get; set; }
+
         public string Endpoint { get; set; }
         public string RootFolder { get; set; }
         public string Username { get; set; }

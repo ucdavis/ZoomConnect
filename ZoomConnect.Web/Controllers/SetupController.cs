@@ -71,6 +71,7 @@ namespace ZoomConnect.Web.Controllers
                 ParticipantReportCcList = options.EmailOptions?.ParticipantReportCcList,
 
                 // mediasite settings
+                UseMediasite = options.MediasiteOptions?.UseMediasite ?? false,
                 MediasiteEndpoint = options.MediasiteOptions?.Endpoint,
                 MediasiteRootFolder = options.MediasiteOptions?.RootFolder,
                 MediasiteUsername = options.MediasiteOptions?.Username,
@@ -165,6 +166,7 @@ namespace ZoomConnect.Web.Controllers
             options.EmailOptions.ParticipantReportCcList = model.ParticipantReportCcList;
 
             // mediasite settings
+            options.MediasiteOptions.UseMediasite = model.UseMediasite;
             options.MediasiteOptions.Endpoint = model.MediasiteEndpoint;
             options.MediasiteOptions.RootFolder = model.MediasiteRootFolder;
             options.MediasiteOptions.Username = model.MediasiteUsername;

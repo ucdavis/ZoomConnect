@@ -49,6 +49,7 @@ namespace ZoomConnect.Web.ViewModels
         public string ParticipantReportCcList { get; set; }
         public List<ISetupRequirement> FailedEmailRequirements { get; set; }
 
+        public bool UseMediasite { get; set; }
         public string MediasiteEndpoint { get; set; }
         public string MediasiteRootFolder { get; set; }
         public string MediasiteUsername { get; set; }
