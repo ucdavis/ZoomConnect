@@ -12,6 +12,7 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Services;
+using ZoomConnect.Web.SetupRequirements;
 using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
@@ -21,25 +22,31 @@ namespace ZoomConnect.Web.Controllers
     {
         private SecretConfigManager<ZoomOptions> _secretOptions;
         private CachedRepository<stvterm> _termRepository;
+        private RequirementManager _requirementManager;
         private ILogger<HomeController> _logger;
         private const string _passwordPlaceholder = "*********";
 
         public SetupController(SecretConfigManager<ZoomOptions> secretOptions, CachedRepository<stvterm> termRepository,
-            ILogger<HomeController> logger)
+            RequirementManager requirementManager, ILogger<HomeController> logger)
         {
             _secretOptions = secretOptions;
             _termRepository = termRepository;
+            _requirementManager = requirementManager;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
+            _requirementManager.CheckAllRequirements();
             var options = _secretOptions.GetValue().Result;
             var viewModel = new BannerOptionsViewModel
             {
                 Instance = options.Banner?.Instance,
                 Username = options.Banner?.Username.Value,
                 Password = String.IsNullOrEmpty(options.Banner?.Password.Value) ? "" : _passwordPlaceholder,
+                FailedBannerRequirements = _requirementManager.MissingRequirements()
+                    .Where(r => r.Type == RequirementType.Banner)
+                    .ToList(),
 
                 CurrentTerm = options.CurrentTerm,
                 CurrentSubject = options.CurrentSubject,

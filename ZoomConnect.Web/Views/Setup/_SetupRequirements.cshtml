@@ -1,0 +1,10 @@
+﻿@model List<ZoomConnect.Web.SetupRequirements.ISetupRequirement>
+
+@if (Model.Count() == 0)
+{
+    <div class="alert alert-success" role="alert">Passed</div>
+}
+@foreach (var requirement in Model)
+{
+    <div class="alert alert-danger" role="alert">@requirement.StatusDescription</div>
+}

@@ -76,6 +76,10 @@ fieldset {
     border: solid 1px gray;
 }
 
+fieldset .alert {
+    margin-bottom: 0;
+}
+
 legend {
     display: inline-block;
     padding: 0 0.5em;

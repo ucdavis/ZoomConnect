@@ -26,6 +26,8 @@
             <label class="col-md-4" asp-for="Password"></label>
             <input class="col-md-4" type="password" asp-for="Password" />
         </div>
+
+        @await Html.PartialAsync("_SetupRequirements", Model.FailedBannerRequirements)
     </fieldset>
 
     <div class="form-group">
