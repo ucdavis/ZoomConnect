@@ -22,8 +22,6 @@ namespace ZoomConnect.Core.Config
         public string DownloadDirectory { get; set; }
         public string ProfilePhotoDirectory { get; set; }
 
-        public string AdminUsers { get; set; }
-
         /// <summary>
         /// Date of last Participant Report.
         /// Updated by participant report service.  Do not display to user.
