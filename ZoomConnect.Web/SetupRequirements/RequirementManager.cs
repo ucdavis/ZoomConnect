@@ -25,6 +25,11 @@ namespace ZoomConnect.Web.SetupRequirements
             return CheckAllRequirements(filteredRequirements);
         }
 
+        public IEnumerable<ISetupRequirement> MissingRequirements()
+        {
+            return _requirements.Where(r => r.Status == RequirementStatus.Missing);
+        }
+
         private bool CheckAllRequirements(IEnumerable<ISetupRequirement> requirements)
         {
             var success = true;
