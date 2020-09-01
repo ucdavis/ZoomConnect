@@ -50,16 +50,6 @@
         <input class="col-md-4" asp-for="TermEnd" />
     </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="DownloadDirectory"></label>
-        <input class="col-md-4" asp-for="DownloadDirectory" />
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-4" asp-for="ProfilePhotoDirectory"></label>
-        <input class="col-md-4" asp-for="ProfilePhotoDirectory" />
-    </div>
-
     <fieldset>
         <legend>Zoom</legend>
 
@@ -91,6 +81,16 @@
         <div class="form-group">
             <label class="col-md-4" asp-for="ZoomAlternateHosts"></label>
             <input class="col-md-4" asp-for="ZoomAlternateHosts" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="DownloadDirectory"></label>
+            <input class="col-md-4" asp-for="DownloadDirectory" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ProfilePhotoDirectory"></label>
+            <input class="col-md-4" asp-for="ProfilePhotoDirectory" />
         </div>
 
         @await Html.PartialAsync("_SetupRequirements", Model.FailedZoomRequirements)
