@@ -8,20 +8,25 @@
 
 <form asp-controller="Setup" asp-action="Index" method="POST">
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="Instance"></label>
-        <input class="col-md-4" asp-for="Instance" />
-    </div>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="Username"></label>
-        <input class="col-md-4" asp-for="Username" />
-    </div>
+    <fieldset>
+        <legend>Banner Connection</legend>
 
-    <div class="form-group">
-        <label class="col-md-4" asp-for="Password"></label>
-        <input class="col-md-4" type="password" asp-for="Password" />
-    </div>
+        <div class="form-group">
+            <label class="col-md-4" asp-for="Instance"></label>
+            <input class="col-md-4" asp-for="Instance" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="Username"></label>
+            <input class="col-md-4" asp-for="Username" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="Password"></label>
+            <input class="col-md-4" type="password" asp-for="Password" />
+        </div>
+    </fieldset>
 
     <div class="form-group">
         <label class="col-md-4" asp-for="CurrentTerm"></label>

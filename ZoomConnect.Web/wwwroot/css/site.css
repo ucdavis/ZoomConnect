@@ -69,3 +69,16 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* Setup View */
+fieldset {
+    margin: 1em 0;
+    border: solid 1px gray;
+}
+
+legend {
+    display: inline-block;
+    padding: 0 0.5em;
+    margin: 0 0.5em;
+    width: auto;
+}
