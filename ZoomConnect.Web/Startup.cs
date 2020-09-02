@@ -16,6 +16,7 @@ using ZoomConnect.Web.Services.Mediasite;
 using MediasiteUtil;
 using ZoomConnect.Web.Services.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using ZoomConnect.Web.DependencyInjection;
 
 namespace ZoomConnect.Web
 {
@@ -63,7 +64,7 @@ namespace ZoomConnect.Web
             services.AddSetupRequirements();
             services.AddCommandKey();
             services.AddScoped<EmailService>();
-            services.AddScoped<MediasiteClient>();
+            services.AddMediasiteServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

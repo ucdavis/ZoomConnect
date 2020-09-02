@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using MediasiteUtil.Models;
 using RestSharp;
 
@@ -15,7 +16,7 @@ namespace MediasiteUtil
 	/// </summary>
 	public partial class MediasiteClient
 	{
-		private readonly MediasiteConfig _config;
+		private MediasiteConfig _config;
 		private string _errorMessage;
 		private static string _message;
 		private RestClient _client;
@@ -37,7 +38,7 @@ namespace MediasiteUtil
 		/// <param name="apiKey">API Key for authentication</param>
 		public MediasiteClient(string endpoint, string username, string password, string apiKey)
 		{
-			_config = new MediasiteConfig
+			Config = new MediasiteConfig
 			{
 			    Endpoint = endpoint,
 			    Username = username,
@@ -56,7 +57,7 @@ namespace MediasiteUtil
 		/// <param name="startFolderId">Resource Id of starting folder</param>
 		public MediasiteClient(string endpoint, string username, string password, string apiKey, string startFolderId)
 		{
-			_config = new MediasiteConfig
+			Config = new MediasiteConfig
 			{
 				Endpoint = endpoint,
 				Username = username,
@@ -64,6 +65,18 @@ namespace MediasiteUtil
 				ApiKey = apiKey,
 				RootFolderId = startFolderId
 			};
+		}
+
+		public MediasiteConfig Config
+		{
+			set
+			{
+				if (_config != null)
+				{
+					throw new Exception("Mediasite Client is alrady configured.");
+				}
+				_config = value;
+			}
 		}
 
 		public RestClient Client

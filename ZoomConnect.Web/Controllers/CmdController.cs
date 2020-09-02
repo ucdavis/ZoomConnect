@@ -14,6 +14,7 @@ using ZoomClient.Extensions;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
+using ZoomConnect.Web.DependencyInjection;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services;
@@ -135,13 +136,11 @@ namespace ZoomConnect.Web.Controllers
 
         // mediasite upload
         public IActionResult MediasiteUpload([FromServices] SecretConfigManager<List<MediasiteJob>> jobsFile,
-            [FromServices] MediasiteClient mediasite, [FromServices] CachedMeetingModels meetingModels,
+            [FromServices] MediasiteClient msClient, [FromServices] CachedMeetingModels meetingModels,
             [FromServices] SecretConfigManager<List<MediasiteJob>> mediasiteJobsFile)
         {
             var mediasiteOptions = _zoomOptions.MediasiteOptions;
-            var msClient = new MediasiteClient(mediasiteOptions.Endpoint,
-                mediasiteOptions.Username, mediasiteOptions.Password,
-                mediasiteOptions.ApiKey, mediasiteOptions.RootFolder);
+            msClient.Config = mediasiteOptions.CreateMediasiteConfig();
             var lawMp4Template = msClient.GetTemplates().First(t => t.Id == mediasiteOptions.TemplateId);
             var cachedMeetings = meetingModels.Meetings;
 
