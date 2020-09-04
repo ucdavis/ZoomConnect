@@ -112,7 +112,7 @@ namespace ZoomConnect.Web.Services.Zoom
                             _zoomMeetings.Add(new ZoomMeetingCourseModel
                             {
                                 ZoomMeetingId = pm.id,
-                                ProfLastName = p.bannerPerson.last_name,
+                                ProfLastName = p.bannerPerson?.last_name ?? "",
                                 ProfEmail = p.primaryEmail.email_address,
                                 Term = mtg.term_code,
                                 Crn = mtg.crn,

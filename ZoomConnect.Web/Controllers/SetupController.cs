@@ -191,11 +191,11 @@ namespace ZoomConnect.Web.Controllers
             // re-check requirements and redirect Home only if all pass
             if (CheckRequirements(model))
             {
+                sizedCache.ResetCache();
+                _logger.LogInformation("Dumping cache after settings update");
+
                 return RedirectToAction("Index", "Home");
             }
-
-            sizedCache.ResetCache();
-            _logger.LogInformation("Dumping cache after settings update");
 
             return View(model);
         }

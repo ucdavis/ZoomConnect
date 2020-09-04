@@ -223,7 +223,7 @@ namespace ZoomConnect.Web.Models
                 if (bannerMeeting == null || bannerCourse == null) { return "ssrmeet or ssbsect row missing."; }
 
                 return String.Format("{0} {1} {2} {3} {4} {5} {6}-{7} in {8} {9}",
-                        bannerCourse.subj_code, bannerCourse.crse_numb, bannerCourse.crn, bannerCourse.crse_title, primaryProf.bannerPerson.last_name,
+                        bannerCourse.subj_code, bannerCourse.crse_numb, bannerCourse.crn, bannerCourse.crse_title, primaryProf.bannerPerson?.last_name,
                         this.daysConcat, bannerMeeting.begin_time, bannerMeeting.end_time, bannerMeeting.bldg_code, bannerMeeting.room_code);
             }
         }

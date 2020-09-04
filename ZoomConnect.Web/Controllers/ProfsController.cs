@@ -25,7 +25,9 @@ namespace ZoomConnect.Web.Controllers
         {
             var profModels = new SelectedProfsModel
             {
-                Profs = _userFinder.Profs.Select(p => new ProfViewModel(p))
+                Profs = _userFinder.Profs
+                    .Where(p => p.bannerPerson != null)
+                    .Select(p => new ProfViewModel(p))
                     .OrderBy(m => m.Name)
                     .ToList()
             };
@@ -65,9 +67,9 @@ namespace ZoomConnect.Web.Controllers
                 .Select(m => m.Pidm);
 
             return _userFinder.Profs
-                .Where(p => selectedPidms.Contains(p.bannerPerson.pidm))
-                .OrderBy(p => p.bannerPerson.last_name)
-                .ThenBy(p => p.bannerPerson.first_name)
+                .Where(p => selectedPidms.Contains(p.bannerPerson?.pidm ?? 0))
+                .OrderBy(p => p.bannerPerson?.last_name ?? "")
+                .ThenBy(p => p.bannerPerson?.first_name ?? "")
                 .ToList();
         }
     }

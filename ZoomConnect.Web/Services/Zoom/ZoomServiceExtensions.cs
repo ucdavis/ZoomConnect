@@ -14,11 +14,6 @@ namespace ZoomConnect.Web.Services.Zoom
     {
         public static ProfDataModel AddAssignments(this ProfDataModel prof, CachedRepository<sirasgn> assignmentRepo, CachedRepository<ssbsect> courseRepo)
         {
-            if (prof.bannerPerson == null)
-            {
-                throw new ArgumentException("ProfDataModel has no bannerPerson.");
-            }
-
             if (assignmentRepo == null)
             {
                 throw new ArgumentNullException("assignmentRepo");
@@ -29,7 +24,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 throw new ArgumentNullException("courseRepo");
             }
 
-            var profAssignments = assignmentRepo.GetAll().Where(a => a.pidm == prof.bannerPerson.pidm);
+            var profAssignments = assignmentRepo.GetAll().Where(a => a.pidm == (prof.bannerPerson?.pidm ?? 0));
             var allCourses = courseRepo.GetAll();
             prof.assignments.AddRange(
                 profAssignments.Join(
@@ -76,7 +71,7 @@ namespace ZoomConnect.Web.Services.Zoom
                 .ToList()
                 .ForEach(a =>
                 {
-                    var prof = profModels.FirstOrDefault(p => p.bannerPerson.pidm == a.pidm);
+                    var prof = profModels.FirstOrDefault(p => (p.bannerPerson?.pidm ?? 0) == a.pidm);
                     if (prof == null) { return; }
 
                     if (a.primary_ind == "Y" && includePrimary)

@@ -13,8 +13,8 @@ namespace ZoomConnect.Web.ViewModels
 
         public ProfViewModel(ProfDataModel prof)
         {
-            Pidm = prof.bannerPerson.pidm;
-            Name = $"{prof.bannerPerson.last_name}, {prof.bannerPerson.first_name}";
+            Pidm = prof.bannerPerson?.pidm ?? 0;
+            Name = $"{prof.bannerPerson?.last_name}, {prof.bannerPerson?.first_name}";
             Email = prof.primaryEmail == null ? "no email" : prof.primaryEmail.email_address;
             AltEmailCount = prof.otherEmails.Count;
             AltEmails = String.Join(", ", prof.otherEmails.Select(e => e.email_address));

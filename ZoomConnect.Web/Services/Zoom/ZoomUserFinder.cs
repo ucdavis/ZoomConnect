@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SecretJsonConfig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
@@ -17,13 +19,16 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<sirasgn> _assignmentRepo;
         private CachedRepository<ssbsect> _courseRepo;
         private ZoomClient.Zoom _zoomClient;
+        private ZoomOptions _zoomOptions;
+
         private List<ProfDataModel> _profs { get; set; }
 
-        public ZoomUserFinder(ZoomClient.Zoom zoomClient,
+        public ZoomUserFinder(ZoomClient.Zoom zoomClient, SecretConfigManager<ZoomOptions> optionsManager,
             CachedRepository<spriden> personRepo, CachedRepository<goremal> profEmailRepo,
             CachedRepository<sirasgn> assignmentRepo, CachedRepository<ssbsect> courseRepo)
         {
             _zoomClient = zoomClient;
+            _zoomOptions = optionsManager.GetValue().Result;
             _personRepo = personRepo;
             _profEmailRepo = profEmailRepo;
             _assignmentRepo = assignmentRepo;
@@ -64,6 +69,18 @@ namespace ZoomConnect.Web.Services.Zoom
             var allEmails = _profEmailRepo.GetAll()
                 .OrderByDescending(e => e.preferred_ind)
                 .ToList();
+
+            // add extra prof emails
+            allEmails.AddRange((_zoomOptions.ExtraProfEmails ?? "")
+                .ToLower()
+                .Split(new[] { ";", ",", " " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(e => new goremal
+                {
+                    pidm = 0,
+                    email_address = e,
+                    status_ind = "A",
+                    preferred_ind = "Y"
+                }));
 
             allEmails.ForEach(e =>
             {

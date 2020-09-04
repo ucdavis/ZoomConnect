@@ -66,7 +66,7 @@ namespace ZoomConnect.Web.Controllers
                 output.AppendFormat("{0},{1} {2} ({3}),{4},",
                     c.bannerCourse.crn,
                     c.bannerCourse.subj_code, c.bannerCourse.crse_numb, c.bannerCourse.seq_numb,
-                    c.primaryProf.bannerPerson.last_name);
+                    c.primaryProf.bannerPerson?.last_name);
                 // zoom?
                 output.AppendFormat("{0},", c.zoomMeeting == null ? "-" : c.zoomMeeting.id);
                 // canvas?
