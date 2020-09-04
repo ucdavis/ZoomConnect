@@ -57,7 +57,7 @@ namespace ZoomConnect.Web.Services.Zoom
         }
 
         /// <summary>
-        /// Course Meetings linked where possible to all found Zoom meetings by prof-zoomuser and ssrmeet id
+        /// Zoom Meetings linked to Banner
         /// </summary>
         public List<ZoomMeetingCourseModel> Meetings
         {
