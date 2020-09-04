@@ -49,6 +49,7 @@ namespace ZoomConnect.Web.Controllers
 
                 DownloadDirectory = options.DownloadDirectory,
                 ProfilePhotoDirectory = options.ProfilePhotoDirectory,
+                ExtraProfEmails = options.ExtraProfEmails,
 
                 TermStart = options.TermStart,
                 TermEnd = options.TermEnd,
@@ -132,6 +133,7 @@ namespace ZoomConnect.Web.Controllers
 
             options.DownloadDirectory = model.DownloadDirectory;
             options.ProfilePhotoDirectory = model.ProfilePhotoDirectory;
+            options.ExtraProfEmails = model.ExtraProfEmails;
 
             options.CurrentSubject = model.CurrentSubject;
 

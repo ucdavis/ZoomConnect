@@ -90,7 +90,12 @@
 
         <div class="form-group">
             <label class="col-md-4" asp-for="ProfilePhotoDirectory"></label>
-            <input class="col-md-4" asp-for="ProfilePhotoDirectory" />
+            <input class="col-md-7" asp-for="ProfilePhotoDirectory" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4" asp-for="ExtraProfEmails"></label>
+            <input class="col-md-7" asp-for="ExtraProfEmails" />
         </div>
 
         @await Html.PartialAsync("_SetupRequirements", Model.FailedZoomRequirements)

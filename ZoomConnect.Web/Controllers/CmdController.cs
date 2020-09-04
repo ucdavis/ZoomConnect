@@ -64,6 +64,12 @@ namespace ZoomConnect.Web.Controllers
                 .Select(e => e.email_address.ToLower())
                 .ToList();
 
+            // get additional prof emails from Setup
+            profEmails.AddRange((_zoomOptions.ExtraProfEmails ?? "")
+                .ToLower()
+                .Split(new[] { ";", ",", " " }, StringSplitOptions.RemoveEmptyEntries)
+                .ToList());
+
             // get all recordings for account
             var recordings = _zoomClient.GetCloudRecordingsForAccount();
 

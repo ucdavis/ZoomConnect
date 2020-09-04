@@ -28,6 +28,8 @@ namespace ZoomConnect.Web.ViewModels
 
         public string DownloadDirectory { get; set; }
 
+        public string ExtraProfEmails { get; set; }
+
         public string ZoomApiKey { get; set; }
         public string ZoomApiSecret { get; set; }
 
