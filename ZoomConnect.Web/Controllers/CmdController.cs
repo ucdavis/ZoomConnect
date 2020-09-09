@@ -20,6 +20,7 @@ using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services;
 using ZoomConnect.Web.Services.Mediasite;
 using ZoomConnect.Web.Services.Zoom;
+using ZoomConnect.Web.Services.ZoomConnect;
 
 namespace ZoomConnect.Web.Controllers
 {
@@ -35,11 +36,13 @@ namespace ZoomConnect.Web.Controllers
         private EmailService _emailService;
         private ZoomOptions _zoomOptions;
         private DirectoryManager _directoryManager;
+        private RecordingRouter _recordingRouter;
 
         public CmdController(ZoomClient.Zoom zoomClient, CachedRepository<goremal> goremal,
             CachedRepository<ssbsect> ssbsect, CachedRepository<ssrmeet> ssrmeet,
             ParticipantReportService participantService, EmailService emailService,
-            SecretConfigManager<ZoomOptions> optionsManager, DirectoryManager directoryManager)
+            SecretConfigManager<ZoomOptions> optionsManager, DirectoryManager directoryManager,
+            RecordingRouter recordingRouter)
         {
             _zoomClient = zoomClient;
             _goremal = goremal;
@@ -49,6 +52,7 @@ namespace ZoomConnect.Web.Controllers
             _emailService = emailService;
             _zoomOptions = optionsManager.GetValue().Result;
             _directoryManager = directoryManager;
+            _recordingRouter = recordingRouter;
         }
 
         public IActionResult Index()
@@ -89,7 +93,8 @@ namespace ZoomConnect.Web.Controllers
 
             // recording download
             var output = new StringBuilder(80 * profRecordings.Count);
-            output.AppendFormat("\r\nRecordings will be saved to [{0}].\r\n", _directoryManager.DownloadDirectory);
+            output.AppendFormat("\r\nRecordings will be saved to [{0}].", _directoryManager.DownloadDirectory);
+            output.AppendFormat("\r\nRecordings marked with action '*' are routed directly to configured upload directory [{0}]\r\n\r\n", _directoryManager.UploadDirectory);
 
             output.AppendLine("  MEETING_ID  TYPE SIZE     START            END    ACTION");
             foreach (var meeting in connectedRecordings)
@@ -107,8 +112,9 @@ namespace ZoomConnect.Web.Controllers
                     else
                     {
                         var filename = recording.GetLocalFileName(meeting) + "." + recording.file_type;
+                        var downloadDir = _recordingRouter.GetDirectoryForRecording(recording);
                         var fileFullName = recording.file_type.ToUpper() == "MP4"
-                            ? Path.Combine(_directoryManager.DownloadDirectory, filename)
+                            ? Path.Combine(downloadDir, filename)
                             : Path.Combine(_directoryManager.DownloadNonMp4Directory, filename);
                         var recordingUrl = recording.download_url.Substring(recording.download_url.IndexOf("/", 8));
 
@@ -122,7 +128,7 @@ namespace ZoomConnect.Web.Controllers
                         }
                         else
                         {
-                            output.Append("Y, trashing ");
+                            output.AppendFormat("Y{0} trashing ", downloadDir == _directoryManager.UploadDirectory ? "*" : " ");
                             var deleted = _zoomClient.DeleteRecording(recording.meeting_id, recording.id);
                             output.AppendFormat("{0} [{1}]", deleted ? "Y" : "N", filename);
                         }

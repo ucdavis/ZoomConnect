@@ -40,6 +40,19 @@ namespace ZoomClient.Domain
             }
         }
 
+        /// <summary>
+        /// Gets total minutes duration of this recording.  If the recording has no end date, returns 0.
+        /// </summary>
+        [JsonIgnore]
+        public int RecordingDurationMinutes
+        {
+            get
+            {
+                if (RecordingEndDateTime == DateTime.MaxValue) { return 0; }
+                return (int)Math.Round(RecordingEndDateTime.Subtract(RecordingStartDateTime).TotalMinutes);
+            }
+        }
+
         public string GetLocalFileName(Meeting meeting)
         {
             return String.Format("{0}_{1:yyyyMMdd_HHmm}-{2:HHmm}_{3}_{4}",
