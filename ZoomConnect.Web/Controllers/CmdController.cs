@@ -34,11 +34,12 @@ namespace ZoomConnect.Web.Controllers
         private ParticipantReportService _participantService;
         private EmailService _emailService;
         private ZoomOptions _zoomOptions;
+        private DirectoryManager _directoryManager;
 
         public CmdController(ZoomClient.Zoom zoomClient, CachedRepository<goremal> goremal,
             CachedRepository<ssbsect> ssbsect, CachedRepository<ssrmeet> ssrmeet,
             ParticipantReportService participantService, EmailService emailService,
-            SecretConfigManager<ZoomOptions> optionsManager)
+            SecretConfigManager<ZoomOptions> optionsManager, DirectoryManager directoryManager)
         {
             _zoomClient = zoomClient;
             _goremal = goremal;
@@ -47,6 +48,7 @@ namespace ZoomConnect.Web.Controllers
             _participantService = participantService;
             _emailService = emailService;
             _zoomOptions = optionsManager.GetValue().Result;
+            _directoryManager = directoryManager;
         }
 
         public IActionResult Index()
@@ -57,7 +59,7 @@ namespace ZoomConnect.Web.Controllers
         public IActionResult CloudDownload()
         {
             // fail if not configured
-            if (String.IsNullOrEmpty(_zoomOptions.DownloadDirectory)) { return Content("Download Directory not configured"); }
+            if (String.IsNullOrEmpty(_directoryManager.DownloadDirectory)) { return Content("Download Directory not configured"); }
 
             // get all prof emails
             var profEmails = _goremal.GetAll()
@@ -85,17 +87,9 @@ namespace ZoomConnect.Web.Controllers
                 return meetingAgendas.ContainsKey(meetingDetail?.agenda ?? "");
             });
 
-            // directory setup
-            var downloadDirectory = _zoomOptions.DownloadDirectory;
-            var nonMP4Directory = Path.Combine(downloadDirectory, "non_mp4");
-            if (!Directory.Exists(nonMP4Directory))
-            {
-                Directory.CreateDirectory(nonMP4Directory);
-            }
-
             // recording download
             var output = new StringBuilder(80 * profRecordings.Count);
-            output.AppendFormat("\r\nRecordings will be saved to [{0}].\r\n", downloadDirectory);
+            output.AppendFormat("\r\nRecordings will be saved to [{0}].\r\n", _directoryManager.DownloadDirectory);
 
             output.AppendLine("  MEETING_ID  TYPE SIZE     START            END    ACTION");
             foreach (var meeting in connectedRecordings)
@@ -114,8 +108,8 @@ namespace ZoomConnect.Web.Controllers
                     {
                         var filename = recording.GetLocalFileName(meeting) + "." + recording.file_type;
                         var fileFullName = recording.file_type.ToUpper() == "MP4"
-                            ? Path.Combine(downloadDirectory, filename)
-                            : Path.Combine(nonMP4Directory, filename);
+                            ? Path.Combine(_directoryManager.DownloadDirectory, filename)
+                            : Path.Combine(_directoryManager.DownloadNonMp4Directory, filename);
                         var recordingUrl = recording.download_url.Substring(recording.download_url.IndexOf("/", 8));
 
                         output.Append("downloading ");
@@ -151,22 +145,10 @@ namespace ZoomConnect.Web.Controllers
             var cachedMeetings = meetingModels.Meetings;
 
             //
-            // PREP
-            //
-
-            // prep output directory
-            var output = new StringBuilder();
-            var outDir = Path.Combine(_zoomOptions.MediasiteOptions.UploadDirectory, "out");
-            if (!Directory.Exists(outDir))
-            {
-                output.AppendFormat("Creating dir {0}", outDir);
-                Directory.CreateDirectory(outDir);
-            }
-
-            //
             // MONITOR OUTSTANDING JOB STATUS, CLEANUP OLD JOBS
             //
 
+            var output = new StringBuilder();
             output.AppendLine("Checking pending jobs...");
 
             var ignorePendingJobSessionIds = new List<String>();
@@ -196,11 +178,11 @@ namespace ZoomConnect.Web.Controllers
                     }
                     else
                     {
-                        Directory.GetFiles(_zoomOptions.MediasiteOptions.UploadDirectory, sessionId + "_*.MP4")
+                        Directory.GetFiles(_directoryManager.UploadDirectory, sessionId + "_*.MP4")
                             .ToList()
                             .ForEach(f =>
                             {
-                                Directory.Move(f, Path.Combine(outDir, Path.GetFileName(f)));
+                                Directory.Move(f, Path.Combine(_directoryManager.UploadOutDirectory, Path.GetFileName(f)));
                                 output.Append(".");
                             });
 
@@ -228,7 +210,7 @@ namespace ZoomConnect.Web.Controllers
                         {
                             output.Append(ex.ToString());
                         }
-                        output.AppendFormat(" meeting files moved to {0}; email {1} ", outDir, emailOk ? "sent" : "failed");
+                        output.AppendFormat(" meeting files moved to {0}; email {1} ", _directoryManager.UploadOutDirectory, emailOk ? "sent" : "failed");
                     }
                 }
                 else
@@ -249,7 +231,7 @@ namespace ZoomConnect.Web.Controllers
             // GET MP4s IN UPLOAD DIRECTORY
             //
 
-            var dirInfo = new DirectoryInfo(_zoomOptions.MediasiteOptions.UploadDirectory);
+            var dirInfo = new DirectoryInfo(_directoryManager.UploadDirectory);
             dirInfo
                 .GetFiles("*.MP4")
                 .ToList()

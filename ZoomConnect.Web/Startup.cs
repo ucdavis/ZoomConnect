@@ -65,6 +65,7 @@ namespace ZoomConnect.Web
             services.AddCommandKey();
             services.AddScoped<EmailService>();
             services.AddMediasiteServices();
+            services.AddScoped<DirectoryManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
