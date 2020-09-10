@@ -7,8 +7,6 @@ using CanvasClient.Domain;
 using CanvasClient.Extensions;
 using RestSharp;
 using RestSharp.Authenticators;
-using SecretJsonConfig;
-using ZoomConnect.Core.Config;
 
 namespace CanvasClient
 {
@@ -16,13 +14,13 @@ namespace CanvasClient
     {
         private readonly string BaseUrl = "https://canvas.ucdavis.edu/api/v1/";
         private RestClient client = null;
-        private CanvasApiOptions _canvasOptions;
+        private CanvasOptions _canvasOptions;
         private int PageSize = 50;
 
-        public CanvasApi(SecretConfigManager<ZoomOptions> options)
+        public CanvasApi(CanvasOptions options)
         {
             client = new RestClient(BaseUrl);
-            _canvasOptions = options.GetValue().Result.CanvasApi;
+            _canvasOptions = options;
         }
 
         /// <summary>
