@@ -49,6 +49,7 @@ namespace ZoomConnect.Web
                 {
                     options.CasServerUrlBase = Configuration["CasBaseUrl"];   // Set in `appsettings.json` file.
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.ServiceForceHTTPS = true;
                 });
 
             services.AddSingleton<IAuthorizationHandler, ListedUserHandler>();
