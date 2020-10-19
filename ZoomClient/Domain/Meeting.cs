@@ -33,7 +33,7 @@ namespace ZoomClient.Domain
         public string start_url { get; set; }
         public string password { get; set; }
         public string h323password { get; set; }
-        public int pmi { get; set; }
+        public string pmi { get; set; }
 
         public MeetingSettings settings { get; set; }
         public List<Recording> recording_files { get; set; }

@@ -14,7 +14,7 @@ namespace ZoomClient.Domain
         public string first_name { get; set; }
         public string last_name { get; set; }
         public PlanType? type { get; set; }
-        public int? pmi { get; set; }
+        public string pmi { get; set; }
         public bool? use_pmi { get; set; }
         public string timezone { get; set; }
         public string language { get; set; }
@@ -32,7 +32,7 @@ namespace ZoomClient.Domain
         public bool ShouldSerializefirst_name() { return first_name != null; }
         public bool ShouldSerializelast_name() { return last_name != null; }
         public bool ShouldSerializetype() { return type.HasValue; }
-        public bool ShouldSerializepmi() { return pmi.HasValue; }
+        public bool ShouldSerializepmi() { return pmi != null; }
         public bool ShouldSerializeuse_pmi() { return use_pmi.HasValue; }
         public bool ShouldSerializetimezone() { return timezone != null; }
         public bool ShouldSerializelanguage() { return language != null; }
