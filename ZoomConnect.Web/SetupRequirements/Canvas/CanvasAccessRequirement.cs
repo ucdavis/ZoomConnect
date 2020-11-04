@@ -2,6 +2,7 @@
 using System;
 using CanvasClient;
 using ZoomConnect.Core.Config;
+using ZoomConnect.Web.Services.Canvas;
 
 namespace ZoomConnect.Web.SetupRequirements.Canvas
 {
@@ -16,6 +17,8 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
         {
             _options = optionsManager.GetValue().Result;
             _canvasApi = canvasApi;
+
+            _canvasApi.Options = _options.CanvasApi.CreateCanvasOptions();
         }
 
         public RequirementType Type => RequirementType.Canvas;

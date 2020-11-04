@@ -29,6 +29,8 @@ namespace ZoomConnect.Web.Services.Canvas
             _cachedCourses = cachedCourses;
             _holidayRepository = holidayRepository;
             _options = optionsManager.GetValue().Result;
+
+            _canvasApi.Options = _options.CanvasApi.CreateCanvasOptions();
         }
 
         /// <summary>

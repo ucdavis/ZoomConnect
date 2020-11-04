@@ -21,6 +21,8 @@ namespace ZoomConnect.Web.Services.Canvas
             _canvasApi = canvasApi;
             _courses = courses.Courses;
             _options = optionsManager.GetValue().Result;
+
+            _canvasApi.Options = _options.CanvasApi.CreateCanvasOptions();
         }
 
         /// <summary>

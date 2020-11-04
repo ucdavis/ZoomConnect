@@ -12,6 +12,7 @@ using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Services;
+using ZoomConnect.Web.Services.Canvas;
 using ZoomConnect.Web.SetupRequirements;
 using ZoomConnect.Web.ViewModels;
 
@@ -100,6 +101,8 @@ namespace ZoomConnect.Web.Controllers
             }
 
             var options = _secretOptions.GetValue().Result;
+            canvasApi.Options = options.CanvasApi.CreateCanvasOptions();
+
             options.Banner.Instance = model.Instance;
             options.Banner.Username = new SecretStruct(model.Username);
             if (model.Password != _passwordPlaceholder && !String.IsNullOrEmpty(model.Password))

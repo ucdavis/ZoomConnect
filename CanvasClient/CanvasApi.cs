@@ -17,10 +17,27 @@ namespace CanvasClient
         private CanvasOptions _canvasOptions;
         private int PageSize = 50;
 
+        public CanvasApi()
+        {
+            client = new RestClient(BaseUrl);
+        }
+
         public CanvasApi(CanvasOptions options)
         {
             client = new RestClient(BaseUrl);
             _canvasOptions = options;
+        }
+
+        public CanvasOptions Options
+        {
+            set
+            {
+                if (_canvasOptions != null)
+                {
+                    throw new ArgumentException("Options already configured.");
+                }
+                _canvasOptions = value;
+            }
         }
 
         /// <summary>
@@ -232,6 +249,10 @@ namespace CanvasClient
         {
             get
             {
+                if (_canvasOptions == null)
+                {
+                    throw new ArgumentException("Options not configured.");
+                }
                 return new JwtAuthenticator(_canvasOptions.ApiAccessToken);
             }
         }

@@ -31,6 +31,8 @@ namespace ZoomConnect.Web.Services.Canvas
             _options = optionsManager.GetValue().Result;
             _cache = cache.Cache;
             _logger = logger;
+
+            _canvasApi.Options = _options.CanvasApi.CreateCanvasOptions();
         }
 
         public List<CalendarEvent> Events
