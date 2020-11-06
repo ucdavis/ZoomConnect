@@ -6,6 +6,7 @@ using CanvasClient;
 using CanvasClient.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using ZoomConnect.Core.Config;
@@ -23,15 +24,18 @@ namespace ZoomConnect.Web.Controllers
     {
         private SecretConfigManager<ZoomOptions> _secretOptions;
         private CachedRepository<stvterm> _termRepository;
+        private CachedRepository<stvsubj> _subjectRepository;
         private RequirementManager _requirementManager;
         private ILogger<HomeController> _logger;
         private const string _passwordPlaceholder = "*********";
 
         public SetupController(SecretConfigManager<ZoomOptions> secretOptions, CachedRepository<stvterm> termRepository,
+            CachedRepository<stvsubj> subjectRepository,
             RequirementManager requirementManager, ILogger<HomeController> logger)
         {
             _secretOptions = secretOptions;
             _termRepository = termRepository;
+            _subjectRepository = subjectRepository;
             _requirementManager = requirementManager;
             _logger = logger;
         }
@@ -88,6 +92,8 @@ namespace ZoomConnect.Web.Controllers
 
             CheckRequirements(viewModel);
 
+            viewModel = PopulateSelectLists(viewModel);
+
             return View(viewModel);
         }
 
@@ -117,15 +123,18 @@ namespace ZoomConnect.Web.Controllers
 
                 // look up new start/end dates
                 var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
-                options.TermStart = term.start_date;
-                options.TermEnd = term.end_date;
+                options.TermStart = term? .start_date ?? DateTime.Now;
+                options.TermEnd = term?.end_date ?? DateTime.Now;
 
                 // if using Canvas, find term in Canvas and store its id in hidden field
                 if (model.UseCanvas)
                 {
                     var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
-                    var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm.description));
-                    options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                    var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
+                    if (canvasTerm != null)
+                    {
+                        options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                    }
                 }
             }
             else
@@ -200,7 +209,24 @@ namespace ZoomConnect.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            model = PopulateSelectLists(model);
+
             return View(model);
+        }
+
+        private BannerOptionsViewModel PopulateSelectLists(BannerOptionsViewModel model)
+        {
+            model.BannerSubjects = _subjectRepository.GetAll()
+                .OrderBy(s => s.code)
+                .ToList();
+
+            model.BannerTerms = _termRepository.GetAll()
+                .Where(t => t.start_date.Subtract(DateTime.Now).TotalDays < 90 &&
+                    DateTime.Now.Subtract(t.end_date).TotalDays < 20)
+                .OrderBy(t => t.code)
+                .ToList();
+
+            return model;
         }
 
         public IActionResult CmdKey()

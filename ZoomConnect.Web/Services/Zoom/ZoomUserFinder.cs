@@ -70,17 +70,22 @@ namespace ZoomConnect.Web.Services.Zoom
                 .OrderByDescending(e => e.preferred_ind)
                 .ToList();
 
-            // add extra prof emails
-            allEmails.AddRange((_zoomOptions.ExtraProfEmails ?? "")
+            // add extra prof emails with unique pidms so they are not grouped with anyone else
+            var extraProfs = (_zoomOptions.ExtraProfEmails ?? "")
                 .ToLower()
                 .Split(new[] { ";", ",", " " }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(e => new goremal
+                .ToArray();
+
+            for (var i = 0; i < extraProfs.Length; i++)
+            {
+                allEmails.Add(new goremal
                 {
-                    pidm = 0,
-                    email_address = e,
-                    status_ind = "A",
-                    preferred_ind = "Y"
-                }));
+                     pidm = -1 - i,
+                     email_address = extraProfs[i],
+                     status_ind = "A",
+                     preferred_ind = "Y"
+                });
+            }
 
             allEmails.ForEach(e =>
             {

@@ -60,6 +60,12 @@ namespace ZoomConnect.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Cloud Download gets Zoom recordings for all connected classes
+        /// into properly named MP4 files in the configured download directory.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
         public IActionResult CloudDownload()
         {
             // fail if not configured
@@ -140,7 +146,16 @@ namespace ZoomConnect.Web.Controllers
             return Content(output.ToString());
         }
 
-        // mediasite upload
+        /// <summary>
+        /// Mediasite Upload checks configured upload directory for properly named MP4s,
+        /// and uploads them to Mediasite in the correct configured subdirectory named with term-crn.
+        /// </summary>
+        /// <param name="jobsFile"></param>
+        /// <param name="msClient"></param>
+        /// <param name="meetingModels"></param>
+        /// <param name="mediasiteJobsFile"></param>
+        /// <returns></returns>
+        [HttpPost]
         public IActionResult MediasiteUpload([FromServices] SecretConfigManager<List<MediasiteJob>> jobsFile,
             [FromServices] MediasiteClient msClient, [FromServices] CachedMeetingModels meetingModels,
             [FromServices] SecretConfigManager<List<MediasiteJob>> mediasiteJobsFile)
@@ -372,7 +387,11 @@ namespace ZoomConnect.Web.Controllers
             return Content(output.ToString());
         }
 
-        // participant report
+        /// <summary>
+        /// Participant Report gathers Zoom participation info for each class and emails to each prof + additional configured cc addresses.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
         public IActionResult ParticipantReport()
         {
             var messages = new List<MimeMessage>();

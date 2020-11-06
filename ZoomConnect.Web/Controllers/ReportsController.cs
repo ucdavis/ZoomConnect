@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecretJsonConfig;
+using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
@@ -104,6 +105,36 @@ namespace ZoomConnect.Web.Controllers
             });
 
             return File(new UTF8Encoding().GetBytes(output.ToString()), "text/csv", "UnconnectedMeetings.csv");
+        }
+
+        public IActionResult ZoomOccurrences([FromServices] CachedMeetingModels meetingModels, [FromServices] ZoomClient.Zoom zoomClient)
+        {
+            var zoomMeetingDetails = new List<Meeting>();
+
+            var output = new StringBuilder(meetingModels.Meetings.Count * 200);
+            output.Append("Topic, Count, First, Last\r\n");
+
+            // get details for each connected zoom meeting id
+            foreach (var meeting in meetingModels.Meetings)
+            {
+                var details = zoomClient.GetMeetingDetails(meeting.ZoomMeetingId);
+                if (details.occurrences == null)
+                {
+                    details.occurrences = new List<MeetingOccurrence>();
+                }
+                var topic = details.topic;
+                var count = details.occurrences.Count;
+                var first = DateTime.MinValue;
+                var last = DateTime.MaxValue;
+                if (details.occurrences.Count > 0)
+                {
+                    first = details.occurrences.OrderBy(o => o.StartDateTimeLocal).FirstOrDefault().StartDateTimeLocal;
+                    last = details.occurrences.OrderBy(o => o.StartDateTimeLocal).LastOrDefault().StartDateTimeLocal;
+                }
+                output.AppendFormat("\"{0}\",{1},{2},{3}\r\n", topic, count, first, last);
+            }
+
+            return File(new System.Text.UTF8Encoding().GetBytes(output.ToString()), "text/csv", "ZoomOccurrences.csv");
         }
     }
 }

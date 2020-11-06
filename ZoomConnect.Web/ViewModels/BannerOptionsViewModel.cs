@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
+using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.SetupRequirements;
 
 namespace ZoomConnect.Web.ViewModels
@@ -65,5 +67,10 @@ namespace ZoomConnect.Web.ViewModels
         public string MediasiteReportToEmail { get; set; }
         public string MediasiteReportReplyToEmail { get; set; }
         public List<ISetupRequirement> FailedMediasiteRequirements { get; set; }
+
+        // lists for dropdown population
+        public List<stvsubj> BannerSubjects { get; set; }
+        public List<stvterm> BannerTerms { get; set; }
+
     }
 }
