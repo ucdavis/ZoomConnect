@@ -32,10 +32,6 @@ namespace CanvasClient
         {
             set
             {
-                if (_canvasOptions != null)
-                {
-                    throw new ArgumentException("Options already configured.");
-                }
                 _canvasOptions = value;
             }
         }
