@@ -53,6 +53,8 @@ namespace ZoomConnect.Web.Controllers
             _zoomOptions = optionsManager.GetValue().Result;
             _directoryManager = directoryManager;
             _recordingRouter = recordingRouter;
+
+            _zoomClient.Options = _zoomOptions.ZoomApi.CreateZoomOptions();
         }
 
         public IActionResult Index()

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SecretJsonConfig;
+using ZoomClient;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Zoom;
@@ -15,10 +18,15 @@ namespace ZoomConnect.Web.Controllers
     public class ProfsController : Controller
     {
         private CachedProfModels _userFinder;
+        private Zoom _zoomClient;
 
-        public ProfsController(CachedProfModels userFinder)
+        public ProfsController(CachedProfModels userFinder, ZoomClient.Zoom zoomClient, SecretConfigManager<ZoomOptions> optionsManager)
         {
             _userFinder = userFinder;
+            _zoomClient = zoomClient;
+
+            var _zoomOptions = optionsManager.GetValue().Result;
+            _zoomClient.Options = _zoomOptions.ZoomApi.CreateZoomOptions();
         }
 
         public IActionResult Index()
@@ -36,9 +44,9 @@ namespace ZoomConnect.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(SelectedProfsModel model, [FromServices] ZoomClient.Zoom zoomClient)
+        public IActionResult Index(SelectedProfsModel model)
         {
-            var planUsage = zoomClient.GetPlanUsage();
+            var planUsage = _zoomClient.GetPlanUsage();
             model.RemainingLicenses = planUsage.plan_base.hosts - planUsage.plan_base.usage;
 
             model.Profs = RehydrateSelectedProfs(model)

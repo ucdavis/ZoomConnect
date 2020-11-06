@@ -38,6 +38,8 @@ namespace ZoomConnect.Web.Services.Zoom
             _assignmentRepo = assignmentRepo;
             _canvasEventFinder = canvasEventFinder;
             _options = optionsManager.GetValue().Result;
+
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         /// <summary>

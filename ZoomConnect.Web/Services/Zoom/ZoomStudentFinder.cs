@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SecretJsonConfig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
 using ZoomConnect.Web.Models;
@@ -16,10 +18,13 @@ namespace ZoomConnect.Web.Services.Zoom
         private CachedRepository<spriden_student> _studentRepo;
         private List<StudentDataModel> _students { get; set; }
 
-        public ZoomStudentFinder(ZoomClient.Zoom zoomClient, CachedRepository<spriden_student> studentRepo)
+        public ZoomStudentFinder(ZoomClient.Zoom zoomClient, CachedRepository<spriden_student> studentRepo, SecretConfigManager<ZoomOptions> optionsManager)
         {
             _zoomClient = zoomClient;
             _studentRepo = studentRepo;
+
+            var _options = optionsManager.GetValue().Result;
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         /// <summary>

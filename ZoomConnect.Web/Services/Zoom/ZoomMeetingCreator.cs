@@ -26,6 +26,8 @@ namespace ZoomConnect.Web.Services.Zoom
             _zoomClient = zoomClient;
             _cachedMeetings = cachedMeetings;
             _cachedHolidays = cachedHolidays;
+
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         public List<Meeting> CreateZoomMeetings(List<CourseMeetingDataModel> courseMeetings)

@@ -33,6 +33,8 @@ namespace ZoomConnect.Web.Services.Zoom
             _profEmailRepo = profEmailRepo;
             _assignmentRepo = assignmentRepo;
             _courseRepo = courseRepo;
+
+            _zoomClient.Options = _zoomOptions.ZoomApi.CreateZoomOptions();
         }
 
         /// <summary>

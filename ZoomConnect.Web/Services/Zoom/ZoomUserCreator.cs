@@ -21,6 +21,8 @@ namespace ZoomConnect.Web.Services.Zoom
             _options = optionsManager.GetValue().Result;
             _zoomClient = zoomClient;
             _cachedProfs = cachedProfs;
+
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         public List<User> CreateLicensedZoomUsers(List<ProfDataModel> profs)

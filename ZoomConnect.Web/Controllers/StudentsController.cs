@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SecretJsonConfig;
 using ZoomClient;
+using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Zoom;
@@ -18,10 +20,13 @@ namespace ZoomConnect.Web.Controllers
         private CachedStudentModels _studentFinder;
         private Zoom _zoomClient;
 
-        public StudentsController(CachedStudentModels studentFinder, ZoomClient.Zoom zoomClient)
+        public StudentsController(CachedStudentModels studentFinder, ZoomClient.Zoom zoomClient, SecretConfigManager<ZoomOptions> optionsManager)
         {
             _studentFinder = studentFinder;
             _zoomClient = zoomClient;
+
+            var _options = optionsManager.GetValue().Result;
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         public IActionResult Index()

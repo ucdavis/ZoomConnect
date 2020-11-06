@@ -1,5 +1,7 @@
-﻿using System;
-using ZoomClient;
+﻿using SecretJsonConfig;
+using System;
+using ZoomConnect.Core.Config;
+using ZoomConnect.Web.Services.Zoom;
 
 namespace ZoomConnect.Web.SetupRequirements.Banner
 {
@@ -9,9 +11,12 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
         private string _statusDescription = "";
         private ZoomClient.Zoom _zoomClient;
 
-        public ZoomConnectionRequirement(ZoomClient.Zoom zoomClient)
+        public ZoomConnectionRequirement(ZoomClient.Zoom zoomClient, SecretConfigManager<ZoomOptions> optionsManager)
         {
             _zoomClient = zoomClient;
+
+            var _options = optionsManager.GetValue().Result;
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         public RequirementType Type => RequirementType.Zoom;

@@ -25,6 +25,8 @@ namespace ZoomConnect.Web.Services.Zoom
             _configManager = configManager;
             _options = configManager.GetValue().Result;
             _logger = logger;
+
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         public List<ParticipantReportModel> PrepareReports()

@@ -10,8 +10,6 @@ using RestSharp.Authenticators;
 using ZoomClient.Domain;
 using ZoomClient.Extensions;
 using System.IO;
-using SecretJsonConfig;
-using ZoomConnect.Core.Config;
 using ZoomClient.Domain.Billing;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
@@ -23,14 +21,28 @@ namespace ZoomClient
         private readonly string BaseUrl = "https://api.zoom.us/v2/";
         private RestClient client = null;
         private int PageSize = 80;
-        private ZoomApiOptions _zoomOptions;
+        private Options _zoomOptions;
         private ILogger<Zoom> _logger;
 
-        public Zoom(SecretConfigManager<ZoomOptions> zoomOptions, ILogger<Zoom> logger)
+        public Zoom(ILogger<Zoom> logger)
         {
             client = new RestClient(BaseUrl);
-            _zoomOptions = zoomOptions.GetValue().Result.ZoomApi;
             _logger = logger;
+        }
+
+        public Zoom(Options zoomOptions, ILogger<Zoom> logger)
+        {
+            client = new RestClient(BaseUrl);
+            _zoomOptions = zoomOptions;
+            _logger = logger;
+        }
+
+        public Options Options
+        {
+            set
+            {
+                _zoomOptions = value;
+            }
         }
 
         /// <summary>
@@ -642,10 +654,15 @@ namespace ZoomClient
         {
             get
             {
+                if (_zoomOptions == null)
+                {
+                    throw new ArgumentException("Options not set.");
+                }
+
                 return new JwtBuilder()
                     .WithAlgorithm(new HMACSHA256Algorithm())
-                    .WithSecret(_zoomOptions.ApiSecret.Value)
-                    .AddClaim("iss", _zoomOptions.ApiKey.Value)
+                    .WithSecret(_zoomOptions.ApiSecret)
+                    .AddClaim("iss", _zoomOptions.ApiKey)
                     .AddClaim("exp", DateTimeOffset.UtcNow.AddSeconds(5).ToUnixTimeSeconds())
                     .Encode();
             }

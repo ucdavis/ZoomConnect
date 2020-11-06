@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecretJsonConfig;
+using ZoomClient;
 using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Banner.Cache;
 using ZoomConnect.Web.Banner.Domain;
-using ZoomConnect.Web.Models;
 using ZoomConnect.Web.Services.Zoom;
-using ZoomConnect.Web.ViewModels;
 
 namespace ZoomConnect.Web.Controllers
 {
@@ -20,10 +18,14 @@ namespace ZoomConnect.Web.Controllers
     public class ReportsController : Controller
     {
         private ZoomOptions _options;
+        private Zoom _zoomClient;
 
-        public ReportsController(SecretConfigManager<ZoomOptions> optionsManager)
+        public ReportsController(SecretConfigManager<ZoomOptions> optionsManager, ZoomClient.Zoom zoomClient)
         {
             _options = optionsManager.GetValue().Result;
+            _zoomClient = zoomClient;
+
+            _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
         public IActionResult Index()
@@ -80,7 +82,7 @@ namespace ZoomConnect.Web.Controllers
             return File(new UTF8Encoding().GetBytes(output.ToString()), "text/csv", "CanvasStatus.csv");
         }
 
-        public IActionResult UnconnectedMeetings([FromServices] CachedRepository<goremal> goremal, [FromServices] ZoomClient.Zoom zoomClient)
+        public IActionResult UnconnectedMeetings([FromServices] CachedRepository<goremal> goremal)
         {
             var output = new StringBuilder();
             output.Append("Prof Email,Meeting Id,Meeting Name,Agenda\r\n");
@@ -93,7 +95,7 @@ namespace ZoomConnect.Web.Controllers
             // get all meetings without ssrmeet.id in agenda (not connected)
             profEmails.ForEach(e =>
             {
-                var meetings = zoomClient.GetMeetingsForUser(e.email_address, "scheduled");
+                var meetings = _zoomClient.GetMeetingsForUser(e.email_address, "scheduled");
                 if (meetings == null) { return; }
 
                 meetings.Where(m => m.agenda == null || m.agenda.Length < 10 || m.agenda.Substring(0, 10) != "ssrmeet.id")
@@ -107,7 +109,7 @@ namespace ZoomConnect.Web.Controllers
             return File(new UTF8Encoding().GetBytes(output.ToString()), "text/csv", "UnconnectedMeetings.csv");
         }
 
-        public IActionResult ZoomOccurrences([FromServices] CachedMeetingModels meetingModels, [FromServices] ZoomClient.Zoom zoomClient)
+        public IActionResult ZoomOccurrences([FromServices] CachedMeetingModels meetingModels)
         {
             var zoomMeetingDetails = new List<Meeting>();
 
@@ -117,7 +119,7 @@ namespace ZoomConnect.Web.Controllers
             // get details for each connected zoom meeting id
             foreach (var meeting in meetingModels.Meetings)
             {
-                var details = zoomClient.GetMeetingDetails(meeting.ZoomMeetingId);
+                var details = _zoomClient.GetMeetingDetails(meeting.ZoomMeetingId);
                 if (details.occurrences == null)
                 {
                     details.occurrences = new List<MeetingOccurrence>();
