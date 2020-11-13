@@ -62,7 +62,7 @@ namespace ZoomConnect.Web
             services.AddBanner();
             services.AddCachedRepositories();
             services.AddZoomServices();
-            services.AddCanvasServices();
+            services.AddCanvasZoomServices();
             services.AddSetupRequirements();
             services.AddCommandKey();
             services.AddScoped<EmailService>();

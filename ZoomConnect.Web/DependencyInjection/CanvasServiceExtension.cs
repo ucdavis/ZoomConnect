@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class CanvasServiceExtension
     {
-        public static IServiceCollection AddCanvasServices(this IServiceCollection services)
+        public static IServiceCollection AddCanvasZoomServices(this IServiceCollection services)
         {
             services.AddScoped<CanvasApi>();
             services.AddScoped<CachedCanvasCourses>();
