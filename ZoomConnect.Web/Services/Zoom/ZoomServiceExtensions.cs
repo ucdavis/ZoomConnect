@@ -144,6 +144,16 @@ namespace ZoomConnect.Web.Services.Zoom
         }
 
         /// <summary>
+        /// Zoom formatted datetime in local time zone
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static string ToZoomUTC(this DateTime date)
+        {
+            return date.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+
+        /// <summary>
         /// Zoom meeting agenda string for creating or matching zoom meetings to ssrmeet rows.
         /// </summary>
         /// <param name="ssrmeetRow"></param>

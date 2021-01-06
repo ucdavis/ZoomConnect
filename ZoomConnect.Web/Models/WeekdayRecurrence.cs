@@ -17,7 +17,7 @@ namespace ZoomConnect.Web.Models
             }
 
             startDateTime = firstOccurrence.AddDays(offset);
-            occurrences = (int)Math.Floor(termEnd.Subtract(startDateTime).TotalDays / 7);
+            occurrences = (int)Math.Floor((termEnd.Subtract(startDateTime).TotalDays + 1) / 7);
         }
 
         /// <summary>

@@ -57,7 +57,8 @@ namespace ZoomConnect.Web.Services.Zoom
                         type = 2,
                         repeat_interval = 1,
                         weekly_days = String.Join(",", meeting.DayNumbers(1)),
-                        end_times = (int)((termEnd.Subtract(termStart).TotalDays + 1) * meeting.DayNumbers(0).Count / 7)
+                        //end_times = (int)((termEnd.Subtract(termStart).TotalDays + 1) * meeting.DayNumbers(0).Count / 7)
+                        end_date_time = termEnd.AddDays(1).Date.ToZoomUTC()
                     },
                     settings = new MeetingSettings
                     {
