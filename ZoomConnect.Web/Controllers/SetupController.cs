@@ -92,7 +92,15 @@ namespace ZoomConnect.Web.Controllers
 
             CheckRequirements(viewModel);
 
-            viewModel = PopulateSelectLists(viewModel);
+            if (viewModel.FailedBannerRequirements.Count() == 0)
+            {
+                viewModel = PopulateSelectLists(viewModel);
+            }
+            else
+            {
+                viewModel.BannerSubjects = new List<stvsubj>();
+                viewModel.BannerTerms = new List<stvterm>();
+            }
 
             return View(viewModel);
         }
@@ -216,15 +224,23 @@ namespace ZoomConnect.Web.Controllers
 
         private BannerOptionsViewModel PopulateSelectLists(BannerOptionsViewModel model)
         {
-            model.BannerSubjects = _subjectRepository.GetAll()
-                .OrderBy(s => s.code)
-                .ToList();
+            try
+            {
+                model.BannerSubjects = _subjectRepository.GetAll()
+                    .OrderBy(s => s.code)
+                    .ToList();
 
-            model.BannerTerms = _termRepository.GetAll()
-                .Where(t => t.start_date.Subtract(DateTime.Now).TotalDays < 90 &&
-                    DateTime.Now.Subtract(t.end_date).TotalDays < 20)
-                .OrderBy(t => t.code)
-                .ToList();
+                model.BannerTerms = _termRepository.GetAll()
+                    .Where(t => t.start_date.Subtract(DateTime.Now).TotalDays < 90 &&
+                        DateTime.Now.Subtract(t.end_date).TotalDays < 20)
+                    .OrderBy(t => t.code)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                model.BannerSubjects = new List<stvsubj>();
+                model.BannerTerms = new List<stvterm>();
+            }
 
             return model;
         }
