@@ -12,6 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<CachedCanvasCourses>();
             services.AddScoped<CalendarEventFinder>();
             services.AddScoped<CanvasEventCreator>();
+            services.AddScoped<CanvasScheduledEventUpdater>();
 
             return services;
         }
