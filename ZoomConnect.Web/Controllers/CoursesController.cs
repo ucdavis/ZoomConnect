@@ -69,6 +69,62 @@ namespace ZoomConnect.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Modify(SelectedCoursesViewModel model)
+        {
+            model.Courses = RehydrateSelectedMeetings(model)
+                .Select(m => new CourseViewModel(m, _options.CanvasApi?.UseCanvas ?? false) { IsSelected = true })
+                .ToList();
+            model.IncludeCanvas = _options.CanvasApi?.UseCanvas ?? false;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Modify(SelectedCoursesViewModel model, [FromServices] ZoomMeetingScheduleUpdater zoomUpdater,
+            [FromServices] CanvasScheduledEventUpdater canvasUpdater)
+        {
+            // validate holiday dates
+            if (model.HolidayStart.HasValue && !model.HolidayEnd.HasValue ||
+                !model.HolidayStart.HasValue && model.HolidayEnd.HasValue ||
+                model.HolidayStart.HasValue && model.HolidayEnd.Value < model.HolidayStart.Value)
+            {
+                TempData["Message"] = "Invalid Holiday Dates";
+                return RedirectToAction("Index");
+            }
+
+            // validate day-of-week variance settings
+            if (model.VarianceDate.HasValue && !model.VarianceDayOfWeek.HasValue ||
+                !model.VarianceDate.HasValue && model.VarianceDayOfWeek.HasValue ||
+                model.VarianceDate.HasValue && model.VarianceDate.Value.DayOfWeek == model.VarianceDayOfWeek.Value)
+            {
+                TempData["Message"] = "Invalid Variance Dates";
+                return RedirectToAction("Index");
+            }
+
+            // return to index if nothing to do
+            if (!model.HolidayEnd.HasValue && !model.VarianceDate.HasValue)
+            {
+                TempData["Message"] = "No Modifications Selected";
+                return RedirectToAction("Index");
+            }
+
+            // carry out modifications
+            if (model.HolidayStart.HasValue)
+            {
+                var holidayZoomResults = zoomUpdater.DeleteHolidayMeetings(model.HolidayStart.Value.Date, model.HolidayEnd.Value.Date.AddDays(1));
+
+                if (_options.CanvasApi.UseCanvas)
+                {
+                    var holidayEventResults = canvasUpdater.DeleteHolidayEvents(model.HolidayStart.Value, model.HolidayEnd.Value);
+                }
+            }
+
+            ViewData["Holiday"] = model.HolidayStart.HasValue ? $"{model.HolidayStart.Value} - {model.HolidayEnd.Value}" : "";
+            ViewData["Variance"] = model.VarianceDate.HasValue ? $"{model.VarianceDate.Value} is a {model.VarianceDayOfWeek.Value}" : "";
+
+            return View(model);
+        }
+
         private List<CourseMeetingDataModel> RehydrateSelectedMeetings(SelectedCoursesViewModel model)
         {
             var selectedMeetingIds = model.Courses

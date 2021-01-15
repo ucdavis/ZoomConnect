@@ -1,0 +1,45 @@
+﻿@model ZoomConnect.Web.ViewModels.SelectedCoursesViewModel
+@using ZoomConnect.Web.ViewModels;
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h1>Courses</h1>
+
+<form asp-controller="Courses" asp-action="Modify" method="POST">
+
+    @await Html.PartialAsync("_Courses", Model)
+
+    @if (Model.HolidayStart.HasValue || Model.VarianceDate.HasValue)
+    {
+        <div>
+            Holiday Data: @ViewData["Holiday"]
+        </div>
+        <div>
+            Variance Data: @ViewData["Variance"]
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <label class="col-md-3">Holiday Range</label>
+            From <input class="col-md-4" asp-for="HolidayStart" />
+            to <input class="col-md-4" asp-for="HolidayEnd" />
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3">Schedule Variance</label>
+            Treat <input class="col-md-4" asp-for="VarianceDate" />
+            as <select class="col-md-4" asp-for="VarianceDayOfWeek" asp-items="@Html.GetEnumSelectList<DayOfWeek>()">
+                  <option>Select a day...</option>
+               </select>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Modify Schedules</button>
+    @if (Model.SelectedCourses > 0)
+    {
+        <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>
+    }
+</form>

@@ -1,0 +1,56 @@
+﻿@model ZoomConnect.Web.ViewModels.SelectedCoursesViewModel
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <td>
+                @if (Model.SelectedCourses == 0)
+                {
+                    <input type="checkbox" id="SelectAll" title="Select All" />
+                }
+            </td>
+            <th scope="col">CRN</th>
+            <th scope="col">Description</th>
+            <th scope="col">Time</th>
+            <th scope="col">Location</th>
+            <th scope="col">Professor</th>
+            <th scope="col">Next Occurrence</th>
+            @if (Model.IncludeCanvas)
+            {
+                <th scope="col">Canvas</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model.Courses)
+        {
+            <tr class="@(course.IsMeetingConnected ? "table-success" : "")">
+                <td>
+                    <input type="hidden" name="Courses.Index" value="@course.MeetingId" />
+                    <input type="hidden" name="Courses[@course.MeetingId].MeetingId" value="@course.MeetingId" />
+                    @if (Model.SelectedCourses == 0 && course.ShowCheckbox)
+                    {
+                        <input type="checkbox" name="Courses[@course.MeetingId].IsSelected" value="true" />
+                    }
+                    else if (Model.SelectedCourses > 0)
+                    {
+                        <input type="hidden" name="Courses[@course.MeetingId].IsSelected" value="true" />
+                    }
+                </td>
+                <td>@course.Crn</td>
+                <td>@course.Description</td>
+                <td>@course.TimeAndDays</td>
+                <td>@course.Location</td>
+                <td>
+                    <span class="@course.ProfStatusCssClass" title="@course.ProfZoomStatus" aria-hidden="true"></span>
+                    @course.Prof
+                </td>
+                <td>@course.NextOccurrence.ToShortDateString()</td>
+                @if (Model.IncludeCanvas)
+                {
+                    <td><span class="@course.CanvasStatusCssClass" title="@(course.IsCanvasEventCreated ? "yes" : "no")"></span></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
