@@ -133,22 +133,22 @@ namespace ZoomConnect.Web.Controllers
                 var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
                 options.TermStart = term? .start_date ?? DateTime.Now;
                 options.TermEnd = term?.end_date ?? DateTime.Now;
-
-                // if using Canvas, find term in Canvas and store its id in hidden field
-                if (model.UseCanvas)
-                {
-                    var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
-                    var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
-                    if (canvasTerm != null)
-                    {
-                        options.CanvasApi.EnrollmentTerm = canvasTerm.id;
-                    }
-                }
             }
             else
             {
                 options.TermStart = model.TermStart;
                 options.TermEnd = model.TermEnd;
+            }
+
+            // if adding Canvas, find term in Canvas and store its id in hidden field
+            if (model.UseCanvas && !options.CanvasApi.UseCanvas)
+            {
+                var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
+                var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
+                if (canvasTerm != null)
+                {
+                    options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                }
             }
 
             options.DownloadDirectory = model.DownloadDirectory;
