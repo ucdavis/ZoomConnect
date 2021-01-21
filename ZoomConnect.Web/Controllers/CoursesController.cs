@@ -109,18 +109,20 @@ namespace ZoomConnect.Web.Controllers
             }
 
             // carry out modifications
+            var results = "";
             if (model.HolidayStart.HasValue)
             {
-                var holidayZoomResults = zoomUpdater.DeleteHolidayMeetings(model.HolidayStart.Value.Date, model.HolidayEnd.Value.Date.AddDays(1));
+                results = zoomUpdater.DeleteHolidayMeetings(model.HolidayStart.Value.Date, model.HolidayEnd.Value.Date.AddDays(1));
 
                 if (_options.CanvasApi.UseCanvas)
                 {
-                    var holidayEventResults = canvasUpdater.DeleteHolidayEvents(model.HolidayStart.Value.Date, model.HolidayEnd.Value.Date.AddDays(1));
+                    results += canvasUpdater.DeleteHolidayEvents(model.HolidayStart.Value.Date, model.HolidayEnd.Value.Date.AddDays(1));
                 }
             }
 
             ViewData["Holiday"] = model.HolidayStart.HasValue ? $"{model.HolidayStart.Value} - {model.HolidayEnd.Value}" : "";
             ViewData["Variance"] = model.VarianceDate.HasValue ? $"{model.VarianceDate.Value} is a {model.VarianceDayOfWeek.Value}" : "";
+            ViewData["Results"] = results;
 
             return View(model);
         }
