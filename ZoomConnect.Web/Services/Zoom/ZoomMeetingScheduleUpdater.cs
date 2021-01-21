@@ -36,7 +36,8 @@ namespace ZoomConnect.Web.Services.Zoom
                         o.StartDateTimeLocal >= holidayStart &&
                         o.StartDateTimeLocal < holidayEnd)
                     .ToList()
-                    .ForEach(d => _zoomClient.DeleteMeeting(m.ZoomMeetingId, d.occurrence_id));
+                    //.ForEach(d => _zoomClient.DeleteMeeting(m.ZoomMeetingId, d.occurrence_id));
+                    .ForEach(d => message += $"{m.ZoomMeetingId}/{d.occurrence_id} at {d.StartDateTimeLocal}\r\n");
             });
 
             return message;

@@ -1,7 +1,6 @@
 ﻿using CanvasClient;
 using SecretJsonConfig;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Services.Zoom;
@@ -26,9 +25,19 @@ namespace ZoomConnect.Web.Services.Canvas
         {
             string message = "";
 
-            // select cached zoom meetings within the holiday date range
-            _cachedMeetings.Meetings.ForEach(m =>
+            // select cached canvas events within the holiday date range, for each cached Course
+            _cachedMeetings.Courses.ForEach(m =>
             {
+                // skip if no connected zoom meeting or canvas course
+                if (m.zoomMeeting == null) { return; }
+
+                // skip if no canvas calendar events exist
+                if (m.canvasEvents == null) { return; }
+
+                // delete connected events within requested date range
+                m.canvasEvents.Where(e => e.start_at >= holidayStart && e.start_at < holidayEnd)
+                    .ToList()
+                    .ForEach(e => message += $"{m.zoomMeeting.id} {e.start_at} {e.description}");
             });
 
             return message;

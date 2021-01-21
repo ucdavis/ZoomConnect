@@ -115,7 +115,7 @@ namespace ZoomConnect.Web.Controllers
 
                 if (_options.CanvasApi.UseCanvas)
                 {
-                    var holidayEventResults = canvasUpdater.DeleteHolidayEvents(model.HolidayStart.Value, model.HolidayEnd.Value);
+                    var holidayEventResults = canvasUpdater.DeleteHolidayEvents(model.HolidayStart.Value.Date, model.HolidayEnd.Value.Date.AddDays(1));
                 }
             }
 
