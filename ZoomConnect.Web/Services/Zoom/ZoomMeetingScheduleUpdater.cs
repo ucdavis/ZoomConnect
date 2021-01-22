@@ -31,6 +31,7 @@ namespace ZoomConnect.Web.Services.Zoom
             _cachedMeetings.Meetings.ForEach(m =>
             {
                 var meetingDetails = _zoomClient.GetMeetingDetails(m.ZoomMeetingId);
+                if (meetingDetails.occurrences == null) { return; }
                 meetingDetails.occurrences
                     .Where(o => o.status != "deleted" &&
                         o.StartDateTimeLocal >= holidayStart &&
