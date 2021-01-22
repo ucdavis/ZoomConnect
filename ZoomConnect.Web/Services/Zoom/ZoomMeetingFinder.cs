@@ -94,7 +94,7 @@ namespace ZoomConnect.Web.Services.Zoom
             var cachedProfs = _profModels.Profs;
 
             cachedProfs
-                .Where(p => p.zoomUser != null)
+                .Where(p => p.zoomUser != null && !String.IsNullOrEmpty(p.zoomUser.id))
                 .ToList()
                 .ForEach(p =>
                 {
