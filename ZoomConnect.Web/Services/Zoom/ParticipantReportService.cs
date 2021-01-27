@@ -2,9 +2,14 @@
 using SecretJsonConfig;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
+using ZoomConnect.Web.Banner.Cache;
+using ZoomConnect.Web.Banner.Domain;
+using ZoomConnect.Web.Banner.Repository;
 using ZoomConnect.Web.Models;
 
 namespace ZoomConnect.Web.Services.Zoom
@@ -15,15 +20,20 @@ namespace ZoomConnect.Web.Services.Zoom
         private ZoomClient.Zoom _zoomClient;
         private SecretConfigManager<ZoomOptions> _configManager;
         private ZoomOptions _options;
+        private GoremalRepository _goremalRepository;
+        private SpridenRepository _spridenRepository;
         private ILogger<ParticipantReportService> _logger;
 
         public ParticipantReportService(CachedMeetingModels meetingModels, ZoomClient.Zoom zoomClient,
-            SecretConfigManager<ZoomOptions> configManager, ILogger<ParticipantReportService> logger)
+            SecretConfigManager<ZoomOptions> configManager, GoremalRepository goremalRepository,
+            SpridenRepository spridenRepository, ILogger<ParticipantReportService> logger)
         {
             _meetingModels = meetingModels;
             _zoomClient = zoomClient;
             _configManager = configManager;
             _options = configManager.GetValue().Result;
+            _goremalRepository = goremalRepository;
+            _spridenRepository = spridenRepository;
             _logger = logger;
 
             _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
@@ -41,13 +51,16 @@ namespace ZoomConnect.Web.Services.Zoom
                 .ToList()
                 .ForEach(m =>
                 {
+                    if (String.IsNullOrEmpty(m.ZoomMeetingId)) { return; }
+
                     var newInstances = _zoomClient.GetPastMeetingInstances(m.ZoomMeetingId)
                         .Where(i => i.EndDateTime > lastRunDate)
                         .Select(i => new ParticipantReportModel
                         {
                             hostEmail = m.ProfEmail,
                             subject = $"{m.Subject} {m.CourseNum} {m.ProfLastName} - Attendance on {i.StartDateTimeLocal}",
-                            instanceId = i.uuid
+                            instanceId = i.uuid,
+                            crn = m.Crn
                         });
                     if (newInstances != null)
                     {
@@ -60,11 +73,26 @@ namespace ZoomConnect.Web.Services.Zoom
             {
                 var participants = _zoomClient.GetParticipantReport(rm.instanceId);
 
+                // list participants
                 rm.participants = participants == null
                     ? new List<Participant>()
                     : participants
                         .OrderBy(pr => pr.name ?? "")
                         .ToList();
+
+                // list non-participants (enrolled, not found by email)
+                var participantEmails = rm.participants.Select(p => p.user_email).ToList();
+                var enrolled = _goremalRepository.GetRegisteredStudents(rm.crn)
+                    .Select(e => new spriden_student { pidm = e.pidm, email = e.email_address })
+                    .ToList();
+                rm.nonParticipants = enrolled
+                    .Where(e => !participantEmails.Contains(e.email, StringComparer.OrdinalIgnoreCase))
+                    .Select(e => new Participant
+                    {
+                        user_email = e.email,
+                        name = _spridenRepository.GetOneStudent(e.pidm)?.FirstAndLastName
+                    })
+                    .ToList();
             });
 
             _options.LastParticipantReportDate = newRunDate;

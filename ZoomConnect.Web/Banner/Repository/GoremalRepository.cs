@@ -50,5 +50,27 @@ namespace ZoomConnect.Web.Banner.Repository
                 })
                 .ToList();
         }
+
+        public List<goremal> GetRegisteredStudents(string crn)
+        {
+            var sql =
+                $"SELECT DISTINCT {_columns} " +
+                "FROM goremal " +
+                "  INNER JOIN sfrstcr ON goremal_pidm = sfrstcr_pidm " +
+                "WHERE sfrstcr_term_code = :term " +
+                "  AND sfrstcr_crn = :crn " +
+                "  AND sfrstcr_rsts_code = 'RE' " +
+                "  AND goremal_emal_code = 'UCD'" +
+                "  AND goremal_status_ind = 'A'";
+
+            return Context
+                .Connection
+                .Query<goremal>(sql, new
+                {
+                    term = new DbString { Value = Options.CurrentTerm },
+                    crn = new DbString { Value = crn }
+                })
+                .ToList();
+        }
     }
 }

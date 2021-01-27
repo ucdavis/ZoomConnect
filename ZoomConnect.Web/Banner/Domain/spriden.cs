@@ -11,5 +11,13 @@ namespace ZoomConnect.Web.Banner.Domain
         public string id { get; set; }
         public string last_name { get; set; }
         public string first_name { get; set; }
+
+        public string FirstAndLastName
+        {
+            get
+            {
+                return $"{first_name} {last_name}";
+            }
+        }
     }
 }

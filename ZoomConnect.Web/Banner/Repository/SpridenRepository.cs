@@ -49,5 +49,21 @@ namespace ZoomConnect.Web.Banner.Repository
                 })
                 .ToList();
         }
+
+        public spriden GetOneStudent(decimal pidm)
+        {
+            var sql =
+                $"SELECT DISTINCT spriden_pidm as pidm, spriden_id as id, spriden_last_name as last_name, " +
+                "        COALESCE(spbpers_pref_first_name, spriden_first_name) as first_name " +
+                "FROM spriden " +
+                "  INNER JOIN spbpers ON spriden_pidm = spbpers_pidm " +
+                "WHERE spriden_change_ind is null " +
+                "  AND spriden_pidm = :pidm ";
+
+            return Context
+                .Connection
+                .Query<spriden>(sql, new { pidm })
+                .FirstOrDefault();
+        }
     }
 }

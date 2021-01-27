@@ -415,7 +415,7 @@ namespace ZoomConnect.Web.Controllers
                     msg.Subject = r.subject;
                     msg.Body = new TextPart("html")
                     {
-                        Text = r.participants.HtmlReport()
+                        Text = r.HtmlReport()
                     };
                     messages.Add(msg);
                 });
