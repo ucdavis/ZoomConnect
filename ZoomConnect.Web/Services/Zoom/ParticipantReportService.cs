@@ -53,7 +53,10 @@ namespace ZoomConnect.Web.Services.Zoom
                 {
                     if (String.IsNullOrEmpty(m.ZoomMeetingId)) { return; }
 
-                    var newInstances = _zoomClient.GetPastMeetingInstances(m.ZoomMeetingId)
+                    var pastInstances = _zoomClient.GetPastMeetingInstances(m.ZoomMeetingId);
+                    if (pastInstances == null) { return; }
+
+                    var newInstances = pastInstances
                         .Where(i => i.EndDateTime > lastRunDate)
                         .Select(i => new ParticipantReportModel
                         {
