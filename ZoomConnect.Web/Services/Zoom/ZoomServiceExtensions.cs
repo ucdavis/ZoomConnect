@@ -38,7 +38,7 @@ namespace ZoomConnect.Web.Services.Zoom
 
         public static ZoomUserStatus ZoomStatus(this ProfDataModel prof)
         {
-            if (prof.zoomUser == null || String.IsNullOrEmpty(prof.zoomUser.id))
+            if (prof?.zoomUser == null || String.IsNullOrEmpty(prof.zoomUser.id))
             {
                 return ZoomUserStatus.Missing;
             }

@@ -22,7 +22,7 @@ namespace ZoomConnect.Web.ViewModels
             TimeAndDays = $"{meeting.begin_time}-{meeting.end_time} {course.daysConcat}";
             Location = $"{meeting.bldg_code} {meeting.room_code}";
             Description = $"{section.subj_code} {section.crse_numb} {section.seq_numb} {section.crse_title}";
-            Prof = course.primaryProf.bannerPerson?.last_name ?? course.primaryProf.primaryEmail.email_address;
+            Prof = course.primaryProf?.bannerPerson?.last_name ?? course.primaryProf?.primaryEmail?.email_address ?? "no prof";
             ProfZoomStatus = course.primaryProf.ZoomStatus();
             if (ProfZoomStatus == ZoomUserStatus.Connected)
             {
