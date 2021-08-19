@@ -55,41 +55,6 @@ namespace ZoomConnect.Web.Controllers
                 .ToList();
 
             return View(models);
-
-            //// student view
-            //var students = studentRepo.GetAll()
-            //    .OrderBy(s => s.last_name)
-            //    .ThenBy(s => s.first_name)
-            //    .ToList();
-
-            //return View(students);
-
-            //// participant report ([FromServices] ParticipantReportService participantReportService, [FromServices] EmailService emailService)
-            //var messages = new List<MimeMessage>();
-            //var ccList = _options.EmailOptions?.ParticipantReportCcList ?? "";
-
-            //var ccAddresses = ccList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-            //    .Select(e => MailboxAddress.Parse(e))
-            //    .ToList();
-
-            //participantReportService.PrepareReports()
-            //    .ForEach(r =>
-            //    {
-            //        var msg = new MimeMessage();
-            //        msg.From.Add(MailboxAddress.Parse(_options.EmailOptions.Username));
-            //        msg.To.Add(MailboxAddress.Parse("emhenn@ucdavis.edu"));
-            //        msg.Cc.AddRange(ccAddresses);
-            //        msg.Subject = r.subject;
-            //        msg.Body = new TextPart("plain")
-            //        {
-            //            Text = String.Join("\r\n", r.participants.Select(p => $"{p.name} : {Math.Ceiling(p.duration / 60.0)} minute(s)"))
-            //        };
-            //        messages.Add(msg);
-            //    });
-
-            //emailService.Send(messages);
-
-            //return new EmptyResult();
         }
 
         [Authorize("ConfiguredAdmins")]
