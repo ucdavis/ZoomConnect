@@ -62,7 +62,7 @@ namespace ZoomConnect.Web.Services.Zoom
         private void Find()
         {
             _profs = new List<ProfDataModel>();
-            var _allFound = new List<goremal>();
+            var _allFound = new List<string>();
 
             // find all person rows
             var bannerPeople = _personRepo.GetAll();
@@ -92,7 +92,7 @@ namespace ZoomConnect.Web.Services.Zoom
             allEmails.ForEach(e =>
             {
                 // skip any emails for profs who are already found in Zoom
-                if (_allFound.Contains(e)) { return; }
+                if (_allFound.Contains(e.email_address)) { return; }
 
                 // check Zoom for prof email
                 var zoomUser = _zoomClient.GetUser(e.email_address);
@@ -110,15 +110,15 @@ namespace ZoomConnect.Web.Services.Zoom
                 // get prof's alternate emails so we can skip them later
                 var altEmails = allEmails.Where(alt => alt.pidm == e.pidm && alt.email_address != e.email_address);
                 prof.otherEmails.AddRange(altEmails);
-                _allFound.Add(e);
-                _allFound.AddRange(altEmails);
+                _allFound.Add(e.email_address);
+                _allFound.AddRange(altEmails.Select(a => a.email_address));
 
                 _profs.Add(prof);
             });
 
             // collate missing emails into per-prof model
             var missingProfs = allEmails
-                .Where(e => !_allFound.Contains(e))
+                .Where(e => !_allFound.Contains(e.email_address))
                 .GroupBy(e => e.pidm, e => e, (key, grp) => new ProfDataModel
                 {
                     bannerPerson = bannerPeople.FirstOrDefault(p => p.pidm == key),
