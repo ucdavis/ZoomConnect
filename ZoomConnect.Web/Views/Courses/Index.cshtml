@@ -11,6 +11,18 @@
 
     @await Html.PartialAsync("_Courses", Model)
 
+    @if (Model.SelectedCourses > 0)
+    {
+        <div>
+            <p>Limit Canvas Date Range?</p>
+            <div class="form-group">
+                <label class="col-md-3">Canvas Date Range</label>
+                From <input class="col-md-4" asp-for="CanvasStart" />
+                to <input class="col-md-4" asp-for="CanvasEnd" />
+            </div>
+        </div>
+    }
+
     <button type="submit" class="btn btn-primary">Find/Create Zoom Meetings</button>
     @if (Model.SelectedCourses > 0)
     {

@@ -37,7 +37,7 @@ namespace ZoomConnect.Web.Services.Canvas
         /// Finds or creates new Canvas Calendar Events for existing course-connected Zoom Meetings.
         /// Stores created canvas events back in cached meetings list.
         /// </summary>
-        public List<CalendarEvent> FindOrCreateCanvasEvents(List<CourseMeetingDataModel> meetingModels)
+        public List<CalendarEvent> FindOrCreateCanvasEvents(List<CourseMeetingDataModel> meetingModels, DateTime canvasStart, DateTime canvasEnd)
         {
             var meetingsFromCache = _cachedMeetings.Courses;
             var createdEvents = new List<CalendarEvent>();
@@ -59,7 +59,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 if (canvasCourse == null) { return; }
                 m.canvasCourse = canvasCourse;
 
-                var foundEvents = _canvasApi.ListCalendarEvents(canvasCourse.id, _options.TermStart, _options.TermEnd);
+                var foundEvents = _canvasApi.ListCalendarEvents(canvasCourse.id, canvasStart, canvasEnd);
                 if (foundEvents == null) { return; }        // api returning null indicates error, so skip this meeting
                 foundEvents = foundEvents
                     .Where(e => e.description.Contains(m.zoomMeeting.join_url, StringComparison.OrdinalIgnoreCase))
@@ -67,7 +67,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 if (foundEvents.Any()) { return; }          // events already found for this course, so skip
 
                 // nothing found in calendar, create new calendar events for course
-                m.NewCanvasCalendarRequests().ForEach(r =>
+                m.NewCanvasCalendarRequests(canvasStart, canvasEnd).ForEach(r =>
                 {
                     var newEvent = _canvasApi.CreateCalendarEvent(r);
                     if (newEvent != null)
@@ -78,7 +78,7 @@ namespace ZoomConnect.Web.Services.Canvas
                 });
 
                 // delete any events created on holidays
-                var newEvents = _canvasApi.ListCalendarEvents(canvasCourse.id, _options.TermStart, _options.TermEnd);
+                var newEvents = _canvasApi.ListCalendarEvents(canvasCourse.id, canvasStart, canvasEnd);
                 DeleteHolidays(newEvents);
 
                 // store created CalendarEvents back in cached meetings list

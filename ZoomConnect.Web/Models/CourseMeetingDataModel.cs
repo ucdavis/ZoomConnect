@@ -81,10 +81,10 @@ namespace ZoomConnect.Web.Models
         /// List of weekdays for this course, with a start date and number of occurrences for each.
         /// </summary>
         /// <returns></returns>
-        public List<WeekdayRecurrence> WeekdayRecurrences()
+        public List<WeekdayRecurrence> WeekdayRecurrences(DateTime startDate, DateTime endDate)
         {
             return DayNumbers(0)
-                .Select(d => new WeekdayRecurrence(NextOccurrence, d, _termEnd))
+                .Select(d => new WeekdayRecurrence(NextOccurrence(startDate), d, endDate))
                 .ToList();
         }
 
@@ -95,7 +95,7 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
-                return NextOccurrence;
+                return NextOccurrence();
             }
         }
 
@@ -106,7 +106,7 @@ namespace ZoomConnect.Web.Models
         {
             get
             {
-                return NextOccurrence.AddMinutes(DurationMinutes);
+                return NextOccurrence().AddMinutes(DurationMinutes);
             }
         }
 
@@ -195,22 +195,28 @@ namespace ZoomConnect.Web.Models
         /// Return DateTime of next occurrence of this meeting.
         /// Returns earliest start time after term start
         /// </summary>
-        public DateTime NextOccurrence
+        public DateTime NextOccurrence()
         {
-            get
-            {
-                // no days in meeting? no occurrence.
-                if (DayNumbers(0).Count == 0) { return DateTime.MinValue; }
+            return NextOccurrence(_termStart);
+        }
 
-                // Start with start of term at appropriate time and add days as needed for first occurrence
-                var first = new DateTime(_termStart.Year, _termStart.Month, _termStart.Day, StartHour, StartMinute, 0);
-                var daysInFirstWeek = DayNumbers(0).Where(d => d >= (int)first.DayOfWeek);
-                var offset = (daysInFirstWeek.Count() == 0)
-                    ? 7 - (int)first.DayOfWeek + DayNumbers(0).Min()
-                    : daysInFirstWeek.Min() - (int)first.DayOfWeek;
+        /// <summary>
+        /// Return DateTime of next occurrence of this meeting.
+        /// Returns earliest start time after specified start date.
+        /// </summary>
+        public DateTime NextOccurrence(DateTime startDate)
+        {
+            // no days in meeting? no occurrence.
+            if (DayNumbers(0).Count == 0) { return DateTime.MinValue; }
 
-                return first.AddDays(offset);
-            }
+            // Start with specified date at appropriate time and add days as needed for first occurrence
+            var first = new DateTime(startDate.Year, startDate.Month, startDate.Day, StartHour, StartMinute, 0);
+            var daysInFirstWeek = DayNumbers(0).Where(d => d >= (int)first.DayOfWeek);
+            var offset = (daysInFirstWeek.Count() == 0)
+                ? 7 - (int)first.DayOfWeek + DayNumbers(0).Min()
+                : daysInFirstWeek.Min() - (int)first.DayOfWeek;
+
+            return first.AddDays(offset);
         }
 
         /// <summary>

@@ -40,7 +40,7 @@ namespace ZoomConnect.Web.ViewModels
             {
                 ProfStatusCssClass = "oi oi-x text-danger";
             }
-            NextOccurrence = course.NextOccurrence;
+            NextOccurrence = course.NextOccurrence();
             IsMeetingConnected = course.zoomMeeting != null;
             IsCanvasEventCreated = course.canvasEvents != null && course.canvasEvents.Any();
             CanvasStatusCssClass = IsCanvasEventCreated ? "oi oi-check text-success" : "oi oi-x text-danger";

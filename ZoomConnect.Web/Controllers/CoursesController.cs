@@ -55,14 +55,28 @@ namespace ZoomConnect.Web.Controllers
         public IActionResult Create(SelectedCoursesViewModel model, [FromServices] ZoomMeetingCreator meetingCreator,
             [FromServices] CanvasEventCreator eventCreator)
         {
+            if (!model.CanvasStart.HasValue) { model.CanvasStart = _options.TermStart; }
+            if (!model.CanvasEnd.HasValue) { model.CanvasEnd = _options.TermEnd; }
+
+            if (model.CanvasStart < _options.TermStart ||
+                model.CanvasStart > _options.TermEnd ||
+                model.CanvasEnd > _options.TermEnd ||
+                model.CanvasEnd < _options.TermStart ||
+                model.CanvasStart > model.CanvasEnd)
+            {
+                TempData["Message"] = "Please specify valid Canvas start / end dates within current Term start / end.";
+                return RedirectToAction("Index");
+            }
+
             var meetings = RehydrateSelectedMeetings(model);
 
+            // do not limit zoom start/end dates, that is only for Canvas.
             var created = meetingCreator.CreateZoomMeetings(meetings);
             TempData["Message"] = $"{created.Count} Zoom Meeting(s) created.";
 
             if (_options.CanvasApi.UseCanvas)
             {
-                var createdEvents = eventCreator.FindOrCreateCanvasEvents(meetings);
+                var createdEvents = eventCreator.FindOrCreateCanvasEvents(meetings, model.CanvasStart.Value, model.CanvasEnd.Value);
                 TempData["Message"] += $" {createdEvents.Count} Canvas Calendar Event(s) created.";
             }
 
