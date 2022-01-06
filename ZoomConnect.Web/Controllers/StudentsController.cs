@@ -59,11 +59,23 @@ namespace ZoomConnect.Web.Controllers
         {
             var students = RehydrateSelectedStudents(model);
 
-            //var created = userCreator.CreateLicensedZoomUsers(students);
+            var created = userCreator.CreateLicensedZoomStudents(students);
 
-            //TempData["Message"] = $"{created.Count} Zoom User(s) licensed.";
+            TempData["Message"] = $"{created.Count} Zoom User(s) licensed.";
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Unlicense()
+        {
+            return View(new EmailListModel());
+        }
+
+        [HttpPost]
+        public IActionResult Unlicense(EmailListModel emailListModel)
+        {
+
+            return View(emailListModel);
         }
 
         private List<StudentDataModel> RehydrateSelectedStudents(SelectedStudentsModel model)

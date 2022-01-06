@@ -232,6 +232,7 @@ namespace ZoomConnect.Web.Controllers
                         catch (Exception ex)
                         {
                             output.Append(ex.ToString());
+                            emailOk = false;
                         }
                         output.AppendFormat(" meeting files moved to {0}; email {1} ", _directoryManager.UploadOutDirectory, emailOk ? "sent" : "failed");
                     }

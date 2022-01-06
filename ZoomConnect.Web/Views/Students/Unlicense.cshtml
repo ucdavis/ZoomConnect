@@ -1,0 +1,21 @@
+﻿@model ZoomConnect.Web.ViewModels.EmailListModel
+@using ZoomConnect.Web.ViewModels;
+
+@{
+    ViewData["Title"] = "Unlicense";
+}
+
+<h1>Unlicense</h1>
+
+@if (@Model.EmailList.Count == 0)
+{
+    <p>Paste email addresses one per line for unlicensing (graduated students post-Bar).
+        Accounts will be moved from Licensed to Basic status.</p>
+
+    <textarea id="emails" class="bigbox"></textarea>
+}
+else
+{
+    <span>@Model.EmailList.Count emails selected.</span>
+}
+<button type="submit" class="btn btn-primary">Unlicense Zoom Users</button>
