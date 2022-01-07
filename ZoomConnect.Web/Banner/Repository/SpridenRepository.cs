@@ -31,14 +31,16 @@ namespace ZoomConnect.Web.Banner.Repository
         public override List<spriden> GetAll()
         {
             var sql =
-                $"SELECT DISTINCT {_columns} " +
-                "FROM spriden " +
-                "  INNER JOIN sirasgn ON spriden_pidm = sirasgn_pidm " +
-                "  INNER JOIN ssbsect ON sirasgn_term_code = ssbsect_term_code " +
-                "                    AND sirasgn_crn = ssbsect_crn " +
-                "WHERE spriden_change_ind is null " +
-                "  AND sirasgn_term_code = :term " +
-                "  AND ssbsect_subj_code = :subj";
+                "SELECT DISTINCT spriden_pidm as pidm, spriden_id as id, spriden_last_name as last_name, " +
+                "       COALESCE(spbpers_pref_first_name, spriden_first_name) as first_name " +
+                "  FROM spriden " +
+                "    INNER JOIN sirasgn ON spriden_pidm = sirasgn_pidm " +
+                "    INNER JOIN ssbsect ON sirasgn_term_code = ssbsect_term_code " +
+                "                      AND sirasgn_crn = ssbsect_crn " +
+                "    LEFT OUTER JOIN spbpers ON spriden_pidm = spbpers_pidm " +
+                "  WHERE spriden_change_ind is null " +
+                "    AND sirasgn_term_code = :term " +
+                "    AND ssbsect_subj_code = :subj";
 
             return Context
                 .Connection
