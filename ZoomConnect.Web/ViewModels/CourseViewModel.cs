@@ -44,7 +44,14 @@ namespace ZoomConnect.Web.ViewModels
             IsMeetingConnected = course.zoomMeeting != null;
             IsCanvasEventCreated = course.canvasEvents != null && course.canvasEvents.Any();
             CanvasStatusCssClass = IsCanvasEventCreated ? "oi oi-check text-success" : "oi oi-x text-danger";
-            CanvasDateDesc = $"{course.canvasEvents.Count} ({course.canvasEvents.Min(e => e.start_at.ToString("M/d"))}-{course.canvasEvents.Max(e => e.start_at.ToString("M/d"))})";
+            var firstEvent = course.canvasEvents.OrderBy(e => e.start_at).FirstOrDefault();
+            if (firstEvent != null)
+            {
+                CanvasDateDesc = $"{course.canvasEvents.Count} ({firstEvent.start_at.ToString("M/d")}-{course.canvasEvents.Max(e => e.start_at).ToString("M/d")})";
+                CanvasCalendarUrl = String.Format("https://canvas.ucdavis.edu/calendar?event_id={0}&include_contexts=course_{1}#view_start={2}&view_name=month",
+                    firstEvent.id, course.canvasCourse.id, firstEvent.start_at.ToString("yyyy-MM-dd"));
+
+            }
         }
 
         /// <summary>
@@ -135,5 +142,10 @@ namespace ZoomConnect.Web.ViewModels
         /// Description of what Canvas dates have been created for this course.
         /// </summary>
         public string CanvasDateDesc { get; set; }
+
+        /// <summary>
+        /// Url for Canvas calendar for this course, in Month view starting with first Canvas zoom event
+        /// </summary>
+        public string CanvasCalendarUrl { get; set; }
     }
 }
