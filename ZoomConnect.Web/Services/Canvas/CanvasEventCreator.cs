@@ -47,8 +47,11 @@ namespace ZoomConnect.Web.Services.Canvas
                 // skip if no connected zoom meeting
                 if (m.zoomMeeting == null) { return; }
 
-                // skip if cached canvas calendar events exist
-                if (m.canvasEvents != null && m.canvasEvents.Any()) { return; }
+                // skip if cached canvas calendar events exist within specified dates
+                if (m.canvasEvents != null && m.canvasEvents.Any(e => e.start_at >= canvasStart && e.start_at < canvasEnd))
+                {
+                    return;
+                }
 
                 // look in fresh canvas for calendar events and skip if found or error
                 Course canvasCourse = m.canvasCourse;

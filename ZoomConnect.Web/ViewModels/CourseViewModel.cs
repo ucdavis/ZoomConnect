@@ -44,6 +44,7 @@ namespace ZoomConnect.Web.ViewModels
             IsMeetingConnected = course.zoomMeeting != null;
             IsCanvasEventCreated = course.canvasEvents != null && course.canvasEvents.Any();
             CanvasStatusCssClass = IsCanvasEventCreated ? "oi oi-check text-success" : "oi oi-x text-danger";
+            CanvasDateDesc = $"{course.canvasEvents.Count} ({course.canvasEvents.Min(e => e.start_at.ToString("M/d"))}-{course.canvasEvents.Max(e => e.start_at.ToString("M/d"))})";
         }
 
         /// <summary>
@@ -123,11 +124,16 @@ namespace ZoomConnect.Web.ViewModels
             ProfZoomStatus == ZoomUserStatus.Connected &&   // course has a prof connected to zoom
             HasStartAndEndTime &&                           // meeting start and end are filled out
             (!IsMeetingConnected ||                         // and either meeting is not connected to zoom
-            (UseCanvas && !IsCanvasEventCreated));          // or we use canvas and canvas events are not created
+            UseCanvas);                                     // or we use canvas
 
         /// <summary>
         /// Indicates whether the app is currently configured to use Canvas
         /// </summary>
         public bool UseCanvas { get; set; }
+
+        /// <summary>
+        /// Description of what Canvas dates have been created for this course.
+        /// </summary>
+        public string CanvasDateDesc { get; set; }
     }
 }

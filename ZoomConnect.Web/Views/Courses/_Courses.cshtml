@@ -48,7 +48,7 @@
                 <td>@course.NextOccurrence.ToShortDateString()</td>
                 @if (Model.IncludeCanvas)
                 {
-                    <td><span class="@course.CanvasStatusCssClass" title="@(course.IsCanvasEventCreated ? "yes" : "no")"></span></td>
+                    <td><span class="@course.CanvasStatusCssClass" title="@(course.IsCanvasEventCreated ? "yes" : "no")"></span> @(course.IsCanvasEventCreated ? @course.CanvasDateDesc : "")</td>
                 }
             </tr>
         }
