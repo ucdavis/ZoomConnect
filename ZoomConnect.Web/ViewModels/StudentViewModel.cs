@@ -12,6 +12,7 @@ namespace ZoomConnect.Web.ViewModels
         public StudentViewModel(StudentDataModel student)
         {
             Pidm = student.bannerPerson.pidm;
+            StudentId = student.bannerPerson.id;
             Name = $"{student.bannerPerson.last_name}, {student.bannerPerson.first_name}";
             Email = student.bannerPerson.email == null ? "no email" : student.bannerPerson.email;
             ClassLevel = student.bannerPerson.classlevel;
@@ -75,6 +76,11 @@ namespace ZoomConnect.Web.ViewModels
         public decimal Pidm { get; set; }
 
         /// <summary>
+        /// Banner Student Id
+        /// </summary>
+        public string StudentId { get; set; }
+
+        /// <summary>
         /// Student name
         /// </summary>
         public string Name { get; set; }
@@ -105,10 +111,26 @@ namespace ZoomConnect.Web.ViewModels
         public string RowStatusIcon { get; set; }
 
         /// <summary>
+        /// Url of Zoom Profile Photo
+        /// </summary>
+        public string ProfilePhotoUrl { get; set; }
+
+        /// <summary>
         /// Shows if this student can be licensed (has email and is Basic or not found)
         /// </summary>
         public bool CanBeLicensed =>
             (ZoomStatus == ZoomUserStatus.Missing || ZoomStatus == ZoomUserStatus.Basic) &&
             Email != "no email";
+
+        /// <summary>
+        /// True if photo named by student id exists in configured profile photos directory
+        /// </summary>
+        public bool HasLocalPhoto { get; set; }
+
+        /// <summary>
+        /// css class for status of row based on local photo existence
+        /// </summary>
+        public string LocalPhotoStatusIcon =>
+            HasLocalPhoto ? "oi oi-check text-success" : "oi oi-x text-danger";
     }
 }

@@ -5,23 +5,14 @@
         ViewData["Title"] = "Students";
     }
 
-    <h1>Students</h1>
-
-    <div>
-        @Html.ActionLink("Photos", "Photos") [
-            @Html.ActionLink("L1", "Photos", new { classLevel = "L1" }),
-            @Html.ActionLink("L2", "Photos", new { classLevel = "L2" }),
-            @Html.ActionLink("L3", "Photos", new { classLevel = "L3" }),
-            @Html.ActionLink("LM", "Photos", new { classLevel = "LM" })
-        ]
-    </div>
+    <h1>Student Photos</h1>
 
     @if (Model.SelectedStudents > 0)
     {
-        <div class="alert @Model.AlertClass" role="alert">@Model.AlertMessage</div>
+        <div class="alert" role="alert">Confirm Photo Upload for these students</div>
     }
 
-    <form asp-controller="Students" asp-action="@(Model.SelectedStudents == 0 ? "Index" : "Create")" method="post">
+    <form asp-controller="Students" asp-action="@(Model.SelectedStudents == 0 ? "Photos" : "Upload")" method="post">
 
         <div class="row">
             @if (Model.ConnectedCount > 0)
@@ -59,6 +50,8 @@
                     <th scope="col">Email</th>
                     <th scope="col">Class</th>
                     <th scope="col">Zoom Acct</th>
+                    <th scope="col">Zoom Pic</th>
+                    <th scope="col">Local Pic</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,10 +59,10 @@
                 {
                     <tr class="@student.RowStatusClass">
                         <td>
-                            @if (Model.SelectedStudents == 0 && student.CanBeLicensed)
+                            <input type="hidden" name="Students.Index" value="@student.Pidm" />
+                            <input type="hidden" name="Students[@student.Pidm].Pidm" value="@student.Pidm" />
+                            @if (Model.SelectedStudents == 0 && student.ZoomStatus == ZoomUserStatus.Connected && student.HasLocalPhoto)
                             {
-                                <input type="hidden" name="Students.Index" value="@student.Pidm" />
-                                <input type="hidden" name="Students[@student.Pidm].Pidm" value="@student.Pidm" />
                                 <input type="checkbox" name="Students[@student.Pidm].IsSelected" value="true" />
                             }
                             else if (Model.SelectedStudents > 0)
@@ -83,12 +76,16 @@
                         <td>
                             <span class="@student.RowStatusIcon" title="@student.ZoomStatus" aria-hidden="true"></span>
                         </td>
+                        <td><img src="@student.ProfilePhotoUrl" /></td>
+                        <td>
+                            <span class="@student.LocalPhotoStatusIcon" aria-hidden="true"></span>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
 
-        <button type="submit" class="btn btn-primary">License Zoom Users</button>
+        <button type="submit" class="btn btn-primary">Upload Local Photos To Zoom</button>
         @if (Model.SelectedStudents > 0)
         {
             <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>

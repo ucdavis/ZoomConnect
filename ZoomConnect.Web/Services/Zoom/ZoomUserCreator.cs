@@ -5,6 +5,7 @@ using System.Linq;
 using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Models;
+using System.IO;
 
 namespace ZoomConnect.Web.Services.Zoom
 {
@@ -126,6 +127,32 @@ namespace ZoomConnect.Web.Services.Zoom
             _cachedStudents.Set(studentsFromCache);
 
             return newLicensedUsers;
+        }
+
+        public List<User> UploadStudentPhotos(List<StudentDataModel> students)
+        {
+            // get all jpg photos in directory
+            var dirInfo = new DirectoryInfo(_options.ProfilePhotoDirectory);
+            var photoFiles = dirInfo.GetFiles("*.jpg").ToList();
+
+            var uploadedPhotos = new List<User>(students.Count);
+            students.ForEach(s =>
+            {
+                // look for user in Zoom before creating or updating
+                var currentUser = _zoomClient.GetUser(s.bannerPerson.email);
+
+                // find file and upload it
+                var filename = s.bannerPerson.id + ".jpg";
+                if (photoFiles.Any(f => f.Name.Equals(filename, StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (_zoomClient.UploadProfilePicture(s.bannerPerson.email, Path.Combine(_options.ProfilePhotoDirectory, filename)))
+                    {
+                        uploadedPhotos.Add(currentUser);
+                    }
+                }
+            });
+
+            return uploadedPhotos;
         }
     }
 }
