@@ -7,15 +7,23 @@
 
 <h1>Unlicense</h1>
 
-@if (@Model.EmailList.Count == 0)
-{
-    <p>Paste email addresses one per line for unlicensing (graduated students post-Bar).
-        Accounts will be moved from Licensed to Basic status.</p>
+<form method="post">
 
-    <textarea id="emails" class="bigbox"></textarea>
-}
-else
-{
-    <span>@Model.EmailList.Count emails selected.</span>
-}
-<button type="submit" class="btn btn-primary">Unlicense Zoom Users</button>
+    @if (@Model.EmailList.Count == 0)
+    {
+        <p>
+            Paste email addresses one per line for unlicensing (graduated students post-Bar).
+            Accounts will be moved from Licensed to Basic status.
+        </p>
+
+        <textarea id="emails" asp-for="emails" class="bigbox"></textarea>
+    }
+    else
+    {
+        <p>
+            @Model.EmailList.Count emails selected.
+        </p>
+    }
+    <button type="submit" class="btn btn-primary">Unlicense Zoom Users</button>
+
+</form>

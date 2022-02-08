@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecretJsonConfig;
 using ZoomClient;
+using ZoomClient.Domain;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Filters;
 using ZoomConnect.Web.Models;
@@ -129,6 +130,33 @@ namespace ZoomConnect.Web.Controllers
         [HttpPost]
         public IActionResult Unlicense(EmailListModel emailListModel)
         {
+            // no emails => redirect to Unlicense
+            if (String.IsNullOrEmpty(emailListModel.emails))
+            {
+                return RedirectToAction("Unlicense");
+            }
+
+            // emails string full => split into EmailList and unlicense them
+            if (!String.IsNullOrEmpty(emailListModel.emails))
+            {
+                var emails = emailListModel.emails.Split(new[] { "\r\n", "\n", "\r", ";", "," }, StringSplitOptions.RemoveEmptyEntries);
+                emailListModel.EmailList.AddRange(emails);
+
+                var successCount = 0;
+                var setToBasic = new UserUpdate() { type = PlanType.Basic };
+
+                emailListModel.EmailList.ForEach(e =>
+                {
+                    var user = _zoomClient.GetUser(e);
+                    if (user == null || user.type != PlanType.Licensed) { return; }
+
+                    successCount += _zoomClient.UpdateUserProfile(e, setToBasic) ? 1 : 0;
+                });
+
+                TempData["Message"] = $"{successCount} Zoom User(s) unlicensed.";
+
+                return RedirectToAction("Index", "Home");
+            }
 
             return View(emailListModel);
         }
