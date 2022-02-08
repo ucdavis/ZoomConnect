@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using CanvasClient;
 using CanvasClient.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using SecretJsonConfig;
 using ZoomConnect.Core.Config;
@@ -131,7 +129,7 @@ namespace ZoomConnect.Web.Controllers
 
                 // look up new start/end dates
                 var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
-                options.TermStart = term? .start_date ?? DateTime.Now;
+                options.TermStart = term?.start_date ?? DateTime.Now;
                 options.TermEnd = term?.end_date ?? DateTime.Now;
             }
             else
@@ -140,15 +138,12 @@ namespace ZoomConnect.Web.Controllers
                 options.TermEnd = model.TermEnd;
             }
 
-            // if adding Canvas, find term in Canvas and store its id in hidden field
-            if (model.UseCanvas && !options.CanvasApi.UseCanvas)
+            // find term in Canvas and store its id in hidden field
+            var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
+            var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
+            if (canvasTerm != null)
             {
-                var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
-                var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
-                if (canvasTerm != null)
-                {
-                    options.CanvasApi.EnrollmentTerm = canvasTerm.id;
-                }
+                options.CanvasApi.EnrollmentTerm = canvasTerm.id;
             }
 
             options.DownloadDirectory = model.DownloadDirectory;
