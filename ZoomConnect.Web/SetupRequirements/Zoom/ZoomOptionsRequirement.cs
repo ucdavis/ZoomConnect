@@ -20,10 +20,10 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
         public string Capabilities => "Needed for connecting to Zoom API to read and write Zoom Meetings and related data.";
 
         public string LongDescription => "To connect to the Zoom API you will need to create or have access to " +
-            "a JWT app in the Zoom Marketplace.  Creating one requires account-level Developer Role Permission. " +
-            "Once you have a JWT app, return here to tell us the API Key and Secret so we can make calls for you. " +
-            "See https://marketplace.zoom.us/docs/api-reference/using-zoom-apis#using-jwt and " +
-            "https://marketplace.zoom.us/docs/guides/auth/jwt#key-secret for more info.";
+            "an OAuth2 Server to Server app in the Zoom Marketplace.  Creating one requires account-level " +
+            "Developer Role Permission.  Once you have an OAuth2 Server to Server app, return here to tell us the " +
+            "Account Id, Client Key and Client Secret so we can make calls for you. " +
+            "See https://marketplace.zoom.us/docs/guides/build/server-to-server-oauth-app/ for more info.";
 
         public EnforcementType Enforcement => EnforcementType.Required;
 
@@ -43,8 +43,9 @@ namespace ZoomConnect.Web.SetupRequirements.Banner
                 return false;
             }
 
-            if (String.IsNullOrEmpty(_options.ZoomApi.ApiKey.Value) ||
-                String.IsNullOrEmpty(_options.ZoomApi.ApiSecret.Value))
+            if (String.IsNullOrEmpty(_options.ZoomApi.AccountId.Value) ||
+                String.IsNullOrEmpty(_options.ZoomApi.ClientId.Value) ||
+                String.IsNullOrEmpty(_options.ZoomApi.ClientSecret.Value))
             {
                 _status = RequirementStatus.Missing;
                 _statusDescription = "Zoom API options are not filled out.";

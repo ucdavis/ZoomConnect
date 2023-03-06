@@ -36,7 +36,7 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
 
         public string Capabilities => "Checks that selected Term is found in Canvas.";
 
-        public string LongDescription => "Canvas term must match selected Banner Year and Term Description.";
+        public string LongDescription => "If enabled, Canvas term must match selected Banner Year and Term Description.";
 
         public EnforcementType Enforcement => EnforcementType.Required;
 
@@ -64,6 +64,11 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
 
         public bool Evaluate()
         {
+            if (!_options.CanvasApi.UseCanvas)
+            {
+                return SetStatusAndReturn("");
+            }
+
             var bannerTermRow = _bannerTerms.GetAll().FirstOrDefault(t => t.code == _options.CurrentTerm);
             var canvasTerms = _canvasApi.ListEnrollmentTerms();
 

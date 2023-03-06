@@ -1,4 +1,5 @@
-﻿using ZoomClient;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ZoomClient;
 using ZoomConnect.Core.Config;
 
 namespace ZoomConnect.Web.Services.Zoom
@@ -9,8 +10,9 @@ namespace ZoomConnect.Web.Services.Zoom
         {
             return new Options
             {
-                ApiKey = zoomApiOptions.ApiKey,
-                ApiSecret = zoomApiOptions.ApiSecret
+                AccountId = zoomApiOptions.AccountId,
+                ClientId = zoomApiOptions.ClientId,
+                ClientSecret = zoomApiOptions.ClientSecret
             };
         }
     }

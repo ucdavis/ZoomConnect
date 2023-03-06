@@ -32,8 +32,9 @@ namespace ZoomConnect.Web.ViewModels
 
         public string ExtraProfEmails { get; set; }
 
-        public string ZoomApiKey { get; set; }
-        public string ZoomApiSecret { get; set; }
+        public string ZoomAccountId { get; set; }
+        public string ZoomClientId { get; set; }
+        public string ZoomClientSecret { get; set; }
 
         public bool ZoomRequireMeetingAuthentication { get; set; }
         public string ZoomAuthenticationOptionId { get; set; }

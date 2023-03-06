@@ -57,8 +57,9 @@ namespace ZoomConnect.Web.Controllers
                 TermStart = options.TermStart,
                 TermEnd = options.TermEnd,
 
-                ZoomApiKey = String.IsNullOrEmpty(options.ZoomApi?.ApiKey.Value) ? "" : _passwordPlaceholder,
-                ZoomApiSecret = String.IsNullOrEmpty(options.ZoomApi?.ApiSecret.Value) ? "" : _passwordPlaceholder,
+                ZoomAccountId = String.IsNullOrEmpty(options.ZoomApi?.AccountId.Value) ? "" : _passwordPlaceholder,
+                ZoomClientId = String.IsNullOrEmpty(options.ZoomApi?.ClientId.Value) ? "" : _passwordPlaceholder,
+                ZoomClientSecret = String.IsNullOrEmpty(options.ZoomApi?.ClientSecret.Value) ? "" : _passwordPlaceholder,
 
                 ZoomRequireMeetingAuthentication = options.ZoomApi?.RequireMeetingAuthentication ?? false,
                 ZoomAuthenticationOptionId = options.ZoomApi?.AuthenticationOptionId,
@@ -128,9 +129,16 @@ namespace ZoomConnect.Web.Controllers
                 options.CurrentTerm = model.CurrentTerm;
 
                 // look up new start/end dates
-                var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
-                options.TermStart = term?.start_date ?? DateTime.Now;
-                options.TermEnd = term?.end_date ?? DateTime.Now;
+                try
+                {
+                    var term = _termRepository.GetAll().FirstOrDefault(t => t.code == model.CurrentTerm);
+                    options.TermStart = term?.start_date ?? DateTime.Now;
+                    options.TermEnd = term?.end_date ?? DateTime.Now;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error looking up Term repo in Setup POST. {ex.Message}");
+                }
             }
             else
             {
@@ -139,11 +147,19 @@ namespace ZoomConnect.Web.Controllers
             }
 
             // find term in Canvas and store its id in hidden field
-            var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
-            var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
-            if (canvasTerm != null)
+            try
             {
-                options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                var bannerTerm = _termRepository.GetAll().FirstOrDefault(t => t.code == options.CurrentTerm);
+                var canvasTerm = canvasApi.ListEnrollmentTerms().FirstOrDefault(t => t.MatchesBannerTermDesc(bannerTerm?.description));
+
+                if (canvasTerm != null)
+                {
+                    options.CanvasApi.EnrollmentTerm = canvasTerm.id;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Setup POST connecting to Banner or Canvas: {ex.Message}.");
             }
 
             options.DownloadDirectory = model.DownloadDirectory;
@@ -152,14 +168,19 @@ namespace ZoomConnect.Web.Controllers
 
             options.CurrentSubject = model.CurrentSubject;
 
-            if (model.ZoomApiKey != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomApiKey))
+            if (model.ZoomAccountId != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomAccountId))
             {
-                options.ZoomApi.ApiKey = new SecretStruct(model.ZoomApiKey);
+                options.ZoomApi.AccountId= new SecretStruct(model.ZoomAccountId);
             }
 
-            if (model.ZoomApiSecret != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomApiSecret))
+            if (model.ZoomClientId != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomClientId))
             {
-                options.ZoomApi.ApiSecret = new SecretStruct(model.ZoomApiSecret);
+                options.ZoomApi.ClientId = new SecretStruct(model.ZoomClientId);
+            }
+
+            if (model.ZoomClientSecret != _passwordPlaceholder && !String.IsNullOrEmpty(model.ZoomClientSecret))
+            {
+                options.ZoomApi.ClientSecret = new SecretStruct(model.ZoomClientSecret);
             }
 
             options.ZoomApi.RequireMeetingAuthentication = model.ZoomRequireMeetingAuthentication;

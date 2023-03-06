@@ -19,10 +19,12 @@ namespace ZoomConnect.Web.Services.Canvas
         public CalendarEventFinder(CanvasApi canvasApi, CachedCanvasCourses courses, SecretConfigManager<ZoomOptions> optionsManager)
         {
             _canvasApi = canvasApi;
-            _courses = courses.Courses;
             _options = optionsManager.GetValue().Result;
-
             _canvasApi.Options = _options.CanvasApi.CreateCanvasOptions();
+            if (_options.CanvasApi.UseCanvas)
+            {
+                _courses = courses.Courses;
+            }
         }
 
         /// <summary>

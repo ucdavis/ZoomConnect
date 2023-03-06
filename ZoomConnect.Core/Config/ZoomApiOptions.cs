@@ -7,12 +7,14 @@ namespace ZoomConnect.Core.Config
     {
         public ZoomApiOptions()
         {
-            ApiSecret = new SecretStruct("");
-            ApiKey = new SecretStruct("");
+            AccountId = new SecretStruct("");
+            ClientId = new SecretStruct("");
+            ClientSecret = new SecretStruct("");
         }
 
-        public SecretStruct ApiSecret { get; set; }
-        public SecretStruct ApiKey { get; set; }
+        public SecretStruct AccountId { get; set; }
+        public SecretStruct ClientId { get; set; }
+        public SecretStruct ClientSecret { get; set; }
 
         /// <summary>
         /// Whether to turn on Require Auth for all meetings created in Zoom
