@@ -216,17 +216,22 @@ namespace ZoomConnect.Web.Controllers
                             if (parsedFilename.isOk)
                             {
                                 var mail = new MimeMessage();
-                                mail.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
-                                mail.To.Add(MailboxAddress.Parse(_zoomOptions.MediasiteOptions.ReportToEmail));
-                                mail.ReplyTo.Add(MailboxAddress.Parse(_zoomOptions.MediasiteOptions.ReportReplyToEmail));
-                                mail.Subject = "Video Edit";
-                                mail.Body = new TextPart("html")
+                                var emailFrom = _zoomOptions.EmailOptions.Username;
+                                var emailTo = _zoomOptions.MediasiteOptions.ReportToEmail;
+                                if (emailFrom is not null && emailTo is not null && emailFrom.Trim() != "" && emailTo.Trim() != "")
                                 {
-                                    Text = String.Format("<p>The following presentation is uploaded to Mediasite, please process according to procedures.</p><p>FOLDER: {0}<br/>PRESENTATION: {1}<br/>TIME: {2}</p>",
-                                        parsedFilename.Folder, j.PresentationName, parsedFilename.CourseDateTime.Value.ToShortTimeString())
-                                };
-                                emailOk = true;
-                                emails.Add(mail);
+                                    mail.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
+                                    mail.To.Add(MailboxAddress.Parse(_zoomOptions.MediasiteOptions.ReportToEmail));
+                                    mail.ReplyTo.Add(MailboxAddress.Parse(_zoomOptions.MediasiteOptions.ReportReplyToEmail));
+                                    mail.Subject = "Video Edit";
+                                    mail.Body = new TextPart("html")
+                                    {
+                                        Text = String.Format("<p>The following presentation is uploaded to Mediasite, please process according to procedures.</p><p>FOLDER: {0}<br/>PRESENTATION: {1}<br/>TIME: {2}</p>",
+                                            parsedFilename.Folder, j.PresentationName, parsedFilename.CourseDateTime.Value.ToShortTimeString())
+                                    };
+                                    emailOk = true;
+                                    emails.Add(mail);
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -410,15 +415,20 @@ namespace ZoomConnect.Web.Controllers
                 .ForEach(r =>
                 {
                     var msg = new MimeMessage();
-                    msg.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
-                    msg.To.Add(MailboxAddress.Parse(r.hostEmail));
-                    msg.Cc.AddRange(ccAddresses);
-                    msg.Subject = r.subject;
-                    msg.Body = new TextPart("html")
+                    var emailFrom = _zoomOptions.EmailOptions.Username;
+                    var emailTo = r.hostEmail;
+                    if (emailFrom is not null && emailFrom.Trim() != "" && emailTo is not null && emailTo.Trim() != "")
                     {
-                        Text = r.HtmlReport()
-                    };
-                    messages.Add(msg);
+                        msg.From.Add(MailboxAddress.Parse(_zoomOptions.EmailOptions.Username));
+                        msg.To.Add(MailboxAddress.Parse(r.hostEmail));
+                        msg.Cc.AddRange(ccAddresses);
+                        msg.Subject = r.subject;
+                        msg.Body = new TextPart("html")
+                        {
+                            Text = r.HtmlReport()
+                        };
+                        messages.Add(msg);
+                    }
                 });
 
             _emailService.Send(messages);
