@@ -226,7 +226,7 @@ namespace ZoomConnect.Web.Controllers
                                     mail.Subject = "Video Edit";
                                     mail.Body = new TextPart("html")
                                     {
-                                        Text = String.Format("<p>The following presentation is uploaded to Mediasite, please process according to procedures.</p><p>FOLDER: {0}<br/>PRESENTATION: {1}<br/>TIME: {2}</p>",
+                                        Text = String.Format("<p>The following presentation is uploaded to Mediasite, please process according to procedures (check if ok and unlock).</p><p>FOLDER: {0}<br/>PRESENTATION: {1}<br/>TIME: {2}</p>",
                                             parsedFilename.Folder, j.PresentationName, parsedFilename.CourseDateTime.Value.ToShortTimeString())
                                     };
                                     emailOk = true;
