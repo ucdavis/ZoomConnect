@@ -83,6 +83,7 @@ namespace ZoomConnect.Web.Controllers
                 MediasitePlayerId = options.MediasiteOptions?.PlayerId,
                 MediasiteTemplateId = options.MediasiteOptions?.TemplateId,
                 MediasiteUploadDirectory = options.MediasiteOptions?.UploadDirectory,
+                MediasiteCoursesDirectory = options.MediasiteOptions?.CoursesDirectory,
                 MediasitePassword = String.IsNullOrEmpty(options.MediasiteOptions?.Password.Value) ? "" : _passwordPlaceholder,
                 MediasiteApiKey = String.IsNullOrEmpty(options.MediasiteOptions?.ApiKey.Value) ? "" : _passwordPlaceholder,
                 MediasiteReportToEmail = options.MediasiteOptions?.ReportToEmail,

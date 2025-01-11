@@ -65,6 +65,7 @@ namespace ZoomConnect.Web.ViewModels
         public string MediasiteTemplateId { get; set; }
 
         public string MediasiteUploadDirectory { get; set; }
+        public string MediasiteCoursesDirectory { get; set; }
         public string MediasiteReportToEmail { get; set; }
         public string MediasiteReportReplyToEmail { get; set; }
         public List<ISetupRequirement> FailedMediasiteRequirements { get; set; }

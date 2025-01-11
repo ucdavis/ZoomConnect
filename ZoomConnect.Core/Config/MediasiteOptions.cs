@@ -1,5 +1,4 @@
 ﻿using SecretJsonConfig;
-using System;
 
 namespace ZoomConnect.Core.Config
 {
@@ -17,6 +16,7 @@ namespace ZoomConnect.Core.Config
         public string TemplateId { get; set; }
 
         public string UploadDirectory { get; set; }
+        public string CoursesDirectory { get; set; }
         public string ReportToEmail { get; set; }
         public string ReportReplyToEmail { get; set; }
     }
