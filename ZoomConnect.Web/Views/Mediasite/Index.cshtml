@@ -1,0 +1,18 @@
+﻿@model ZoomConnect.Web.ViewModels.SelectedMediasiteModel;
+
+@{
+    ViewData["Title"] = "Mediasite";
+}
+
+<h1>Mediasite Schedule Setup</h1>
+
+<form asp-controller="Mediasite" method="POST">    @* asp-action="@(Model.SelectedCourses == 0 ? "Index" : "Create") *@
+
+    @await Html.PartialAsync("_Courses", Model)
+
+    <button type="submit" class="btn btn-primary">Find/Create Zoom Meetings</button>
+@*     @if (Model.SelectedCourses > 0)
+    {
+        <a asp-action="Index"><span class="btn btn-secondary">Cancel</span></a>
+    }
+ *@</form>

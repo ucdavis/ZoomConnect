@@ -1,0 +1,46 @@
+﻿@model ZoomConnect.Web.ViewModels.SelectedMediasiteModel
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <td>
+                @if (Model.SelectedCourses == 0)
+                {
+                    <input type="checkbox" id="SelectAll" title="Select All" />
+                }
+            </td>
+            <th scope="col">CRN</th>
+            <th scope="col">Description</th>
+            <th scope="col">Time</th>
+            <th scope="col">Location</th>
+            <th scope="col">Professor</th>
+            <th scope="col">Next Occurrence</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model.Courses)
+        {
+            <tr>
+                <td>
+                    <input type="hidden" name="Courses.Index" value="@course.bannerMeeting.surrogate_id" />
+                    <input type="hidden" name="Courses[@course.bannerMeeting.surrogate_id].MeetingId" value="@course.bannerMeeting.surrogate_id" />
+                    @if (Model.SelectedCourses == 0)
+                    {
+                        <input type="checkbox" name="Courses[@course.bannerMeeting.surrogate_id].IsSelected" value="true" />
+                    }
+                    else if (Model.SelectedCourses > 0)
+                    {
+                        <input type="hidden" name="Courses[@course.bannerMeeting.surrogate_id].IsSelected" value="true" />
+                    }
+                </td>
+                <td>@course.bannerMeeting.crn</td>
+                <td>@course.bannerCourse.crse_title</td>
+                <td>@course.bannerMeeting.begin_time</td>
+                <td>@course.bannerMeeting.bldg_code @course.bannerMeeting.room_code</td>
+                <td>
+                    @course.primaryProf.bannerPerson.last_name
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
