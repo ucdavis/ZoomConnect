@@ -212,6 +212,7 @@ namespace ZoomConnect.Web.Controllers
             options.MediasiteOptions.PlayerId = model.MediasitePlayerId;
             options.MediasiteOptions.TemplateId = model.MediasiteTemplateId;
             options.MediasiteOptions.UploadDirectory = model.MediasiteUploadDirectory;
+            options.MediasiteOptions.CoursesDirectory = model.MediasiteCoursesDirectory;
             options.MediasiteOptions.ReportToEmail = model.MediasiteReportToEmail;
             options.MediasiteOptions.ReportReplyToEmail = model.MediasiteReportReplyToEmail;
             if (model.MediasitePassword != _passwordPlaceholder && !String.IsNullOrEmpty(model.MediasitePassword))
