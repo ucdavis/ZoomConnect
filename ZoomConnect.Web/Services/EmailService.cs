@@ -20,8 +20,19 @@ namespace ZoomConnect.Web.Services
         {
             using (var client = new SmtpClient())
             {
-                client.Connect(_options.EmailOptions.SmtpHost, 587, false);
-                client.Authenticate(_options.EmailOptions.Username, _options.EmailOptions.Password.Value);
+                var hostParts = _options.EmailOptions.SmtpHost.Split(':', StringSplitOptions.RemoveEmptyEntries);
+                var host = hostParts[0];
+                var port = 587;
+                if (hostParts.Length > 1)
+                {
+                    int.TryParse(hostParts[1], out port);
+                }
+                client.RequireTLS = true;
+                client.Connect(host, port, false);
+                if (!String.IsNullOrWhiteSpace(_options.EmailOptions.Username) && !String.IsNullOrWhiteSpace(_options.EmailOptions.Password))
+                {
+                    client.Authenticate(_options.EmailOptions.Username, _options.EmailOptions.Password.Value);
+                }
 
                 messages.ForEach(m => client.Send(m));
 
@@ -33,10 +44,21 @@ namespace ZoomConnect.Web.Services
         {
             try
             {
+                var hostParts = _options.EmailOptions.SmtpHost.Split(':', StringSplitOptions.RemoveEmptyEntries);
+                var host = hostParts[0];
+                var port = 587;
+                if (hostParts.Length > 1)
+                {
+                    int.TryParse(hostParts[1], out port);
+                }
                 using (var client = new SmtpClient())
                 {
-                    client.Connect(_options.EmailOptions.SmtpHost, 587, false);
-                    client.Authenticate(_options.EmailOptions.Username, _options.EmailOptions.Password.Value);
+                    client.RequireTLS = true;
+                    client.Connect(host, port, false);
+                    if (!String.IsNullOrWhiteSpace(_options.EmailOptions.Username) && !String.IsNullOrWhiteSpace(_options.EmailOptions.Password))
+                    {
+                        client.Authenticate(_options.EmailOptions.Username, _options.EmailOptions.Password.Value);
+                    }
                     client.Disconnect(true);
                 }
                 return true;

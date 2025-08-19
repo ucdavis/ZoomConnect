@@ -19,8 +19,8 @@ namespace ZoomConnect.Web.SetupRequirements.Email
 
         public string Capabilities => "Needed for connecting to an email server to send notifications and reports.";
 
-        public string LongDescription => "This would typically be smtp.office365.com with campus OU account credentials, " +
-            "but any authenticated smtp server is fine.";
+        public string LongDescription => "This would typically be smtp.office365.com with campus AD3 account credentials, " +
+            "or potentially unauthenticated.";
 
         public EnforcementType Enforcement => EnforcementType.Required;
 
@@ -41,11 +41,10 @@ namespace ZoomConnect.Web.SetupRequirements.Email
             }
 
             if (String.IsNullOrEmpty(_options.EmailOptions.SmtpHost) ||
-                String.IsNullOrEmpty(_options.EmailOptions.Username) ||
-                String.IsNullOrEmpty(_options.EmailOptions.Password.Value))
+                String.IsNullOrEmpty(_options.EmailOptions.Username))
             {
                 _status = RequirementStatus.Missing;
-                _statusDescription = "Email server and/or credentials are not filled out.";
+                _statusDescription = "Email server and/or username are not filled out.";
 
                 return false;
             }
