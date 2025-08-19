@@ -30,12 +30,12 @@ namespace ZoomConnect.Web.Banner.Repository
 
         public override List<sirasgn> GetAll()
         {
-            var sql =
-                $"SELECT DISTINCT {_columns} " +
-                "FROM sirasgn " +
-                "INNER JOIN ssbsect ON sirasgn_term_code = ssbsect_term_code AND sirasgn_crn = ssbsect_crn " +
-                "WHERE SIRASGN_TERM_CODE = :term " +
-                "  AND ssbsect_subj_code = :subj";
+            var sql = $@"
+                SELECT DISTINCT {_columns}
+                FROM sirasgn
+                INNER JOIN ssbsect ON sirasgn_term_code = ssbsect_term_code AND sirasgn_crn = ssbsect_crn
+                WHERE SIRASGN_TERM_CODE = :term
+                  AND ssbsect_subj_code = :subj";
 
             return Context
                 .Connection

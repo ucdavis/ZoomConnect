@@ -17,5 +17,10 @@ namespace ZoomConnect.Web.Models
         public bool IsSelected { get; set; }
 
         public decimal MeetingId { get; set; }
+
+        public string MediasiteFolderId { get; set; }
+        public string MediasiteFolderName { get; set; }
+
+        public string MediasiteFolderCssClass => MediasiteFolderId == null ? "oi oi-x text-danger" : "oi oi-folder text-success";
     }
 }
