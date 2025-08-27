@@ -197,7 +197,7 @@ namespace ZoomConnect.Web.Models
         /// </summary>
         public DateTime NextOccurrence()
         {
-            return NextOccurrence(_termStart);
+            return NextOccurrence(new[] { _termStart, DateTime.Now }.Max());
         }
 
         /// <summary>
