@@ -24,7 +24,7 @@
                 <td>
                     <input type="hidden" name="Courses.Index" value="@course.bannerMeeting.surrogate_id" />
                     <input type="hidden" name="Courses[@course.bannerMeeting.surrogate_id].MeetingId" value="@course.bannerMeeting.surrogate_id" />
-                    @if (Model.SelectedCourses == 0)
+                    @if (Model.SelectedCourses == 0 && course.ShowCheckbox)
                     {
                         <input type="checkbox" name="Courses[@course.bannerMeeting.surrogate_id].IsSelected" value="true" />
                     }
@@ -35,7 +35,7 @@
                 </td>
                 <td>@course.bannerMeeting.crn</td>
                 <td>@course.bannerCourse.crse_title</td>
-                <td>@course.bannerMeeting.begin_time</td>
+                <td>@course.bannerMeeting.begin_time - @course.bannerMeeting.end_time</td>
                 <td>@course.bannerMeeting.bldg_code @course.bannerMeeting.room_code</td>
                 <td>
                     @course.primaryProf.bannerPerson.last_name

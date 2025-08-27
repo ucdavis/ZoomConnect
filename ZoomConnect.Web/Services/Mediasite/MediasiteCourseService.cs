@@ -56,18 +56,16 @@ namespace ZoomConnect.Web.Services.Mediasite
                 .ToDictionary(c => c.crn);
 
             var coursesFolder = _mediasiteClient.FindFolder(_options.MediasiteOptions.CoursesDirectory);
-            var msFolders = _mediasiteClient.FindFolders(coursesFolder.Id);
+            var msCourseFolders = _mediasiteClient.FindFolders(coursesFolder.Id);
 
             return _meetingRepo.GetAll()
                 .Where(m => courses.ContainsKey(m.crn) && primaryAssignments.ContainsKey(m.crn))
-                .Select(m => new MediasiteCourseModel
-                {
-                    bannerMeeting = m,
-                    bannerCourse = courses[m.crn],
-                    primaryProf = people[primaryAssignments[m.crn].pidm],
-                    MediasiteFolderId = msFolders.FirstOrDefault(f => f.Name == $"{m.term_code}-{m.crn}")?.Id,
-                    MediasiteFolderName = $"{m.term_code}-{m.crn}"
-                })
+                .Select(m => new MediasiteCourseModel(
+                    m,
+                    courses[m.crn],
+                    people[primaryAssignments[m.crn].pidm],
+                    msCourseFolders,
+                    _mediasiteClient))
                 .ToList();
         }
     }
