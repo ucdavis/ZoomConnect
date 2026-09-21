@@ -1,6 +1,8 @@
 ﻿using MediasiteUtil;
+using MediasiteUtil.Models;
 using Org.BouncyCastle.Tls;
 using SecretJsonConfig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoomConnect.Core.Config;
@@ -67,6 +69,11 @@ namespace ZoomConnect.Web.Services.Mediasite
                     msCourseFolders,
                     _mediasiteClient))
                 .ToList();
+        }
+
+        public List<Schedule> CreateMediasiteSchedules(List<MediasiteCourseModel> meetings)
+        {
+            throw new NotImplementedException();
         }
     }
 }

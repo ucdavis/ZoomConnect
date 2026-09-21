@@ -37,7 +37,7 @@ namespace ZoomConnect.Web.Services.Zoom
             foreach (var prof in profs)
             {
                 // look for user in Zoom before creating or updating
-                var currentUser = _zoomClient.GetUser(prof.primaryEmail.email_address);
+                var currentUser = _zoomClient.GetUser(prof.primaryEmail.email_address); // TODO: can this email address be null?
 
                 // if confirmed not found, create new user
                 User newLicensedUser = null;

@@ -40,17 +40,17 @@ namespace ZoomConnect.Web.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //public IActionResult Create(SelectedCoursesViewModel model, [FromServices] MediasiteCourseCreator mediasiteService)
-        //{
-        //    var meetings = RehydrateSelectedMeetings(model);
+        [HttpPost]
+        public IActionResult Create(SelectedMediasiteModel model, [FromServices] MediasiteCourseService mediasiteService)
+        {
+            var meetings = RehydrateSelectedMeetings(model);
 
-        //    // do not limit zoom start/end dates, that is only for Canvas.
-        //    var created = mediasiteService.CreateMediasiteCourses(meetings);
-        //    TempData["Message"] = $"{created.Count} Zoom Meeting(s) created.";
+            // do not limit zoom start/end dates, that is only for Canvas.
+            var created = mediasiteService.CreateMediasiteSchedules(meetings);
+            TempData["Message"] = $"{created.Count} Mediasite Schedule(s) created.";
 
-        //    return RedirectToAction("Index");
-        //}
+            return RedirectToAction("Index");
+        }
 
         private List<MediasiteCourseModel> RehydrateSelectedMeetings(SelectedMediasiteModel model)
         {

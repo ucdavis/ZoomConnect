@@ -32,11 +32,13 @@ namespace ZoomConnect.Web.Controllers
             _zoomClient.Options = _options.ZoomApi.CreateZoomOptions();
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string classLevel)
         {
             var studentModels = new SelectedStudentsModel
             {
-                Students = _studentFinder.Students.Select(s => new StudentViewModel(s))
+                Students = _studentFinder.Students
+                    .Where(s => classLevel == null || s.bannerPerson.classlevel == classLevel)
+                    .Select(s => new StudentViewModel(s))
                     .OrderBy(m => m.Name)
                     .ToList()
             };
