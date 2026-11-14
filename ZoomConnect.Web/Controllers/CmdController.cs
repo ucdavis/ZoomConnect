@@ -9,6 +9,7 @@ using MediasiteUtil;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using SecretJsonConfig;
+using Serilog;
 using ZoomClient;
 using ZoomClient.Extensions;
 using ZoomConnect.Core.Config;
@@ -128,6 +129,8 @@ namespace ZoomConnect.Web.Controllers
 
                         output.Append("downloading ");
 
+                        Log.Information($"{DateTime.Now} : CmdController.CloudDownload : zoomClient.DownloadRecordingStream({recordingUrl}, {fileFullName})");
+
                         var response = _zoomClient.DownloadRecordingStream(recordingUrl, fileFullName);
 
                         if (response.StatusCode != HttpStatusCode.OK)
@@ -186,6 +189,7 @@ namespace ZoomConnect.Web.Controllers
                 var sessionId = j.FileName.SessionIdPrefix();
                 output.AppendFormat("{0} ", sessionId);
                 // update job status for each pending job
+                Log.Information($"{DateTime.Now} : CmdController.MediasiteUpload : msclient GetJob({j.JobId}).");
                 var jobStatus = msClient.GetJob(j.JobId);
                 j.Status = jobStatus == null ? "missing" : jobStatus.Status;
                 j.Tries++;

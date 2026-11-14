@@ -163,6 +163,45 @@ namespace ZoomConnect.Web.Controllers
             return View(emailListModel);
         }
 
+        public IActionResult License()
+        {
+            return View(new EmailListModel());
+        }
+
+        [HttpPost]
+        public IActionResult License(EmailListModel emailListModel)
+        {
+            // no emails => redirect to License
+            if (String.IsNullOrEmpty(emailListModel.emails))
+            {
+                return RedirectToAction("License");
+            }
+
+            // emails string full => split into EmailList and license them
+            if (!String.IsNullOrEmpty(emailListModel.emails))
+            {
+                var emails = emailListModel.emails.Split(new[] { "\r\n", "\n", "\r", ";", "," }, StringSplitOptions.RemoveEmptyEntries);
+                emailListModel.EmailList.AddRange(emails);
+
+                var successCount = 0;
+                var setToLicensed = new UserUpdate() { type = PlanType.Licensed };
+
+                emailListModel.EmailList.ForEach(e =>
+                {
+                    var user = _zoomClient.GetUser(e);
+                    if (user == null || user.type != PlanType.Basic) { return; }
+
+                    successCount += _zoomClient.UpdateUserProfile(e, setToLicensed) ? 1 : 0;
+                });
+
+                TempData["Message"] = $"{successCount} Zoom User(s) licensed.";
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(emailListModel);
+        }
+
         private List<StudentDataModel> RehydrateSelectedStudents(SelectedStudentsModel model)
         {
             return RehydrateSelectedStudents(model, false);

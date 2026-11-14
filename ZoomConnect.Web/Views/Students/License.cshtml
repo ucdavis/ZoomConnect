@@ -1,0 +1,30 @@
+﻿@model ZoomConnect.Web.ViewModels.EmailListModel
+@using ZoomConnect.Web.ViewModels;
+
+@{
+    ViewData["Title"] = "License";
+}
+
+<h1>License</h1>
+
+<form method="post">
+
+    @if (@Model.EmailList.Count == 0)
+    {
+        <p>
+            Paste email addresses one per line for licensing existing basic users.
+            Accounts will be moved from Basic to Licensed status.
+            All others will be ignored.
+        </p>
+
+        <textarea id="emails" asp-for="emails" class="bigbox"></textarea>
+    }
+    else
+    {
+        <p>
+            @Model.EmailList.Count emails selected.
+        </p>
+    }
+    <button type="submit" class="btn btn-primary">License Zoom Users</button>
+
+</form>
