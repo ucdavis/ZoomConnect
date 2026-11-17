@@ -52,13 +52,13 @@ namespace ZoomConnect.Web.SetupRequirements.Canvas
         public bool Evaluate()
         {
             // if Canvas is unused just indicate success without checking further
-            if (_options == null || _options.CanvasApi == null || !_options.CanvasApi.UseCanvas)
+            if (!_options.CanvasApi.UseCanvas)
             {
                 return SetStatusAndReturn("");
             }
 
-            // only invalid if no Token is provided
-            if (String.IsNullOrEmpty(_options.CanvasApi.ApiAccessToken.Value))
+            // invalid if no Token is provided
+            if (_options == null || _options.CanvasApi == null || String.IsNullOrEmpty(_options.CanvasApi.ApiAccessToken.Value))
             {
                 return SetStatusAndReturn("Canvas Access Token is required.");
             }
