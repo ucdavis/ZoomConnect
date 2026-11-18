@@ -3,7 +3,7 @@ using System;
 using ZoomConnect.Core.Config;
 using ZoomConnect.Web.Services.Zoom;
 
-namespace ZoomConnect.Web.SetupRequirements.Banner
+namespace ZoomConnect.Web.SetupRequirements.Zoom
 {
     public class ZoomConnectionRequirement : ISetupRequirement
     {
