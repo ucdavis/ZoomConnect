@@ -180,7 +180,7 @@ namespace ZoomConnect.Web.Controllers
             var ignorePendingJobSessionIds = new List<String>();
             var emails = new List<MimeMessage>();
             var jobRows = mediasiteJobsFile.GetValue().Result ?? new List<MediasiteJob>();
-            jobRows = jobRows.Where(j => j.Status != "Failed" && j.Status != "Successful").ToList();
+            jobRows = jobRows.Where(j => j.Status != "Failed" && j.Status != "Successful" && j.Status != "missing").ToList();
             jobRows.ForEach(j =>
             {
                 // session id includes zoom meeting id plus year, month, day of recording.
@@ -191,7 +191,7 @@ namespace ZoomConnect.Web.Controllers
                 // update job status for each pending job
                 Log.Information($"{DateTime.Now} : CmdController.MediasiteUpload : msclient GetJob({j.JobId}).");
                 var jobStatus = msClient.GetJob(j.JobId);
-                j.Status = jobStatus == null ? "missing" : jobStatus.Status;
+                j.Status = jobStatus == null ? "missing" : jobStatus.Status ?? "missing";
                 j.Tries++;
                 j.ModifiedDate = DateTime.Now;
 
